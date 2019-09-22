@@ -1,0 +1,43 @@
+version: "3"
+
+services:
+  fantasta_proxy:
+    image: nginx:latest
+    container_name: fantasta_proxy
+    restart: always
+    volumes:
+      - ./modules/central_proxy/nginx.conf:/etc/nginx/nginx.conf
+      - ./modules/central_proxy/logs/reverse_proxy.log:/etc/nginx/error_log.log
+    ports:
+      - 80:80
+    networks: 
+      - default
+    depends_on:
+      - fantasta_auth
+
+  fantasta_auth:
+    container_name: fantasta_auth
+    restart: always
+    build: ./modules/central_authentication
+    # command: npm run start
+    expose:
+      - "3000"
+    networks: 
+      -  default
+    links:
+      - mongo
+    depends_on:
+      - mongo
+
+  mongo:
+    container_name: fantasta_mongo
+    image: mongo
+    volumes:
+      - mongodata:/data/db
+    expose:
+      - "27017"
+    networks: 
+      -  default
+
+volumes:
+  mongodata:
