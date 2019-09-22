@@ -1,3 +1,6 @@
 [submodule "modules/central_utilities"]
 	path = modules/central_utilities
 	url = https://pinkal2019@dev.azure.com/pinkal2019/Core_modules/_git/Central_utilities
+[submodule "modules/central_authentication"]
+	path = modules/central_authentication
+	url = https://pinkal2019@dev.azure.com/pinkal2019/Core_modules/_git/Central_authentication
