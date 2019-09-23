@@ -4,3 +4,6 @@
 [submodule "modules/central_authentication"]
 	path = modules/central_authentication
 	url = https://pinkal2019@dev.azure.com/pinkal2019/Core_modules/_git/Central_authentication
+[submodule "modules/fantasta_core"]
+	path = modules/fantasta_core
+	url = https://pinkal2019@dev.azure.com/pinkal2019/FantaAsta/_git/Fantasta_server_core
