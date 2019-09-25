@@ -1,0 +1,52 @@
+### Start docker swarm
+# cluster
+docker swarm init --advertise-addr <MANAGER-IP>
+
+# single machine
+docker swarm init
+
+
+### View the current state of the swarm
+docker info
+
+
+### View information about nodes
+docker node ls
+
+
+### Retrieve the join command for a worker
+docker swarm join-token worker
+
+
+### Create the service
+#  The --name flag names the service helloworld.
+#  The --replicas flag specifies the desired state of 1 running instance.
+#  The arguments alpine ping docker.com define the service as an Alpine Linux container that executes the command ping docker.com
+docker service create --replicas 1 --name helloworld alpine ping docker.com
+
+
+# See the list of running services
+docker service ls
+
+# Display the details about a service (without pretty will be a JSON)
+# SERVICE-ID or SERVICE-NAME if specified while starting the service (eg. helloworld)
+docker service inspect --pretty <SERVICE-ID> 
+
+
+# See which nodes are running the service
+docker service ps <SERVICE-ID>
+
+
+# See details about the container for the task (run it on the node where the task is running)
+docker ps
+
+
+# Change the desired state of the service running in the swarm
+docker service scale <SERVICE-ID>=<NUMBER-OF-TASKS>
+
+
+# Remove the service
+docker service rm 
+
+
+

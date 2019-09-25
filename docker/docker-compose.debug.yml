@@ -1,0 +1,12 @@
+version: "3"
+services:
+  fantasta_core:
+    command: npm run debug
+    restart: always
+    environment:
+      - DEBUG=1
+      - NODE_ENV=dev
+    volumes:
+      - ./src:/usr/fantasta_core/src
+    ports:
+      - "9222:9222"

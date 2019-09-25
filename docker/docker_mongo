@@ -1,0 +1,15 @@
+
+# download specific version of mongobs docker container
+# --publish:			exposes port (host:container)
+# --name:				name the container
+# -d:					detach the terminal
+# mongo:4.0.0-xenial:	use a specific container repo and version
+
+# first time (download the image)
+docker run --publish 127.0.0.1:27017:27017 --name mongodb -d mongo:4.0.0-xenial
+
+# once the image is downloaded you can use the assigned name (af93d1bb9e2a is the image ID)
+docker start mongodb
+
+
+npm install express

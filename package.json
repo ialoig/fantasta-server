@@ -1,26 +1,57 @@
 {
-  "name": "fantasta_server",
-  "version": "0.0.1",
-  "private": true,
+  "name": "fantasta_core",
+  "version": "1.0.0",
+  "description": "Fantasta server module",
   "scripts": {
-    
+    "build": "babel src --out-dir ./dist --source-maps",
+    "serve": "pm2 start dist/index.js",
+    "test": "nyc mocha test/integration/*.test.js",
+    "start": "npm run build && nodemon --exec babel-node ./fantasta.js",
+    "debug": "npm run build && nodemon --exec babel-node --legacy-watch --watch ./src --inspect=0.0.0.0:9222 --nolazy ./fantasta.js",
+    "docker-debug": "docker-compose -f ./docker/docker-compose.yml -f ./docker/docker-compose.debug.yml up --build",
+    "docker-test": "docker-compose -f ./docker/docker-compose.yml -f ./docker/docker-compose.test.yml up -d --build && docker exec -it fantasta_core npm run test && docker-compose down",
+    "docker-start": "docker-compose -f ./docker/docker-compose.yml -f ./docker/docker-compose.start.yml up --build"
   },
   "dependencies": {
     "body-parser": "^1.18.3",
-    "cookie-parser": "~1.4.3",
-    "debug": "3.1.0",
-    "dotenv": "^8.1.0",
-    "express": "^4.16.3",
-    "jsonwebtoken": "8.3.0",
-    "mocha": "^6.2.0",
-    "mongoose": "^5.7.1",
+    "cookie-parser": "^1.4.4",
+    "debug": "4.1.1",
+    "config": "^3.0.1",
+    "express": "^4.16.4",
+    "jsonwebtoken": "8.5.1",
+    "mongoose": "^5.4.19",
     "morgan": "^1.9.1",
     "node-mandrill": "^1.0.1",
+    "pm2": "^3.4.1",
     "pug": "^2.0.3",
-    "babel-cli": "6.26.0",
     "q": "^1.5.1",
-    "serve-favicon": "^2.5.0",
-    "socket.io": "^2.1.1",
-    "xlsx": "^0.15.1"
-  }
+    "serve-favicon": "^2.5.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-plugin-module-resolver": "^3.2.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "babel-register": "^6.26.0",
+    "chai": "^4.2.0",
+    "chai-http": "^4.2.1",
+    "eslint": "^5.15.3",
+    "mocha": "^6.0.2",
+    "nodemon": "^1.18.10",
+    "nyc": "^13.3.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://pinkal2019@dev.azure.com/pinkal2019/FantaAsta/_git/Fantasta_server",
+    "ssh": "git@ssh.dev.azure.com:v3/pinkal2019/FantaAsta/Fantasta_server"
+  },
+  "keywords": [
+    "fantasta",
+    "server",
+    "service"
+  ],
+  "author": "pinkal",
+  "license": "ISC"
 }

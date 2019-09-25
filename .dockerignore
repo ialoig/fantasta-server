@@ -1,0 +1,7 @@
+.git
+.dockerignore
+node_modules
+Dockerfile
+npm-debug.log
+nyc_output
+coverage

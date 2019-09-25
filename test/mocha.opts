@@ -1,0 +1,9 @@
+--recursive
+--exit
+--timeout 30000
+--forbid-pending
+--bail
+--require babel-core/register
+--exec babel-node
+--reporter spec
+--slow 0

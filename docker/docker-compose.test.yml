@@ -1,0 +1,11 @@
+version: "3"
+services:
+  fantasta_core:
+    command: npm run start
+    restart: "no"
+    environment:
+      - TEST=1
+      - NODE_ENV=test
+    volumes:
+      - ./coverage:/usr/fantasta_core/coverage
+    
