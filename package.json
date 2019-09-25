@@ -2,6 +2,7 @@
   "name": "fantasta_core",
   "version": "1.0.0",
   "description": "Fantasta server module",
+  "private": true,
   "scripts": {
     "build": "babel src --out-dir ./dist --source-maps",
     "serve": "pm2 start dist/index.js",
@@ -24,7 +25,6 @@
     "node-mandrill": "^1.0.1",
     "pm2": "^3.4.1",
     "pug": "^2.0.3",
-    "q": "^1.5.1",
     "serve-favicon": "^2.5.0"
   },
   "devDependencies": {
