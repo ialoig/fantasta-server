@@ -1,12 +1,14 @@
-
-import mongoose, { connect, connection } from 'mongoose'
-import config from 'config';
+const mongoose = require("mongoose");
+const config = require("../config/developmentConfig");
 
 // use ES6 Promise instead of mongoose.Promise
 mongoose.Promise = global.Promise;
 
+const mongodbConnection = `${config.mongodb.endpoint}:${config.mongodb.port}/${config.mongodb.database}`
+console.log(`mongodb endpoint: ${mongodbConnection}`);
+
 // register callback on events
-connection
+mongoose.connection
   .on("connecting", function() {
     console.log("mongodb status: connecting");
   })
@@ -21,13 +23,9 @@ connection
   })
   .on("error", console.error.bind(console, "mongodb connection error:"));
 
-connection
-  .once("connected", function() {
-    console.log("mongodb status: connected");
-  })
-
+// close all connections if the mongoose process ends
 process.on("SIGINT", function() {
-  connection.close(function() {
+  mongoose.connection.close(function() {
     console.log(
       "Mongoose default connection is disconnected due to application termination"
     );
@@ -35,8 +33,23 @@ process.on("SIGINT", function() {
   });
 });
 
-const mongodbConnection = `${config.mongodb.endpoint}:${config.mongodb.port}/${config.mongodb.database}`
-console.log(`mongodb endpoint: ${mongodbConnection}`);
+const AuctionConfig = require("./models/auctionConfigModel");
+const FootballPlayer = require("./models/footballPlayerModel");
+const LeagueConfig = require("./models/leagueConfigModel");
+const League = require("./models/leagueModel");
+const User = require("./models/userModel");
+const Team = require("./models/teamModel");
+const commons = require("./commons");
+
+module.exports = {
+  User,
+  Team,
+  League,
+  AuctionConfig,
+  LeagueConfig,
+  FootballPlayer,
+  commons
+}
 
 const mongoConnectionParams = {
   useNewUrlParser: true, // MongoDB driver has deprecated their current connection string parser
@@ -48,12 +61,4 @@ const mongoConnectionParams = {
   useUnifiedTopology: true
 };
 
-connect(mongodbConnection, mongoConnectionParams);
-
-
-const commons = require("./commons");
-
-export default {
-  
-  commons
-}
+mongoose.connect(mongodbConnection, mongoConnectionParams);

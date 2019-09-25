@@ -14,12 +14,12 @@ services:
       - default
     depends_on:
       - fantasta_auth
+      - fantasta_core
 
   fantasta_auth:
     container_name: fantasta_auth
     restart: always
     build: ./modules/central_authentication
-    # command: npm run start
     expose:
       - "3000"
     networks: 
@@ -33,7 +33,6 @@ services:
     container_name: fantasta_core
     restart: always
     build: ./modules/fantasta_core
-    # command: npm run start
     expose:
       - "3000"
     networks: 

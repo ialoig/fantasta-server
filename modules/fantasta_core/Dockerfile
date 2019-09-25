@@ -8,7 +8,7 @@ WORKDIR /usr/fantasta_core
 
 
 # copy package.json and package-lock.json
-COPY package*.json package-lock.json /usr/fantasta_core/
+COPY package*.json /usr/fantasta_core/
 
 
 # Install app dependencies
