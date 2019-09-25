@@ -29,6 +29,20 @@ services:
     depends_on:
       - mongo
 
+  fantasta_core:
+    container_name: fantasta_core
+    restart: always
+    build: ./modules/fantasta_core
+    # command: npm run start
+    expose:
+      - "3000"
+    networks: 
+      -  default
+    links:
+      - mongo
+    depends_on:
+      - mongo
+
   mongo:
     container_name: fantasta_mongo
     image: mongo
