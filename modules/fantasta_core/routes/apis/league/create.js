@@ -1,95 +1,71 @@
 
-var Q = require('q');
+import { default as DB } from 'database'
+import { Constants, LeagueUtils, Response } from 'utils'
+import { Socket } from 'socket'
 
-var database = require('../../database/database');
-var response = require('../../utils/response');
-var config = require('../../utils/config');
-var Token = require('../../utils/token');
-var socket = require('../../utils/socket');
-
-var leagueUtils = require('../../utils/league/leagueFunctions');
-
-module.exports = function ( req, res, next )
+const create = async ( req, res, next ) =>
 {
-    var body = req.body;
+    let leagueData = req.body && req.body.league || {};
+    let settings = req.body && req.body.settings || {};
 
-    var leagueData = body.league || {};
-    var settings = body.settings || {};
-    var token = '';
-
-    var leagueValid = leagueUtils.validateleague(leagueData, true);
-    var settingsValid = leagueUtils.validateSettings(settings)
+    var leagueValid = LeagueUtils.validateleague(leagueData, true);
+    var settingsValid = LeagueUtils.validateSettings(settings)
 
     if ( leagueValid.valid && settingsValid.valid )
     {
-        Token.read( body.token, req )
-        .then(
-            function (data)
-            {
-                token = data;
-                return database.user.findById( data.id );
-            }
-        )
-        .then(
-            function (user)
-            {
-                if ( user.password && user.password==token.password )
-                {
-                    var newAuct = database.auction.create( user, leagueData, settings );
-                    var newLeag = database.league.create( leagueData, user, newAuct );
+        let user = null
+        try
+        {
+            user = await verifyToken( params.token )
+        }
+        catch (error)
+        {
+            console.error(error)
+            res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, error ) )
+        }
 
-                    var leag = {
-                        leagueId: newLeag.id,
-                        leagueName: newLeag.name,
-                        username: leagueData.username,
-                        admin: true,
-                    };
-                    var newvalues = { $push: {'leagues': leag} };
+        var newAuct = DB.AuctionConfig({ user, leagueData, settings });
+        var newLeag = DB.League({ leagueData, user, newAuct });
 
-                    Q.all([
-                        database.db.update( user, newvalues ),
-                        database.db.save( newLeag ),
-                        database.db.save( newAuct )
-                    ])
-                    .then(
-                        function (data)
-                        {
-                            database.user.findById( user.id )
-                            .then(
-                                function (user)
-                                {
-                                    var attendees = leagueUtils.getleagueObj(data[1]).attendees
-                                    var resp = {
-                                        league: data[1].id,
-                                        full: false,
-                                        attendees: attendees
-                                    };
+        var leag = {
+            leagueId: newLeag.id,
+            leagueName: newLeag.name,
+            username: leagueData.username,
+            admin: true,
+        };
+        var newvalues = { $push: {'leagues': leag} };
 
-                                    socket.addAttendee( req, newLeag.name, '' );
-                                    socket.leagueCreate( req, newLeag.name, '' );
+        try
+        {
+            await DB.Commons.update( user, newvalues )
+            let newLeague = await DB.Commons.save( newLeag )
+            await DB.Commons.save( newAuct )
 
-                                    res.json( response.resolve(config.constants.OK, resp) );
-                                }
-                            );
-                        }
-                    );
-                }
-                else
-                {
-                    res.status(400).send( response.reject(config.constants.BAD_REQUEST, config.constants.WRONG_PASSWORD ) );
-                }
-            }
-        )
-        .catch(
-            function (error)
-            {
-                res.status(400).send( response.reject(config.constants.BAD_REQUEST, config.constants.BAD_REQUEST ) );
-            }
-        );
+            let user = await database.user.findById( user.id )
+            
+            var attendees = LeagueUtils.getleagueObj(newLeague).attendees
+            var resp = {
+                league: newLeague.id,
+                full: false,
+                attendees: attendees
+            };
+
+            Socket.addAttendee( req, newLeag.name, '' );
+            Socket.leagueCreate( req, newLeag.name, '' );
+
+            res.json( Response.resolve(Constants.OK, resp) );
+        }
+        catch (error)
+        {
+            console.error(error)
+            res.status(500).send( Response.reject( Constants.INT_SERV_ERR, Constants.INT_SERV_ERR, error ) )
+        }
     }
     else
     {
-        res.status(400).send( response.reject( config.constants.BAD_REQUEST, !leagueValid.valid ? leagueValid.error : settingsValid.error ) );
+        res.status(400).send( Response.reject( Constants.BAD_REQUEST, !leagueValid.valid ? leagueValid.error : settingsValid.error ) )
     }
 
-};
+}
+
+export default create

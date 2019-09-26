@@ -1,35 +1,32 @@
 
-var httpStatus = require('./const/httpStatus');
-var errorMessages = require('./const/errorMessages');
+import { ErrorMessages, HttpStatus } from 'utils'
 
-var resolve = function ( status, data, token )
+const resolve = ( status, data, token ) =>
 {
-    var ret = {
+    return {
         'ok': true,
-        'code': httpStatus[status].code,
-        'status': httpStatus[status].status,
+        'code': HttpStatus[status].code,
+        'status': HttpStatus[status].status,
         'data': data || {},
         'token': token || null
-    };
-    return ret;
+    }
 }
 
-var reject = function ( status, info, error )
+const reject = ( status, info, error ) =>
 {
-    var ret = {
+    return {
         'ok': false,
-        'status': httpStatus[status].status,
-        'code': httpStatus[status].code,
+        'code': HttpStatus[status].code,
+        'status': HttpStatus[status].status,
         'info': {
-            title: errorMessages[info] ? errorMessages[info].title : '',
-            subTitle: errorMessages[info] ? errorMessages[info].subTitle : ''
+            title: ErrorMessages[info] ? ErrorMessages[info].title : '',
+            subTitle: ErrorMessages[info] ? ErrorMessages[info].subTitle : ''
         },
         'data': error || {}
-    };
-    return ret;
+    }
 }
 
-module.exports =  {
+export default {
     resolve,
     reject
-};
+}

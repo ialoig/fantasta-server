@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+
+import { Schema, model } from "mongoose"
 
 const footballPlayerSchema = new Schema(
   {
@@ -33,14 +33,12 @@ const footballPlayerSchema = new Schema(
     }
   },
   {
-    // createdAt: Date (default added by mongoose)
-    // updatedAt: Date (default added by mongoose)
     timestamps: true
   }
 );
 
 // create the model out of the schema
-const FootballPlayer = mongoose.model("FootballPlayer", footballPlayerSchema);
+const FootballPlayer = model("FootballPlayer", footballPlayerSchema);
 
 // return the object to the caller when this file is imported
-module.exports = FootballPlayer;
+export default FootballPlayer;

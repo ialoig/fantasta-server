@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+
+import { Schema, model } from "mongoose"
 
 const leagueConfig = new Schema(
   {
@@ -49,14 +49,12 @@ const leagueConfig = new Schema(
     }
   },
   {
-    // createdAt: Date (default added by mongoose)
-    // updatedAt: Date (default added by mongoose)
     timestamps: true
   }
 );
 
 // create the model out of the schema
-const LeagueConfig = mongoose.model("LeagueConfig", leagueConfig);
+const LeagueConfig = model("LeagueConfig", leagueConfig);
 
 // return the object to the caller when this file is imported
-module.exports = LeagueConfig;
+export default LeagueConfig;

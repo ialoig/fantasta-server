@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+
+import { Schema, model } from "mongoose"
 
 const auctionConfig = new Schema(
   {
@@ -27,8 +27,6 @@ const auctionConfig = new Schema(
     }
   },
   {
-    // createdAt: Date (default added by mongoose)
-    // updatedAt: Date (default added by mongoose)
     timestamps: true
   }
 );
@@ -46,7 +44,7 @@ auctionConfig.method("mymethod2", function() {
 //-------------------------------------------------------------------
 
 // create the model out of the schema
-const AuctionConfig = mongoose.model("AuctionConfig", auctionConfig);
+const AuctionConfig = model("AuctionConfig", auctionConfig);
 
 // return the object to the caller when this file is imported
-module.exports = AuctionConfig;
+export default AuctionConfig;

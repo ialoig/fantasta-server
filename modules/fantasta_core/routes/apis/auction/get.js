@@ -1,12 +1,8 @@
 
-let response = require('../../utils/response');
+import { default as DB } from 'database'
+import { Constants, LeagueUtils, Response } from 'utils'
 
-let database = require('../../database/database');
-let config = require('../../utils/config');
 let Token = require('../../utils/token');
-
-let leagueUtils = require('../../utils/league/leagueFunctions');
-let userUtils = require('../../utils/user/userFunctions');
 
 const get = async ( req, res, next ) =>
 {
@@ -21,43 +17,43 @@ const get = async ( req, res, next ) =>
         catch (error)
         {
             console.error(error)
-            res.status(400).send( response.reject( config.constants.BAD_REQUEST, config.constants.BAD_REQUEST, error ) )
+            res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, error ) )
         }
 
         let league = null;
         try
         {
-            league = await database.league.findById( params.leagueId )
+            league = await DB.League.findById( params.leagueId )
         }
         catch (error)
         {
             console.error(error)
-            res.status(400).send( response.reject( config.constants.BAD_REQUEST, config.constants.BAD_REQUEST, error ) )
+            res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, error ) )
         }
 
         let auction = null;
         try
         {
-            auction = await database.auction.findById( league.auction.id )
+            auction = await DB.AuctionConfig.findById( league.auction.id )
         }
         catch (error)
         {
             console.error(error)
-            res.status(400).send( response.reject( config.constants.BAD_REQUEST, config.constants.BAD_REQUEST, error ) )
+            res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, error ) )
         }
         
         let resp = {
-            user: userUtils.getUsrObj(user),
-            league: leagueUtils.getleagueObj(league),
-            auction: leagueUtils.getAuctionObj(auction)
+            user: user,
+            league: LeagueUtils.getleagueObj(league),
+            auction: LeagueUtils.getAuctionObj(auction)
         };
         resp.user.admin = user.id==league.administrator.id;
 
-        res.json( response.resolve(config.constants.OK, resp, params.token) );
+        res.json( Response.resolve(Constants.OK, resp, params.token) );
     }
     else
     {
-        res.status(400).send( response.reject( config.constants.BAD_REQUEST, config.constants.BAD_REQUEST, null ) )
+        res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, null ) )
     }
 
 }

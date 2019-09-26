@@ -51,11 +51,16 @@ const mongoConnectionParams = {
 
 connect(mongodbConnection, mongoConnectionParams);
 
-
-const commons = require("./commons");
+const Commons = require("./commons");
+import { AuctionConfig, FootballPlayer, League, LeagueConfig, Team } from "./models";
 
 const DB = {
-  commons
+  Commons,
+  AuctionConfig,
+  FootballPlayer,
+  League,
+  LeagueConfig,
+  Team
 }
 
 export default DB

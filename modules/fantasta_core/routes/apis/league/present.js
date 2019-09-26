@@ -1,25 +1,21 @@
 
-var response = require('../../utils/response');
+import { default as DB } from 'database'
+import { Constants, Response } from 'utils'
 
-var database = require('../../database/database');
-var config = require('../../utils/config');
-
-module.exports = function ( req, res, next )
+const present = ( req, res, next ) =>
 {
-    var params = req.query;
+    let params = req.query
     if ( params.name )
     {
-        database.league.present( params.name )
-        .then(
-            function (data)
-            {
-                res.json( data );
-            },
-        );
+        let present = await DB.League.present( params.name )
+        
+        res.json( !!present );
     }
     else
     {
-        res.status(400).send( response.reject(config.constants.BAD_REQUEST, config.constants.BAD_REQUEST ) );
+        res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST ) );
     }
 
-};
+}
+
+export default present

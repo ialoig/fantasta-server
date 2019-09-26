@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+
+import { Schema, model } from "mongoose"
 
 const teamSchema = new Schema(
   {
@@ -8,7 +8,7 @@ const teamSchema = new Schema(
       required: true
     },
     footballPlayers: [
-      { type: mongoose.Schema.Types.ObjectId, ref: "FootballPlayer" }
+      { type: Schema.Types.ObjectId, ref: "FootballPlayer" }
     ],
     budget: {
       type: Number,
@@ -18,17 +18,15 @@ const teamSchema = new Schema(
         message: "{VALUE} is not an integer value for budget"
       }
     },
-    league: { type: mongoose.Schema.Types.ObjectId, ref: "League" }
+    league: { type: Schema.Types.ObjectId, ref: "League" }
   },
   {
-    // createdAt: Date (default added by mongoose)
-    // updatedAt: Date (default added by mongoose)
     timestamps: true
   }
 );
 
 // create the model out of the schema
-const Team = mongoose.model("Team", teamSchema);
+const Team = model("Team", teamSchema);
 
 // return the object to the caller when this file is imported
-module.exports = Team;
+export default Team;

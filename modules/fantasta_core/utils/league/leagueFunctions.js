@@ -11,7 +11,7 @@ const errors = {
     LEAGUE_ATTENDEES_NOT_CORRECT: 'LEAGUE_ATTENDEES_NOT_CORRECT'
 };
 
-var validateleague = function ( leagueData, newLeague )
+const validateleague = ( leagueData, newLeague ) =>
 {
     var ret = {
         valid: false,
@@ -49,7 +49,7 @@ var validateleague = function ( leagueData, newLeague )
     return ret;
 };
 
-var validateSettings = function ( leagueSettingsData )
+const validateSettings = ( leagueSettingsData ) =>
 {
     var ret = {
         valid: false,
@@ -76,7 +76,7 @@ var validateSettings = function ( leagueSettingsData )
     return ret;
 };
 
-var getleagueObj = function ( league )
+const getleagueObj = ( league ) =>
 {
     var obj = JSON.parse(JSON.stringify(league));
 
@@ -90,7 +90,7 @@ var getleagueObj = function ( league )
     return leag;
 }
 
-var getAuctionObj = function ( auction )
+const getAuctionObj = ( auction ) =>
 {
     var obj = JSON.parse(JSON.stringify(auction));
 
@@ -115,7 +115,7 @@ var getAuctionObj = function ( auction )
     return auct;
 }
 
-module.exports = {
+export default {
     validateSettings,
     validateleague,
     getleagueObj,

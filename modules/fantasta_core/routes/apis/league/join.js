@@ -1,38 +1,35 @@
 
-var Q = require('q');
+import { default as DB } from 'database'
+import { Constants, LeagueUtils, Response } from 'utils'
+import { Socket } from 'socket'
 
-var database = require('../../database/database');
-var response = require('../../utils/response');
-var config = require('../../utils/config');
 var Token = require('../../utils/token');
-var leagueUtils = require('../../utils/league/leagueFunctions');
-var socket = require('../../utils/socket');
 
 module.exports = function ( req, res, next )
 {
     var body = req.body || {};
     var leagueData = body.leagueData || {};
-    var leagueValid = leagueUtils.validateleague(leagueData, false);
+    var leagueValid = LeagueUtils.validateleague(leagueData, false);
 
     if ( leagueValid.valid && body.token )
     {
-        database.league.findByName( leagueData.name )
+        DB.League.findByName( leagueData.name )
         .then(
             function (league)
             {
                 if ( league.password!=leagueData.password )
                 {
-                    res.status(400).send( response.reject( config.constants.BAD_REQUEST, config.constants.WRONG_PASSWORD ) );
+                    res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.WRONG_PASSWORD ) );
                 }
                 else if ( league.attendees.length>=league.total_attendees )
                 {
-                    res.status(400).send( response.reject( config.constants.FULL_LEAGUE, config.constants.FULL_LEAGUE ) );
+                    res.status(400).send( Response.reject( Constants.FULL_LEAGUE, Constants.FULL_LEAGUE ) );
                 }
                 else
                 {
                     var auction = {};
 
-                    database.auction.findById( league.auction.id )
+                    DB.AuctionConfig.findById( league.auction.id )
                     .then(
                         function (data)
                         {
@@ -44,7 +41,7 @@ module.exports = function ( req, res, next )
                     .then(
                         function (tok)
                         {
-                            return database.user.findById( tok.id );
+                            return DB.User.findById( tok.id );
                         }
                     )
                     .then(
@@ -73,22 +70,22 @@ module.exports = function ( req, res, next )
                             var newAuct = { $set: {'attendees': attendees, 'teams': teams} };
 
                             Q.all([
-                                database.db.update( league, newPart ),
-                                database.db.update( auction, newAuct ),
-                                database.db.update( user, newLeag )
+                                DB.commons.update( league, newPart ),
+                                DB.commons.update( auction, newAuct ),
+                                DB.commons.update( user, newLeag )
                             ])
                             .then(
                                 function (data)
                                 {
                                     Q.all([
-                                        database.user.findById( user.id ),
-                                        database.league.findById( league.id ),
-                                        database.auction.findById( auction.id )
+                                        DB.user.findById( user.id ),
+                                        DB.League.findById( league.id ),
+                                        DB.AuctionConfig.findById( auction.id )
                                     ])
                                     .then(
                                         function (data)
                                         {
-                                            var attendees = leagueUtils.getleagueObj(data[1]).attendees;
+                                            var attendees = LeagueUtils.getleagueObj(data[1]).attendees;
                                             var resp = {
                                                 league: data[1].id,
                                                 full: false,
@@ -98,15 +95,15 @@ module.exports = function ( req, res, next )
                                             if ( league.attendees.length==league.total_attendees )
                                             {
                                                 resp.full = true;
-                                                socket.leagueCreate( req, league.name, 'OK' );
+                                                Socket.leagueCreate( req, league.name, 'OK' );
                                             }
 
                                             if ( league.attendees.length<league.total_attendees )
                                             {
-                                                socket.addAttendee( req, league.name, attendees );
+                                                Socket.addAttendee( req, league.name, attendees );
                                             }
 
-                                            res.json( response.resolve(config.constants.OK, resp) );
+                                            res.json( Response.resolve(Constants.OK, resp) );
                                         }
                                     );
                                 }
@@ -116,20 +113,20 @@ module.exports = function ( req, res, next )
                     .catch(
                         function (error)
                         {
-                            res.status(400).send( response.reject(config.constants.BAD_REQUEST, config.constants.BAD_REQUEST ) );
+                            res.status(400).send( Response.reject(Constants.BAD_REQUEST, Constants.BAD_REQUEST ) );
                         }
                     );
                 }
             },
             function (error)
             {
-                res.status(404).send( response.reject( config.constants.NOT_FOUND, config.constants.LEAGUE_NOT_FOUND ) );
+                res.status(404).send( Response.reject( Constants.NOT_FOUND, Constants.LEAGUE_NOT_FOUND ) );
             }
         );
     }
     else
     {
-        res.status(400).send( response.reject( config.constants.BAD_REQUEST, leagueValid.error ) );
+        res.status(400).send( Response.reject( Constants.BAD_REQUEST, leagueValid.error ) );
     }
 
 };

@@ -1,53 +1,48 @@
 
-var database = require('../../database/database');
-var xlsx = require('../xlsx');
-var _ = require('underscore');
+import { default as DB } from 'database'
+import { XLSX } from 'CentralUtils'
 
-module.exports = function ()
+let _ = require('underscore');
+
+const savePlayersJson = async () =>
 {
-    var xlsxJson = xlsx.readFile('statistiche.xlsx');
+    var xlsxJson = XLSX.readFile( 'statistiche.xlsx' );
     var players = getPlayersJsonFromXlsx(xlsxJson);
     
-    database.players.getPlayers()
-    .then(
-        function (entry)
+    let entry = await DB.Players.getPlayers()
+    
+    if ( entry && entry.players )
+    {
+        var equals = _.isEqual( entry.players, players );
+        if ( !equals )
         {
-            if ( entry && entry.players )
+            var update = { $set: {'players': players, 'version': ++entry.version, 'updated_at': (new Date()).toISOString()} };
+
+            try
             {
-                var equals = _.isEqual( entry.players, players );
-                if ( !equals )
-                {
-                    var update = { $set: {'players': players, 'version': ++entry.version, 'updated_at': (new Date()).toISOString()} };
-                    database.db.update( entry, update )
-                    .then(
-                        function (data)
-                        {
-                            console.log(data);
-                        },
-                        function (error)
-                        {
-                            console.log(error);
-                        }
-                    )
-                }
+                let data = await DB.Commons.update( entry, update )
+                console.log(data)
             }
-            else
+            catch (error)
             {
-                var newPlayers = database.players.create( players );
-                database.db.save( newPlayers )
-                .then(
-                    function (data)
-                    {
-                        console.log(data);
-                    },
-                    function (error)
-                    {
-                        console.log(error);
-                    }
-                )
+                console.error(error);
             }
         }
-    )
+    }
+    else
+    {
+        let newPlayers = DB.Players( players );
+
+        try
+        {
+            let data = await DB.Commons.save( newPlayers )
+            console.log(data)
+        }
+        catch (error)
+        {
+            console.error(error);
+        }
+    }
 }
 
 var getPlayersJsonFromXlsx = function ( xlsxJson )
@@ -74,3 +69,5 @@ var getPlayersJsonFromXlsx = function ( xlsxJson )
     }
     return obj;
 }
+
+export default savePlayersJson

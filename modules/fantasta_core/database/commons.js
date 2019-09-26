@@ -1,41 +1,47 @@
-var Q = require("q");
 
-var save = function(entry) {
-  var deferredObject = Q.defer();
-  entry.save(function(err, data) {
-    if (err) {
-      deferredObject.reject(err);
+const save = ( entry ) =>
+{
+  return entry.save(
+    (err, data) => {
+      if (err) {
+        return Promise.reject(error)
+      }
+      return Promise.resolve(data)
     }
-    deferredObject.resolve(data);
-  });
-  return deferredObject.promise;
-};
+  )
+}
 
-var update = function(entry, value) {
-  var deferredObject = Q.defer();
-  entry.update(value, function(err, data) {
-    if (err) {
-      deferredObject.reject(err);
+const update = ( entry, value ) =>
+{
+  return entry.update(
+    value,
+    ( err, data ) => {
+      if (err)
+      {
+        return Promise.reject(error)
+      }
+      return Promise.resolve(data)
     }
-    deferredObject.resolve(data);
-  });
-  return deferredObject.promise;
-};
+  )
+}
 
 /**
  * Search Object for a specific Model *
  * @param {*} modelReference : Model to perform the find on
  * @param {*} objectToFind : Object to find in the model (eg. {name: "name_to_find"})
  */
-function find(modelReference, objectToFind) {
-  var deferredObject = Q.defer();
-  modelReference.find(objectToFind, function(err, objectFound) {
-    if (err || !objectFound || !objectFound[0]) {
-      deferredObject.reject(err);
+const find = ( modelReference, objectToFind ) =>
+{
+  return modelReference.find(
+    objectToFind,
+    (err, objectFound) => {
+      if (err || !objectFound || !objectFound[0])
+      {
+        return Promise.reject(error)
+      }
+      return Promise.resolve(objectFound[0]);
     }
-    deferredObject.resolve(objectFound[0]);
-  });
-  return deferredObject.promise;
+  )
 }
 
 /**
@@ -43,20 +49,22 @@ function find(modelReference, objectToFind) {
  * @param {*} modelReference : Model to perform the findById on
  * @param {*} idToFind : id to find in the model (eg. ObjectId("5d87b71a9b0ba12ef443976e"))
  */
-function findById(modelReference, idToFind) {
-  var deferredObject = Q.defer();
-  modelReference.findById(idToFind, function(err, objectFound) {
-    if (err) {
-      deferredObject.reject(err);
+const findById = ( modelReference, idToFind ) =>
+{
+  return modelReference.findById(
+    idToFind,
+    ( err, objectFound ) => {
+      if (err) {
+        return Promise.reject(error)
+      }
+      return Promise.resolve(objectFound);
     }
-    deferredObject.resolve(objectFound);
-  });
-  return deferredObject.promise;
+  )
 }
 
-module.exports = {
+export default {
   save,
   update,
   find,
   findById
-};
+}
