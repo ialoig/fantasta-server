@@ -2,9 +2,9 @@
 import { RESPONSE } from '@pinkal/central_utilities'
 
 import { default as DB } from 'database'
-import { Constants, Response } from 'utils'
+import { Constants } from 'utils'
 
-const present = ( req, res, next ) =>
+const present = async ( req, res, next ) =>
 {
     let params = req.query
     if ( params.name )
@@ -15,7 +15,7 @@ const present = ( req, res, next ) =>
     }
     else
     {
-        res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST ) );
+        res.status(400).send( RESPONSE.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST ) );
     }
 
 }

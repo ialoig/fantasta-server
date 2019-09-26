@@ -6,6 +6,9 @@ yarn-debug.log*
 yarn-error.log*
 *.stackdump
 *.exe.stackdump
+/dist
+/node_modules
+
 
 # Runtime data
 pids
