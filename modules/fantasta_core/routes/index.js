@@ -1,23 +1,24 @@
 
 import { Router } from 'express';
-import { auction, league, players } from './apis';
+import { default as apis } from './apis';
 
 let routing = Router()
 
+//----- AUCTION APIS -----//
 routing.route('/auction')
-    .get(auction.get);
+    .get(apis.auction.get);
 
+//----- LEAGUE APIS -----//
 routing.route('/league')
-    .get(league.present);
-
+    .get(apis.league.present);
 routing.route('/league')
-    .post(league.create);
-
+    .post(apis.league.create);
 routing.route('/league')
-    .post(league.join);
+    .post(apis.league.join);
 
+//----- PPLAYERS APIS -----//
 routing.route('/players')
-    .get(players.get);
+    .get(apis.players.get);
 
 routing.use('/asta', routing);
 

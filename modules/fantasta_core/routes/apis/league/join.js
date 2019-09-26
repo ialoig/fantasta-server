@@ -5,7 +5,7 @@ import { default as DB } from 'database'
 import { Constants, LeagueUtils } from 'utils'
 import { Socket } from 'socket'
 
-var Token = require('../../utils/token');
+// var Token = require('../../utils/token');
 
 module.exports = function ( req, res, next )
 {

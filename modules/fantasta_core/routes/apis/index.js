@@ -1,4 +1,11 @@
 
-export { default as auction } from './auction';
-export { default as league } from './league';
-export { default as players } from './players';
+
+import * as auction from './auction'
+import * as league from './league'
+import * as players from './players'
+
+export default {
+    auction: auction,
+    league: league,
+    players: players
+}

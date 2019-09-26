@@ -4,7 +4,7 @@ import { RESPONSE } from '@pinkal/central_utilities'
 import { default as DB } from 'database'
 import { Constants, LeagueUtils } from 'utils'
 
-let Token = require('../../utils/token');
+// let Token = require('../../utils/token');
 
 const get = async ( req, res, next ) =>
 {

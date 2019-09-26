@@ -24,7 +24,7 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "${workspaceFolder}/authentication.js",
+            "program": "${workspaceFolder}/fantasta.js",
             "runtimeExecutable": "C:/Program Files/nodejs/node.exe",
             "cwd": "${workspaceFolder}"
         }

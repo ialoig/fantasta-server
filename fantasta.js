@@ -12,7 +12,6 @@ let app = express();
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
-app.set('tokenPassword', config.security.tokenPassword);
 
 app.use(morgan('dev')); //'combined'
 app.use(bodyParser.urlencoded({ extended: true }));
