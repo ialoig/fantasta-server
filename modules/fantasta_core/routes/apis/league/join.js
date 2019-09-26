@@ -1,6 +1,8 @@
 
+import { RESPONSE } from '@pinkal/central_utilities'
+
 import { default as DB } from 'database'
-import { Constants, LeagueUtils, Response } from 'utils'
+import { Constants, LeagueUtils } from 'utils'
 import { Socket } from 'socket'
 
 var Token = require('../../utils/token');
@@ -19,11 +21,11 @@ module.exports = function ( req, res, next )
             {
                 if ( league.password!=leagueData.password )
                 {
-                    res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.WRONG_PASSWORD ) );
+                    res.status(400).send( RESPONSE.reject( Constants.BAD_REQUEST, Constants.WRONG_PASSWORD ) );
                 }
                 else if ( league.attendees.length>=league.total_attendees )
                 {
-                    res.status(400).send( Response.reject( Constants.FULL_LEAGUE, Constants.FULL_LEAGUE ) );
+                    res.status(400).send( RESPONSE.reject( Constants.FULL_LEAGUE, Constants.FULL_LEAGUE ) );
                 }
                 else
                 {
@@ -103,7 +105,7 @@ module.exports = function ( req, res, next )
                                                 Socket.addAttendee( req, league.name, attendees );
                                             }
 
-                                            res.json( Response.resolve(Constants.OK, resp) );
+                                            res.json( RESPONSE.resolve(Constants.OK, resp) );
                                         }
                                     );
                                 }
@@ -113,7 +115,7 @@ module.exports = function ( req, res, next )
                     .catch(
                         function (error)
                         {
-                            res.status(400).send( Response.reject(Constants.BAD_REQUEST, Constants.BAD_REQUEST ) );
+                            res.status(400).send( RESPONSE.reject(Constants.BAD_REQUEST, Constants.BAD_REQUEST ) );
                         }
                     );
                 }

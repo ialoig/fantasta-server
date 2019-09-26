@@ -1,6 +1,6 @@
 
 import { default as DB } from 'database'
-import { XLSX } from 'CentralUtils'
+import { XLSX } from '@pinkal/central_utilities'
 
 let _ = require('underscore');
 

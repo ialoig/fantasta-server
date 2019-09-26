@@ -1,6 +1,8 @@
 
+import { RESPONSE } from '@pinkal/central_utilities'
+
 import { default as DB } from 'database'
-import { Constants, LeagueUtils, Response } from 'utils'
+import { Constants, LeagueUtils } from 'utils'
 
 let Token = require('../../utils/token');
 
@@ -17,7 +19,7 @@ const get = async ( req, res, next ) =>
         catch (error)
         {
             console.error(error)
-            res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, error ) )
+            res.status(400).send( RESPONSE.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, error ) )
         }
 
         let league = null;
@@ -28,7 +30,7 @@ const get = async ( req, res, next ) =>
         catch (error)
         {
             console.error(error)
-            res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, error ) )
+            res.status(400).send( RESPONSE.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, error ) )
         }
 
         let auction = null;
@@ -39,7 +41,7 @@ const get = async ( req, res, next ) =>
         catch (error)
         {
             console.error(error)
-            res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, error ) )
+            res.status(400).send( RESPONSE.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, error ) )
         }
         
         let resp = {
@@ -49,11 +51,11 @@ const get = async ( req, res, next ) =>
         };
         resp.user.admin = user.id==league.administrator.id;
 
-        res.json( Response.resolve(Constants.OK, resp, params.token) );
+        res.json( RESPONSE.resolve(Constants.OK, resp, params.token) );
     }
     else
     {
-        res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, null ) )
+        res.status(400).send( RESPONSE.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, null ) )
     }
 
 }
