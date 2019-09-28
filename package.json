@@ -14,7 +14,7 @@
     "docker-start": "docker-compose -f ./docker-compose.yml -f ./docker/docker-compose.start.yml up --build"
   },
   "dependencies": {
-    "@pinkal/central_utilities": "^0.1.4",
+    "@pinkal/central_utilities": "^0.1.5",
     "body-parser": "^1.18.3",
     "config": "^3.0.1",
     "cookie-parser": "^1.4.4",
@@ -26,7 +26,8 @@
     "node-mandrill": "^1.0.1",
     "pm2": "^3.4.1",
     "pug": "^2.0.3",
-    "serve-favicon": "^2.5.0"
+    "serve-favicon": "^2.5.0",
+    "socket.io": "^2.2.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

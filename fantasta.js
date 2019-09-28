@@ -3,10 +3,11 @@ let express = require('express');
 let path = require('path');
 let favicon = require('serve-favicon');
 let morgan = require('morgan');
+let http = require('http');
 let cookieParser = require('cookie-parser');
 let bodyParser = require('body-parser');
-
 let config = require('config');
+let socket = require('socket.io');
 
 let app = express();
 
@@ -20,9 +21,21 @@ app.use(cookieParser());
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-import { default as routes } from 'routes'
 
+/* ----- CREATING SOCKET PUB/SUB ----- */
+const server = http.Server(app);
+const io = socket.listen(server);
+app.set('io', io);
+
+/* ----- SCHEDULING PROCESS ----- */
+let SavePlayersJson = require('utils').SavePlayersJson
+let schedule = require('@pinkal/central_utilities').SCHEDULE
+schedule.jobSchedule( 3, SavePlayersJson )
+
+/* ----- SETTING API ROUTES ----- */
+import { default as routes } from 'routes'
 app.use('/fantasta/api', routes);
+
 
 app.use( (req,res,next) => {
     res.header("Access-Control-Allow-Origin", "*");
