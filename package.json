@@ -14,7 +14,7 @@
     "docker-start": "docker-compose -f ./docker-compose.yml -f ./docker/docker-compose.start.yml up --build"
   },
   "dependencies": {
-    "@pinkal/central_utilities": "^0.1.3",
+    "@pinkal/central_utilities": "^0.1.4",
     "body-parser": "^1.18.3",
     "config": "^3.0.1",
     "cookie-parser": "^1.4.4",
@@ -38,7 +38,6 @@
     "babel-register": "^6.26.0",
     "chai": "^4.2.0",
     "chai-http": "^4.2.1",
-    "eslint": "^5.15.3",
     "mocha": "^6.0.2",
     "nodemon": "^1.18.10",
     "nyc": "^13.3.0"
