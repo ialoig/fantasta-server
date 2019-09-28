@@ -33,7 +33,7 @@ let schedule = require('@pinkal/central_utilities').SCHEDULE
 schedule.jobSchedule( 3, SavePlayersJson )
 
 /* ----- SETTING API ROUTES ----- */
-import { default as routes } from 'routes'
+let routes = require('routes').default
 app.use('/fantasta/api', routes);
 
 
