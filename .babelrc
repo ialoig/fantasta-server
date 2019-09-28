@@ -11,7 +11,8 @@
                     "database": "./modules/fantasta_core/database",
                     "routes": "./modules/fantasta_core/routes",
                     "utils": "./modules/fantasta_core/utils",
-                    "socket": "./modules/fantasta_core/socket"
+                    "socket": "./modules/fantasta_core/socket",
+                    "players": "./modules/fantasta_core/players"
                 }
             }
         ]
