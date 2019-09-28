@@ -52,7 +52,7 @@ const mongoConnectionParams = {
 connect(mongodbConnection, mongoConnectionParams);
 
 const Commons = require("./commons");
-import { AuctionConfig, FootballPlayer, League, LeagueConfig, Team } from "./models";
+import { AuctionConfig, FootballPlayer, League, LeagueConfig, Players, Team } from "./models";
 
 const DB = {
   Commons,
@@ -60,6 +60,7 @@ const DB = {
   FootballPlayer,
   League,
   LeagueConfig,
+  Players,
   Team
 }
 
