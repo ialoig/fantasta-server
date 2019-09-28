@@ -6,17 +6,22 @@ FROM node:lts-slim
 RUN mkdir -p /usr/fantasta_core
 WORKDIR /usr/fantasta_core
 
+# copy the npmrc file in order to install the private npm package from azure
+COPY .npmrc .npmrc
 
 # copy package.json and package-lock.json
-COPY package*.json package-lock.json /usr/fantasta_core/
+COPY package.json package-lock.json /usr/fantasta_core/
 
 
 # Install app dependencies
 RUN npm install
 
+# removing the npmrc file after npm install
+RUN rm -f .npmrc
 
 # Bundle app source
-COPY . /usr/fantasta_core
+COPY fantasta.js /usr/fantasta_core
+COPY ./modules/fantasta_core /usr/fantasta_core
 
 
 # expose a specific port
