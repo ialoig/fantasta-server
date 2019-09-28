@@ -15,11 +15,11 @@ COPY package*.json package-lock.json /usr/fantasta_core/
 # Install app dependencies
 RUN npm install
 
-# removing the npmrc file after npm install
-RUN rm -f .npmrc
-
 # Bundle app source
 COPY . /usr/fantasta_core
+
+# removing the npmrc file after npm install
+RUN rm -f .npmrc
 
 # expose a specific port
 EXPOSE 3000

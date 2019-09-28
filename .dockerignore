@@ -1,7 +1,6 @@
 .git
 .dockerignore
 .vscode
-.npmrc
 .gitignore
 .gitmodules
 .nycrc.json
