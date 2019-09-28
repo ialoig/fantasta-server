@@ -11,7 +11,8 @@
     "debug": "npm run build && nodemon --exec babel-node --legacy-watch --watch ./modules/fantasta_core --inspect=0.0.0.0:9222 --nolazy ./fantasta.js",
     "docker-debug": "docker-compose -f ./docker-compose.yml -f ./docker/docker-compose.debug.yml up --build",
     "docker-test": "docker-compose -f ./docker-compose.yml -f ./docker/docker-compose.test.yml up -d --build && docker exec -it fantasta_core npm run test && docker-compose down",
-    "docker-start": "docker-compose -f ./docker-compose.yml -f ./docker/docker-compose.start.yml up --build"
+    "docker-start": "docker-compose -f ./docker-compose.yml -f ./docker/docker-compose.start.yml up --build",
+    "docker-build": "docker-compose up --build"
   },
   "dependencies": {
     "@pinkal/central_utilities": "^0.1.5",
