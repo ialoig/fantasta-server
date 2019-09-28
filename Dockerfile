@@ -10,8 +10,7 @@ WORKDIR /usr/fantasta_core
 COPY .npmrc .npmrc
 
 # copy package.json and package-lock.json
-COPY package.json package-lock.json /usr/fantasta_core/
-
+COPY package*.json package-lock.json /usr/fantasta_core/
 
 # Install app dependencies
 RUN npm install
@@ -20,9 +19,7 @@ RUN npm install
 RUN rm -f .npmrc
 
 # Bundle app source
-COPY fantasta.js /usr/fantasta_core
-COPY ./modules/fantasta_core /usr/fantasta_core
-
+COPY . /usr/fantasta_core
 
 # expose a specific port
 EXPOSE 3000

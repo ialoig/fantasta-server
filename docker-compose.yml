@@ -30,9 +30,9 @@ services:
       - mongo
 
   fantasta_core:
+    build: .
     container_name: fantasta_core
     restart: always
-    build: ./modules/fantasta_core
     expose:
       - "3000"
     networks: 
@@ -41,6 +41,7 @@ services:
       - mongo
     depends_on:
       - mongo
+      - fantasta_auth
 
   mongo:
     container_name: fantasta_mongo

@@ -1,7 +1,16 @@
 .git
 .dockerignore
+.vscode
+.npmrc
+.gitignore
+.gitmodules
+.nycrc.json
+*.exe.stackdump
+*.stackdump
+modules
 node_modules
 Dockerfile
 npm-debug.log
 nyc_output
 coverage
+test

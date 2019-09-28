@@ -8,11 +8,11 @@
             "module-resolver",
             {
                 "alias": {
-                    "database": "./modules/fantasta_core/database",
-                    "routes": "./modules/fantasta_core/routes",
-                    "utils": "./modules/fantasta_core/utils",
-                    "socket": "./modules/fantasta_core/socket",
-                    "players": "./modules/fantasta_core/players"
+                    "database": "./src/database",
+                    "routes": "./src/routes",
+                    "utils": "./src/utils",
+                    "socket": "./src/socket",
+                    "players": "./src/players"
                 }
             }
         ]
