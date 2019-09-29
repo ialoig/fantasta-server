@@ -1,8 +1,0 @@
-version: "3"
-services:
-  fantasta_core:
-    command: npm run start
-    restart: "always"
-    environment:
-      - PROD=1
-      - NODE_ENV=prod
