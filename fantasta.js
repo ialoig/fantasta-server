@@ -31,6 +31,7 @@ app.set('io', io);
 let SavePlayersJson = require('players').SavePlayersJson
 let schedule = require('@pinkal/central_utilities').SCHEDULE
 schedule.jobSchedule( 3, SavePlayersJson )
+SavePlayersJson()
 
 /* ----- SETTING API ROUTES ----- */
 let routes = require('routes').default
