@@ -28,6 +28,7 @@ const io = socket.listen(server);
 app.set('io', io);
 
 /* ----- SCHEDULING PROCESS ----- */
+/*
 let SavePlayersJson = require('players').SavePlayersJson
 let schedule = require('@pinkal/central_utilities').SCHEDULE
 schedule.jobSchedule( 3, SavePlayersJson )

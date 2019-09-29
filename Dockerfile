@@ -1,7 +1,6 @@
 # base docker
 FROM node:lts-slim
 
-
 # Create app directory and cd into it
 RUN mkdir -p /usr/fantasta_core
 WORKDIR /usr/fantasta_core
@@ -10,22 +9,19 @@ WORKDIR /usr/fantasta_core
 COPY .npmrc .npmrc
 
 # copy package.json and package-lock.json
-COPY package*.json package-lock.json /usr/fantasta_core/
+COPY package.json package-lock.json ./
+
+# Install app dependencies
+#RUN if [ "$NODE_ENV" = "dev" ]; \
+#        then npm install; \
+#        else npm install --only=production; \
+#    fi
 
 # Install app dependencies
 RUN npm install
 
 # Bundle app source
-COPY . /usr/fantasta_core
+COPY . .
 
 # removing the npmrc file after npm install
 RUN rm -f .npmrc
-
-# expose a specific port
-EXPOSE 3000
-
-# install nodemon for changes on the fly
-#RUN npm install -g nodemon
-
-# run the server
-CMD [ "npm", "start" ]
