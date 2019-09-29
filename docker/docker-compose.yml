@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 services:
 
@@ -6,51 +6,24 @@ services:
     container_name: fantasta_mongodb
     image: mongo
     restart: always
-    environment:
-      MY_EXPORTED_VARIABLE: poba
     ports:
-      - "27017:27017"             # bind local:container port
-    deploy:
-      replicas: 1
+      - "27017:27017"
     volumes:
-      - 'db_data:/mongodb-data'
+      - mongodata:/data/db
     networks: 
       -  default
 
-  fantasta_auth:
-    container_name: fantasta_auth
-    restart: always
-    environment:
-      MY_EXPORTED_VARIABLE_2: poba2
-    command: npm run start
-    build: .
-    ports:
-      - "3000:3000"               # bind local:container port
-    deploy:
-      replicas: 2
-    networks: 
-      -  default
-    depends_on:
-      - mongo
-    links:
-      - mongo
-
-  fantasta_core:
+  fantasta_server:
     container_name: fantasta_core
     restart: always
-    environment:
-      MY_EXPORTED_VARIABLE_2: poba2
     command: npm run start
     build: .
     ports:
-      - "4000:4000"               # bind local:container port
-    deploy:
-      replicas: 2
+      - "3001:3001"
     networks: 
       -  default
     depends_on:
       - mongo
-      - fantasta_auth
     links:
       - mongo
 

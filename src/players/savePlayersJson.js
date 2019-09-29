@@ -9,7 +9,7 @@ const savePlayersJson = async () =>
     var xlsxJson = XLSX.readFile( 'statistiche.xlsx' );
     var players = getPlayersJsonFromXlsx(xlsxJson);
     
-    let entry = await DB.Players.getPlayers()
+    let entry = await DB.Players.getAll()
     
     if ( entry && entry.players )
     {
