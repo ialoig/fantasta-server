@@ -1,5 +1,5 @@
 
-import { default as DB } from 'database'
+import { Commons, Players } from 'database'
 import { XLSX } from '@pinkal/central_utilities'
 
 let _ = require('underscore');
@@ -9,18 +9,24 @@ const savePlayersJson = async () =>
     var xlsxJson = XLSX.readFile( 'statistiche.xlsx' );
     var players = getPlayersJsonFromXlsx(xlsxJson);
     
-    let entry = await DB.Players.getAll()
+    let entry = null
+    try {
+        entry = await Players.getAll()
+    }
+    catch (error)
+    {
+        console.error(error)
+    }
     
     if ( entry && entry.players )
     {
         var equals = _.isEqual( entry.players, players );
         if ( !equals )
         {
-            var update = { $set: {'players': players, 'version': ++entry.version, 'updated_at': (new Date()).toISOString()} };
-
+            var update = { $set: {'players': players, 'version': ++entry.version } };
             try
             {
-                let data = await DB.Commons.update( entry, update )
+                let data = await Commons.update( entry, update )
                 console.log(data)
             }
             catch (error)
@@ -31,12 +37,10 @@ const savePlayersJson = async () =>
     }
     else
     {
-        let newPlayers = DB.Players( players );
-
+        let newPlayers = Players({ players: players, version: 1 });
         try
         {
-            let data = await DB.Commons.save( newPlayers )
-            console.log(data)
+            let data = await newPlayers.save()
         }
         catch (error)
         {

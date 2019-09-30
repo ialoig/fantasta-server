@@ -28,7 +28,6 @@ const io = socket.listen(server);
 app.set('io', io);
 
 /* ----- SCHEDULING PROCESS ----- */
-/*
 let SavePlayersJson = require('players').SavePlayersJson
 let schedule = require('@pinkal/central_utilities').SCHEDULE
 schedule.jobSchedule( 3, SavePlayersJson )
@@ -37,7 +36,6 @@ SavePlayersJson()
 /* ----- SETTING API ROUTES ----- */
 let routes = require('routes').default
 app.use('/fantasta/api', routes);
-
 
 app.use( (req,res,next) => {
     res.header("Access-Control-Allow-Origin", "*");

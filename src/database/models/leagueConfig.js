@@ -1,7 +1,7 @@
 
 import { Schema, model } from "mongoose"
 
-const leagueConfig = new Schema(
+const leagueConfigSchema = new Schema(
   {
     mantra: {
       type: Boolean,
@@ -54,7 +54,7 @@ const leagueConfig = new Schema(
 );
 
 // create the model out of the schema
-const LeagueConfig = model("LeagueConfig", leagueConfig);
+const LeagueConfig = model("LeagueConfig", leagueConfigSchema);
 
 // return the object to the caller when this file is imported
 export default LeagueConfig;

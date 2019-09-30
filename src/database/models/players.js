@@ -20,17 +20,15 @@ const playersSchema = new Schema(
 );
 
 //--------------------   auctionConfig methods   --------------------
-// add a method to the schema (version 1)
-playersSchema.methods.getAll = function getAll ()
-{
-    return this.model.findOne(
+playersSchema.statics.getAll = function () {
+    return this.findOne(
         (err, players) =>
         {
             if (err)
             {
                 return Promise.reject(err)
             }
-            return Promise.resolve(players);
+            return Promise.resolve(players)
         }
     )
 }

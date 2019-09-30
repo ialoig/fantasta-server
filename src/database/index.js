@@ -20,7 +20,9 @@ connection
   .on("close", function() {
     console.log("mongodb status: connection close");
   })
-  .on("error", console.error.bind(console, "mongodb connection error:"));
+  .on("error", function(error) {
+    console.error("ERROR: ", error);
+  });
 
 connection
   .once("connected", function() {
@@ -51,17 +53,6 @@ const mongoConnectionParams = {
 
 connect(mongodbConnection, mongoConnectionParams);
 
-const Commons = require("./commons");
-import { AuctionConfig, FootballPlayer, League, LeagueConfig, Players, Team } from "./models";
+export { default as Commons } from './commons'
 
-const DB = {
-  Commons,
-  AuctionConfig,
-  FootballPlayer,
-  League,
-  LeagueConfig,
-  Players,
-  Team
-}
-
-export default DB
+export { AuctionConfig, FootballPlayer, League, LeagueConfig, Players, Team } from './models'

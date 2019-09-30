@@ -2,7 +2,7 @@
 {
     "port": 3000,
     "mongodb": {
-        "endpoint": "mongodb://fantasta_mongo",
+        "endpoint": "mongodb://localhost",
         "port": 27017,
         "database": "fantasta"
     }
