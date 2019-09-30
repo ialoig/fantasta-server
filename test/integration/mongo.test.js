@@ -36,17 +36,22 @@ const dropCollection = function(collectionName, done) {
 describe("Database", function() {
   //this.timeout(15000)
 
-  // Drop X collection
   before(done => {
-    const collectionName = "X";
-    dropCollection(collectionName, function(err, result) {
-      if (err) {
-        console.log(err);
-      } else {
+    mongoose.connection.once("connected", function() {
         done();
-      }
     });
-  });
+});
+
+  // Drop X collection
+  beforeEach((done) => {
+    dropCollection('users', function(err, result) {
+        if (err) {
+            console.log(err);
+        } else {
+            done();
+        }
+    });
+});
 
   // TEST 1: connection to mongodb established
   it(`should be able to connect to mongodb`, done => {
@@ -58,8 +63,8 @@ describe("Database", function() {
   });
 
   // TEST 2: create User
-  it(`should be able to create a User`, async function() {
-    console.log("0000")
+  it(`should be able to create a User`, function (done) {
+
     const newUser = User({
       name: "user_name",
       email: "user_email",
@@ -70,21 +75,41 @@ describe("Database", function() {
     console.log(JSON.stringify(newUser))
     console.log("1111")
 
-    try {
-      //let newUserResult = await Commons.save( newUser );
-      let newUserResult = await Commons.save( newUser );
-      console.log("3333");
-      assert.equal(newUser.name, newUserResult.name);
-      assert.equal(newUser.email, newUserResult.email);
-      assert.equal(newUser.password, newUserResult.password);
-      assert.equal(newUser.uuid, newUserResult.uuid);
-      assert.equal(newUser.teams, newUserResult.teams);
-      console.log("4444");
-      assert.equal(false, newUser.isNew);
-      done()
-    } catch (err) {
-      done();
-    }
+    // try {
+    //   //let newUserResult = await Commons.save( newUser );
+    //   let newUserResult = await Commons.save( newUser );
+      
+    //   console.log("3333");
+    //   assert.equal(newUser.name, newUserResult.name);
+    //   assert.equal(newUser.email, newUserResult.email);
+    //   assert.equal(newUser.password, newUserResult.password);
+    //   assert.equal(newUser.uuid, newUserResult.uuid);
+    //   assert.equal(newUser.teams, newUserResult.teams);
+    //   assert.equal(false, newUser.isNew);
+    //   done();
+    // }
+    // catch (err) {
+    //   done(err);
+    // }
+
+    Commons.save( newUser )
+    .then(
+      function (newUserResult)
+      {
+        console.log("3333");
+        assert.equal(newUser.name, newUserResult.name);
+        assert.equal(newUser.email, newUserResult.email);
+        assert.equal(newUser.password, newUserResult.password);
+        assert.equal(newUser.uuid, newUserResult.uuid);
+        assert.equal(newUser.teams, newUserResult.teams);
+        assert.equal(false, newUser.isNew);
+        done();
+      },
+      function (error)
+      {
+        done(error);
+      }
+    );
 
     /*
     newUser.save().then(() => {

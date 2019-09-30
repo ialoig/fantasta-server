@@ -1,14 +1,16 @@
 
 const save = ( entry ) =>
 {
-  return entry.save(
-    (err, data) => {
-      if (err) {
-        return Promise.reject(error)
+  return new Promise(( resolve, reject )=>{
+    entry.save(
+      (err, data) => {
+        if (err) {
+          return reject(error)
+        }
+        return resolve(data)
       }
-      return Promise.resolve(data)
-    }
-  )
+    )
+  })
 }
 
 const update = ( entry, value ) =>
