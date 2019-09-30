@@ -1,7 +1,7 @@
 
 import { RESPONSE } from '@pinkal/central_utilities'
 
-import { default as DB } from 'database'
+import { League } from 'database'
 import { Constants } from 'utils'
 
 const present = async ( req, res, next ) =>
@@ -9,7 +9,7 @@ const present = async ( req, res, next ) =>
     let params = req.query
     if ( params.name )
     {
-        let present = await DB.League.present( params.name )
+        let present = await League.present( params.name )
         
         res.json( !!present );
     }
