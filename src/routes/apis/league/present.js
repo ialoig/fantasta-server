@@ -15,7 +15,7 @@ const present = async ( req, res, next ) =>
     }
     else
     {
-        res.status(400).send( RESPONSE.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST ) );
+        res.status(400).send( RESPONSE.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, null ) );
     }
 
 }
