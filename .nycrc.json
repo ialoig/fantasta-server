@@ -32,7 +32,7 @@
     ],
     "cache": false,
     "all": true,
-    "temp-dir": "/usr/fantasta_core/coverage-tmp",
-    "report-dir": "/usr/fantasta_core/coverage"
+    "temp-dir": "./test-results/coverage-tmp",
+    "report-dir": "./test-results/coverage"
 }
   
