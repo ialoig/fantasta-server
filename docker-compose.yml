@@ -3,7 +3,6 @@ version: "3"
 services:
 
   fantasta_mongo:
-    container_name: fantasta_mongo
     image: mongo:latest
     restart: always
     ports:
