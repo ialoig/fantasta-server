@@ -36,22 +36,16 @@ const dropCollection = function(collectionName, done) {
 describe("Database", function() {
   //this.timeout(15000)
 
-  before(done => {
-    mongoose.connection.once("connected", function() {
+  // Drop users collection
+  beforeEach(done => {
+    dropCollection("users", function(err, result) {
+      if (err) {
+        console.log(err);
+      } else {
         done();
+      }
     });
-});
-
-  // Drop X collection
-  beforeEach((done) => {
-    dropCollection('users', function(err, result) {
-        if (err) {
-            console.log(err);
-        } else {
-            done();
-        }
-    });
-});
+  });
 
   // TEST 1: connection to mongodb established
   it(`should be able to connect to mongodb`, done => {
@@ -63,8 +57,7 @@ describe("Database", function() {
   });
 
   // TEST 2: create User
-  it(`should be able to create a User`, function (done) {
-
+  it(`should be able to create a User`, function(done) {
     const newUser = User({
       name: "user_name",
       email: "user_email",
@@ -72,31 +65,9 @@ describe("Database", function() {
       uuid: "user_uuid",
       teams: []
     });
-    console.log(JSON.stringify(newUser))
-    console.log("1111")
 
-    // try {
-    //   //let newUserResult = await Commons.save( newUser );
-    //   let newUserResult = await Commons.save( newUser );
-      
-    //   console.log("3333");
-    //   assert.equal(newUser.name, newUserResult.name);
-    //   assert.equal(newUser.email, newUserResult.email);
-    //   assert.equal(newUser.password, newUserResult.password);
-    //   assert.equal(newUser.uuid, newUserResult.uuid);
-    //   assert.equal(newUser.teams, newUserResult.teams);
-    //   assert.equal(false, newUser.isNew);
-    //   done();
-    // }
-    // catch (err) {
-    //   done(err);
-    // }
-
-    Commons.save( newUser )
-    .then(
-      function (newUserResult)
-      {
-        console.log("3333");
+    Commons.save(newUser).then(
+      function(newUserResult) {
         assert.equal(newUser.name, newUserResult.name);
         assert.equal(newUser.email, newUserResult.email);
         assert.equal(newUser.password, newUserResult.password);
@@ -105,23 +76,15 @@ describe("Database", function() {
         assert.equal(false, newUser.isNew);
         done();
       },
-      function (error)
-      {
+      function(error) {
         done(error);
       }
     );
-
-    /*
-    newUser.save().then(() => {
-      assert.equal(false, newUser.isNew);
-      done();
-    });
-    */
   });
 
   // Drop X collection
   after(done => {
-    const collectionName = "X";
+    const collectionName = "users";
     dropCollection(collectionName, function(err, result) {
       if (err) {
         console.log(err);
