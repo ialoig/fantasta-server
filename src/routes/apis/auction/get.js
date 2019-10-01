@@ -1,7 +1,7 @@
 
 import { RESPONSE } from '@pinkal/central_utilities'
 
-import { default as DB } from 'database'
+import { AuctionConfig, League } from 'database'
 import { Constants, LeagueUtils } from 'utils'
 
 // let Token = require('../../utils/token');
@@ -25,7 +25,7 @@ const get = async ( req, res, next ) =>
         let league = null;
         try
         {
-            league = await DB.League.findById( params.leagueId )
+            league = await League.findById( params.leagueId )
         }
         catch (error)
         {
@@ -36,7 +36,7 @@ const get = async ( req, res, next ) =>
         let auction = null;
         try
         {
-            auction = await DB.AuctionConfig.findById( league.auction.id )
+            auction = await AuctionConfig.findById( league.auction.id )
         }
         catch (error)
         {

@@ -3,23 +3,27 @@ version: "3"
 services:
 
   fantasta_mongo:
+    container_name: fantasta_mongo 
     image: mongo:latest
     restart: always
-    ports:
-      - "27017:27017"
     deploy:
       replicas: 1
+    ports:
+      - "27017:27017"
     volumes:
       - mongodata:/data/db
     networks: 
       -  default
 
   fantasta_core:
+    container_name: fantasta_core
+    image: fantasta_core:latest # use this image if already present in the local machine, build it otherwise
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: fantasta_core
     restart: always
+    deploy:
+      replicas: 1
     ports:
       - "3000:3000"
     networks: 

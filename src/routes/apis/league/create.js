@@ -1,7 +1,7 @@
 
 import { RESPONSE } from '@pinkal/central_utilities'
 
-import { default as DB } from 'database'
+import { AuctionConfig, Commons, League } from 'database'
 import { Constants, LeagueUtils } from 'utils'
 import { Socket } from 'socket'
 
@@ -26,8 +26,8 @@ const create = async ( req, res, next ) =>
             res.status(400).send( RESPONSE.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, error ) )
         }
 
-        var newAuct = DB.AuctionConfig({ user, leagueData, settings });
-        var newLeag = DB.League({ leagueData, user, newAuct });
+        var newAuct = AuctionConfig({ user, leagueData, settings });
+        var newLeag = League({ leagueData, user, newAuct });
 
         var leag = {
             leagueId: newLeag.id,
@@ -39,9 +39,9 @@ const create = async ( req, res, next ) =>
 
         try
         {
-            await DB.Commons.update( user, newvalues )
-            let newLeague = await DB.Commons.save( newLeag )
-            await DB.Commons.save( newAuct )
+            await Commons.update( user, newvalues )
+            let newLeague = await Commons.save( newLeag )
+            await Commons.save( newAuct )
 
             let user = await database.user.findById( user.id )
             

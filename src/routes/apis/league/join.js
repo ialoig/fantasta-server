@@ -1,7 +1,7 @@
 
 import { RESPONSE } from '@pinkal/central_utilities'
 
-import { default as DB } from 'database'
+import { AuctionConfig, Commons, League } from 'database'
 import { Constants, LeagueUtils } from 'utils'
 import { Socket } from 'socket'
 
@@ -15,7 +15,7 @@ module.exports = function ( req, res, next )
 
     if ( leagueValid.valid && body.token )
     {
-        DB.League.findByName( leagueData.name )
+        League.findByName( leagueData.name )
         .then(
             function (league)
             {
@@ -31,7 +31,7 @@ module.exports = function ( req, res, next )
                 {
                     var auction = {};
 
-                    DB.AuctionConfig.findById( league.auction.id )
+                    AuctionConfig.findById( league.auction.id )
                     .then(
                         function (data)
                         {
@@ -43,7 +43,7 @@ module.exports = function ( req, res, next )
                     .then(
                         function (tok)
                         {
-                            return DB.User.findById( tok.id );
+                            return User.findById( tok.id );
                         }
                     )
                     .then(
@@ -72,17 +72,17 @@ module.exports = function ( req, res, next )
                             var newAuct = { $set: {'attendees': attendees, 'teams': teams} };
 
                             Q.all([
-                                DB.commons.update( league, newPart ),
-                                DB.commons.update( auction, newAuct ),
-                                DB.commons.update( user, newLeag )
+                                Commons.update( league, newPart ),
+                                Commons.update( auction, newAuct ),
+                                Commons.update( user, newLeag )
                             ])
                             .then(
                                 function (data)
                                 {
                                     Q.all([
-                                        DB.user.findById( user.id ),
-                                        DB.League.findById( league.id ),
-                                        DB.AuctionConfig.findById( auction.id )
+                                        User.findById( user.id ),
+                                        League.findById( league.id ),
+                                        AuctionConfig.findById( auction.id )
                                     ])
                                     .then(
                                         function (data)

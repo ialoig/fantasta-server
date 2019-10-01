@@ -1,9 +1,8 @@
 //"use strict";
+import mongoose from "mongoose";
+import { Commons, User } from "database";
 
-const mongoose = require("mongoose");
 const assert = require("assert");
-
-var databaseManager;
 
 const dropCollection = function(collectionName, done) {
   mongoose.connection.db
@@ -11,7 +10,10 @@ const dropCollection = function(collectionName, done) {
     .next(function(err, collinfo) {
       if (collinfo) {
         // collection exists => remove it
-        mongoose.connection.dropCollection(collectionName, function( err, result ) {
+        mongoose.connection.dropCollection(collectionName, function(
+          err,
+          result
+        ) {
           if (err) {
             console.log(`deleting collection '${collectionName}': failure`);
             console.log(err);
@@ -23,7 +25,9 @@ const dropCollection = function(collectionName, done) {
       }
       // collection does not exist => call callback
       else {
-        console.log(`deleting collection'${collectionName}': collection does not exist`);
+        console.log(
+          `deleting collection'${collectionName}': collection does not exist`
+        );
         done();
       }
     });
@@ -32,20 +36,9 @@ const dropCollection = function(collectionName, done) {
 describe("Database", function() {
   //this.timeout(15000)
 
-  // Establish connection
-  before(done => {
-    // start mongoose
-    databaseManager = require("../database/databaseManager");
-    mongoose.connection.once("connected", function() {
-      console.log("mongodb status: connected");
-      done();
-    });
-  });
-
-  // Drop X collection
-  before(done => {
-    const collectionName = "X";
-    dropCollection(collectionName, function(err, result) {
+  // Drop users collection
+  beforeEach(done => {
+    dropCollection("users", function(err, result) {
       if (err) {
         console.log(err);
       } else {
@@ -54,7 +47,7 @@ describe("Database", function() {
     });
   });
 
-  // TEST 1: connection to mongodb
+  // TEST 1: connection to mongodb established
   it(`should be able to connect to mongodb`, done => {
     assert.equal(
       mongoose.connection.states.connected,
@@ -63,9 +56,35 @@ describe("Database", function() {
     done();
   });
 
-  // Drop X collection
+  // TEST 2: create User
+  it(`should be able to create a User`, function(done) {
+    const newUser = User({
+      name: "user_name",
+      email: "user_email",
+      password: "user_password",
+      uuid: "user_uuid",
+      teams: []
+    });
+
+    Commons.save(newUser).then(
+      function(newUserResult) {
+        assert.equal(newUser.name, newUserResult.name);
+        assert.equal(newUser.email, newUserResult.email);
+        assert.equal(newUser.password, newUserResult.password);
+        assert.equal(newUser.uuid, newUserResult.uuid);
+        assert.equal(newUser.teams, newUserResult.teams);
+        assert.equal(false, newUser.isNew);
+        done();
+      },
+      function(error) {
+        done(error);
+      }
+    );
+  });
+
+  // Drop users collection
   after(done => {
-    const collectionName = "X";
+    const collectionName = "users";
     dropCollection(collectionName, function(err, result) {
       if (err) {
         console.log(err);

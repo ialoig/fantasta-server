@@ -1,6 +1,7 @@
 
 import { Schema, model } from "mongoose"
 
+
 const leagueSchema = new Schema(
   {
     name: {
