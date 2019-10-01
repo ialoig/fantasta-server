@@ -18,7 +18,7 @@ services:
   fantasta_core:
     build:
       context: .
-      dockerfile: Dockerfile  
+      dockerfile: Dockerfile
     container_name: fantasta_core
     image: fantasta_core:latest
     restart: always

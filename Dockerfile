@@ -25,3 +25,9 @@ COPY . .
 
 # removing the npmrc file after npm install
 RUN rm -f .npmrc
+
+# expose a specific port
+EXPOSE 3000
+
+# run the server
+CMD [ "npm", "start" ]
