@@ -27,13 +27,13 @@ It spawns the *Mongo* and *Fantasta_server* docker. Then run tests on the docker
 
 #### Run with docker (DEBUG)
 
-It spawns the *Mongo* and *Fantasta_server* docker in debug mode. It mounts local folders in the server docker and run it with nodemon. All local changes will be immediately reflected in the running server. 
+It spawns the *Mongo* and *Fantasta_server* docker in debug mode. It mounts local folders in the server docker and run it with nodemon. All local changes will be immediately reflected in the running server.
 
 ```npm run docker-debug```
 
 #### Run with docker (PRODUCTION)
 
-It spawns the *Mongo* and *Fantasta_server* docker in debug mode. It mounts local folders in the server docker and run it with nodemon. All local changes will be immediately reflected in the running server. 
+It spawns the *Mongo* and *Fantasta_server* docker in debug mode. It mounts local folders in the server docker and run it with nodemon. All local changes will be immediately reflected in the running server.
 
 ```npm run docker-prod```
 
