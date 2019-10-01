@@ -86,6 +86,4 @@ routing.route('/league')
 routing.route('/players')
     .get(apis.players.get);
 
-routing.use('/asta', routing);
-
 export default routing;
