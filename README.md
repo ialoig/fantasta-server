@@ -1,18 +1,47 @@
 # Introduction 
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
+Fantasta_server is the server side of the fantasta application. It receives API calls from the mobile application querying the mongodb if necessary. It handles also the football player auction that is running on different devices belonging to the same league.
 
-# Getting Started
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-1.	Installation process
-2.	Software dependencies
-3.	Latest releases
-4.	API references
+# Dependencies
+1.	docker
+2.	npm
+3.	node
 
 # Build and Test
-TODO: Describe and show how to build your code and run the tests. 
+We use docker to launch the application in different environment: debug, test, production.
 
-# Contribute
-TODO: Explain how other users and developers can contribute to make your code better. 
+## Docker
+### Build docker images
+It builds the Fantasta_server docker images. This image will be used to by docker-compose to run the container
+
+```npm run docker-build```
+
+### Test with docker
+It spawns the *Mongo* and *Fantasta_server* docker. Then run tests on the docker container
+
+```npm run docker-test```
+
+### Run with docker (DEBUG)
+It spawns the *Mongo* and *Fantasta_server* docker in debug mode. It mounts local folders in the server docker and run it with nodemon. All local changes will be immediately reflected in the running server. 
+
+```npm run docker-debug```
+
+### Run with docker (PRODUCTION)
+It spawns the *Mongo* and *Fantasta_server* docker in debug mode. It mounts local folders in the server docker and run it with nodemon. All local changes will be immediately reflected in the running server. 
+
+```npm run docker-prod```
+
+## Local (it should not be used, prefer using the docker commands)
+### Test locally
+Run tests on the local machine (requires docker mongo to be running already)
+
+```npm run test```
+
+### Debug locally
+Run tests on the local machine (requires docker mongo to be running already)
+
+```npm run debug```
+
+
 
 If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
 - [ASP.NET Core](https://github.com/aspnet/Home)

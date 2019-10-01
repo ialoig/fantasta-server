@@ -82,7 +82,7 @@ describe("Database", function() {
     );
   });
 
-  // Drop X collection
+  // Drop users collection
   after(done => {
     const collectionName = "users";
     dropCollection(collectionName, function(err, result) {
