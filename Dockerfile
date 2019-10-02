@@ -9,7 +9,7 @@ WORKDIR /usr/fantasta_core
 COPY .npmrc .npmrc
 
 # copy package.json and package-lock.json
-COPY package.json package-lock.json ./
+COPY package.json package-lock.json /usr/fantasta_core/
 
 # Install app dependencies
 #RUN if [ "$NODE_ENV" = "dev" ]; \
@@ -21,7 +21,7 @@ COPY package.json package-lock.json ./
 RUN npm install
 
 # Bundle app source
-COPY . .
+COPY . /usr/fantasta_core
 
 # removing the npmrc file after npm install
 RUN rm -f .npmrc
@@ -32,9 +32,9 @@ RUN rm -f .npmrc
 # IN QUESTO MODO HAI LA POSSIBILITÀ DI ESPORRE UNA QUALSIASI PORTA AL MOMENTO DEL LANCIO CON
 # DOCKER COMPOSE E NON DEVI RICREARTI L'IMMAGINE DI DOCKER OGNI VOLTA CHE VUOI CAMBIARE PORTA
 # expose a specific port
-#EXPOSE 3000
+EXPOSE 3000
 
 # IL COMANDO VIENE DEFINITO IN DOCKER COMPOSE
 # STESSO DISCORSO FATTO PRIMA
 # run the server
-#CMD [ "npm", "start" ]
+CMD [ "npm", "start" ]

@@ -2,8 +2,8 @@ version: "3"
 
 services:
 
-  fantasta_mongo:
-    container_name: fantasta_mongo 
+  fantastacore_mongo:
+    container_name: fantastacore_mongo
     image: mongo:latest
     restart: always
     deploy:
@@ -18,20 +18,21 @@ services:
   fantasta_core:
     container_name: fantasta_core
     image: fantasta_core:latest # use this image if already present in the local machine, build it otherwise
-    build:
-      context: .
-      dockerfile: Dockerfile
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
+    build: .
     restart: always
-    deploy:
-      replicas: 1
+    # deploy:
+    #   replicas: 1
     ports:
       - "3000:3000"
     networks: 
       -  default
     depends_on:
-      - fantasta_mongo
+      - fantastacore_mongo
     links:
-      - fantasta_mongo
+      - fantastacore_mongo
     #command: overwritten in the docker-compose.[environment].yml
 
 volumes:
