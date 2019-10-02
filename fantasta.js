@@ -61,7 +61,7 @@ app.use( (err, req, res, next) => {
 
 const port = process.env.PORT || config.port;
 app.listen(port, () => {
-    console.log(`// ***** CENTRAL LOGIN SERVER ***** \\\\`);
+    console.log(`// ***** FANTA ASTA SERVER ***** \\\\`);
     console.log(`// Server environment: ` + process.env.NODE_ENV + ' \\\\' );
     console.log(`// Server started on port <${port}> \\\\`);
 });
