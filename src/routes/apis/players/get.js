@@ -6,8 +6,6 @@ import { Constants } from 'utils'
 
 const get = async ( req, res, next ) =>
 {
-    var params = req.query;
-    
     let players = {}
     try
     {
@@ -19,7 +17,7 @@ const get = async ( req, res, next ) =>
         res.status(400).send( RESPONSE.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, error ) )
     }
 
-    let version = parseInt(params.version) || 0
+    let version = parseInt(req.query.version) || 0
         
     let obj = {
         version: players.version,

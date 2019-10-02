@@ -1,7 +1,7 @@
 
 const save = ( entry ) =>
 {
-  return new Promise(( resolve, reject )=>{
+  return new Promise( ( resolve, reject ) => {
     entry.save(
       (err, data) => {
         if (err) {
@@ -15,16 +15,18 @@ const save = ( entry ) =>
 
 const update = ( entry, value ) =>
 {
-  return entry.update(
-    value,
-    ( err, data ) => {
-      if (err)
-      {
-        return Promise.reject(error)
+  return new Promise( ( resolve, reject ) => {
+    entry.update(
+      value,
+      ( err, data ) => {
+        if (err)
+        {
+          return reject(error)
+        }
+        return resolve(data)
       }
-      return Promise.resolve(data)
-    }
-  )
+    )
+  })
 }
 
 /**
@@ -34,16 +36,18 @@ const update = ( entry, value ) =>
  */
 const find = ( modelReference, objectToFind ) =>
 {
-  return modelReference.find(
-    objectToFind,
-    (err, objectFound) => {
-      if (err || !objectFound || !objectFound[0])
-      {
-        return Promise.reject(error)
+  return new Promise( ( resolve, reject ) => {
+    modelReference.find(
+      objectToFind,
+      (err, objectFound) => {
+        if (err || !objectFound || !objectFound[0])
+        {
+          return reject(error)
+        }
+        return resolve(objectFound[0]);
       }
-      return Promise.resolve(objectFound[0]);
-    }
-  )
+    )
+  })
 }
 
 /**
@@ -53,15 +57,17 @@ const find = ( modelReference, objectToFind ) =>
  */
 const findById = ( modelReference, idToFind ) =>
 {
-  return modelReference.findById(
-    idToFind,
-    ( err, objectFound ) => {
-      if (err) {
-        return Promise.reject(error)
+  return new Promise( ( resolve, reject ) => {
+    modelReference.findById(
+      idToFind,
+      ( err, objectFound ) => {
+        if (err) {
+          return reject(error)
+        }
+        return resolve(objectFound);
       }
-      return Promise.resolve(objectFound);
-    }
-  )
+    )
+  })
 }
 
 export default {
