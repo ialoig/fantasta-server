@@ -1,10 +1,8 @@
 
-import { RESPONSE } from '@pinkal/central_utilities'
+import { League } from '../../../database'
+import { Constants, Response } from '../../../utils'
 
-import { League } from 'database'
-import { Constants } from 'utils'
-
-const present = async ( req, res, next ) =>
+export const present = async ( req, res, next ) =>
 {
     let params = req.query
     if ( params.name )
@@ -15,9 +13,7 @@ const present = async ( req, res, next ) =>
     }
     else
     {
-        res.status(400).send( RESPONSE.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, null ) );
+        res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, null ) );
     }
 
 }
-
-export default present

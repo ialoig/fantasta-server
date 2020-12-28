@@ -1,13 +1,13 @@
 
-import { Commons, Players } from 'database'
-import { XLSX } from '@pinkal/central_utilities'
+import _ from 'lodash'
 
-let _ = require('underscore');
+import { Commons, Players } from '../database'
+import { Read } from '../utils'
 
 const savePlayersJson = async () =>
 {
-    var xlsxJson = XLSX.readFile( 'statistiche.xlsx' );
-    var players = getPlayersJsonFromXlsx(xlsxJson);
+    var xlsxJson = Read( 'statistiche.xlsx' )
+    var players = getPlayersJsonFromXlsx(xlsxJson)
     
     let entry = null
     try {
@@ -20,10 +20,10 @@ const savePlayersJson = async () =>
     
     if ( entry && entry.players )
     {
-        var equals = _.isEqual( entry.players, players );
+        var equals = _.isEqual( entry.players, players )
         if ( !equals )
         {
-            var update = { $set: {'players': players, 'version': ++entry.version } };
+            var update = { $set: {'players': players, 'version': ++entry.version } }
             try
             {
                 let data = await Commons.update( entry, update )
@@ -31,27 +31,27 @@ const savePlayersJson = async () =>
             }
             catch (error)
             {
-                console.error(error);
+                console.error(error)
             }
         }
     }
     else
     {
-        let newPlayers = Players({ players: players, version: 1 });
+        let newPlayers = Players({ players: players, version: 1 })
         try
         {
             let data = await newPlayers.save()
         }
         catch (error)
         {
-            console.error(error);
+            console.error(error)
         }
     }
 }
 
-var getPlayersJsonFromXlsx = function ( xlsxJson )
+const getPlayersJsonFromXlsx = ( xlsxJson ) =>
 {
-    var obj = {};
+    var obj = {}
     for ( var i in xlsxJson )
     {
         var sheet = xlsxJson[i]
@@ -60,18 +60,18 @@ var getPlayersJsonFromXlsx = function ( xlsxJson )
         {
             if ( !obj[i] )
             {
-                obj[i] = {};
+                obj[i] = {}
             }
     
             for ( var j in sheet )
             {
-                var player = sheet[j];
-                var playerId = player['Id'];
-                obj[i][playerId] = player;
+                var player = sheet[j]
+                var playerId = player['Id']
+                obj[i][playerId] = player
             }
         }
     }
-    return obj;
+    return obj
 }
 
-export default savePlayersJson
+export { savePlayersJson }

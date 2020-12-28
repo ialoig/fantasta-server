@@ -1,5 +1,5 @@
 
-const constants = {
+const Constants = {
     OK: "OK",
     NOT_FOUND: "NOT_FOUND",
     USER_NOT_FOUND: "USER_NOT_FOUND",
@@ -13,4 +13,4 @@ const constants = {
     LEAGUE_PRESENT: "LEAGUE_PRESENT"
 }
 
-module.exports = constants;
+export { Constants }

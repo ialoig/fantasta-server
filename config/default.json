@@ -1,8 +1,11 @@
 
 {
     "port": 3000,
+    "schedule": {
+        "hour": 3
+    },
     "mongodb": {
-        "endpoint": "mongodb://fantastacore_mongo",
+        "endpoint": "mongodb://localhost",
         "port": 27017,
         "database": "fantasta"
     }

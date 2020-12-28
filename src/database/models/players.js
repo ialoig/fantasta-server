@@ -1,5 +1,5 @@
 
-import { Schema, model } from "mongoose"
+import { Schema, model } from 'mongoose'
 
 const playersSchema = new Schema(
     {
@@ -15,12 +15,13 @@ const playersSchema = new Schema(
         }
     },
     {
-      timestamps: true
+        timestamps: true
     }
-);
+)
 
 //--------------------   auctionConfig methods   --------------------
-playersSchema.statics.getAll = function () {
+playersSchema.statics.getAll = function ()
+{
     return this.findOne(
         (err, players) =>
         {
@@ -34,6 +35,6 @@ playersSchema.statics.getAll = function () {
 }
 //-------------------------------------------------------------------
 
-const Players = model("Players", playersSchema);
+const Players = model( 'Players', playersSchema )
 
-export default Players;
+export default Players

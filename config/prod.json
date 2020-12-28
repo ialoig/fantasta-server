@@ -1,6 +1,9 @@
 
 {
     "port": 3000,
+    "schedule": {
+        "hour": 3
+    },
     "mongodb": {
         "endpoint": "mongodb://admin:admin@IP_ADDRESS",
         "port": 27017,

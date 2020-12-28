@@ -11,7 +11,7 @@ const addAttendee = ( req, leagueName, resp ) =>
     io.emit( leagueName + ".attendee.added", leagueName, resp );
 }
 
-export default {
+export {
     leagueCreate,
     addAttendee
 }

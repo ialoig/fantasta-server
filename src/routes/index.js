@@ -1,26 +1,26 @@
 
-import { Router } from 'express';
-import { default as apis } from './apis';
+import { Router } from 'express'
+import { default as apis } from './apis'
 
 let routing = Router()
 
 //----- AUCTION APIS -----//
 routing.route('/auction')
-    .get(apis.auction.get);
+    .get(apis.auction.get)
 
 //----- LEAGUE APIS -----//
 routing.route('/league')
-    .get(apis.league.present);
+    .get(apis.league.present)
 routing.route('/league')
-    .post(apis.league.create);
+    .post(apis.league.create)
 routing.route('/league')
-    .post(apis.league.join);
+    .post(apis.league.join)
 
 //----- PLAYERS APIS -----//
 routing.route('/players')
-    .get(apis.players.get);
+    .get(apis.players.get)
 
 
-routing.use('/asta', routing);
+routing.use('/asta', routing)
 
-export default routing;
+export default routing

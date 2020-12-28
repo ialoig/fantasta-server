@@ -1,32 +1,33 @@
 
 const save = ( entry ) =>
 {
-  return new Promise( ( resolve, reject ) => {
-    entry.save(
-      (err, data) => {
-        if (err) {
-          return reject(error)
-        }
-        return resolve(data)
-      }
-    )
-  })
+    return new Promise( ( resolve, reject ) => {
+        entry.save(
+            (err, data) => {
+                if (err)
+                {
+                    return reject(error)
+                }
+                return resolve(data)
+            }
+        )
+    })
 }
 
 const update = ( entry, value ) =>
 {
-  return new Promise( ( resolve, reject ) => {
-    entry.update(
-      value,
-      ( err, data ) => {
-        if (err)
-        {
-          return reject(error)
-        }
-        return resolve(data)
-      }
-    )
-  })
+    return new Promise( ( resolve, reject ) => {
+        entry.update(
+            value,
+            ( err, data ) => {
+                if (err)
+                {
+                    return reject(error)
+                }
+                return resolve(data)
+            }
+        )
+    })
 }
 
 /**
@@ -36,18 +37,18 @@ const update = ( entry, value ) =>
  */
 const find = ( modelReference, objectToFind ) =>
 {
-  return new Promise( ( resolve, reject ) => {
-    modelReference.find(
-      objectToFind,
-      (err, objectFound) => {
-        if (err || !objectFound || !objectFound[0])
-        {
-          return reject(error)
-        }
-        return resolve(objectFound[0]);
-      }
-    )
-  })
+    return new Promise( ( resolve, reject ) => {
+        modelReference.find(
+            objectToFind,
+            (err, objectFound) => {
+                if (err || !objectFound || !objectFound[0])
+                {
+                    return reject(error)
+                }
+                return resolve(objectFound[0])
+            }
+        )
+    })
 }
 
 /**
@@ -57,22 +58,23 @@ const find = ( modelReference, objectToFind ) =>
  */
 const findById = ( modelReference, idToFind ) =>
 {
-  return new Promise( ( resolve, reject ) => {
-    modelReference.findById(
-      idToFind,
-      ( err, objectFound ) => {
-        if (err) {
-          return reject(error)
-        }
-        return resolve(objectFound);
-      }
-    )
-  })
+    return new Promise( ( resolve, reject ) => {
+        modelReference.findById(
+            idToFind,
+            ( err, objectFound ) => {
+                if (err)
+                {
+                    return reject(error)
+                }
+                return resolve(objectFound)
+            }
+        )
+    })
 }
 
 export default {
-  save,
-  update,
-  find,
-  findById
+    save,
+    update,
+    find,
+    findById
 }

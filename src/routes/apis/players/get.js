@@ -1,10 +1,8 @@
 
-import { RESPONSE } from '@pinkal/central_utilities'
+import { Players } from '../../../database'
+import { Constants, Response } from '../../../utils'
 
-import { Players } from 'database'
-import { Constants } from 'utils'
-
-const get = async ( req, res, next ) =>
+export const get = async ( req, res, next ) =>
 {
     let players = {}
     try
@@ -14,7 +12,7 @@ const get = async ( req, res, next ) =>
     catch (error)
     {
         console.error(error)
-        res.status(400).send( RESPONSE.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, error ) )
+        res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, error ) )
     }
 
     let version = parseInt(req.query.version) || 0
@@ -25,7 +23,5 @@ const get = async ( req, res, next ) =>
         updated: version>=players.version
     }
 
-    res.json( RESPONSE.resolve(Constants.OK, obj) )
+    res.json( Response.resolve(Constants.OK, obj) )
 }
-
-export default get

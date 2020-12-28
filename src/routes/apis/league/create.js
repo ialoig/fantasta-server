@@ -1,11 +1,9 @@
 
-import { RESPONSE } from '@pinkal/central_utilities'
+import { AuctionConfig, Commons, League } from '../../../database'
+import { Constants, LeagueUtils, Response } from '../../../utils'
+import { Socket } from '../../../socket'
 
-import { AuctionConfig, Commons, League } from 'database'
-import { Constants, LeagueUtils } from 'utils'
-import { Socket } from 'socket'
-
-const create = async ( req, res, next ) =>
+export const create = async ( req, res, next ) =>
 {
     let leagueData = req.body && req.body.league || {};
     let settings = req.body && req.body.settings || {};
@@ -23,7 +21,7 @@ const create = async ( req, res, next ) =>
         catch (error)
         {
             console.error(error)
-            res.status(400).send( RESPONSE.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, error ) )
+            res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, error ) )
         }
 
         var newAuct = AuctionConfig({ user, leagueData, settings });
@@ -43,7 +41,7 @@ const create = async ( req, res, next ) =>
             let newLeague = await Commons.save( newLeag )
             await Commons.save( newAuct )
 
-            let user = await database.user.findById( user.id )
+            let user = await user.findById( user.id )
             
             var attendees = LeagueUtils.getleagueObj(newLeague).attendees
             var resp = {
@@ -55,19 +53,17 @@ const create = async ( req, res, next ) =>
             Socket.addAttendee( req, newLeag.name, '' );
             Socket.leagueCreate( req, newLeag.name, '' );
 
-            res.json( RESPONSE.resolve(Constants.OK, resp) );
+            res.json( Response.resolve(Constants.OK, resp) );
         }
         catch (error)
         {
             console.error(error)
-            res.status(500).send( RESPONSE.reject( Constants.INT_SERV_ERR, Constants.INT_SERV_ERR, error ) )
+            res.status(500).send( Response.reject( Constants.INT_SERV_ERR, Constants.INT_SERV_ERR, error ) )
         }
     }
     else
     {
-        res.status(400).send( RESPONSE.reject( Constants.BAD_REQUEST, !leagueValid.valid ? leagueValid.error : settingsValid.error ) )
+        res.status(400).send( Response.reject( Constants.BAD_REQUEST, !leagueValid.valid ? leagueValid.error : settingsValid.error ) )
     }
 
 }
-
-export default create

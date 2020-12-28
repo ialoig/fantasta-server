@@ -3,18 +3,6 @@
         "es2015", "stage-2"
     ],
     "plugins": [
-        "transform-object-rest-spread",
-        [
-            "module-resolver",
-            {
-                "alias": {
-                    "database": "./src/database",
-                    "routes": "./src/routes",
-                    "utils": "./src/utils",
-                    "socket": "./src/socket",
-                    "players": "./src/players"
-                }
-            }
-        ]
+        "transform-object-rest-spread"
     ]
 }

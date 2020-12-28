@@ -1,2 +1,2 @@
 
-export { default as get } from './get'
+export { get } from './get'
