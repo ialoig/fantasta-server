@@ -6,7 +6,7 @@ const save = ( entry ) =>
             (err, data) => {
                 if (err)
                 {
-                    return reject(error)
+                    return reject(err)
                 }
                 return resolve(data)
             }
@@ -22,7 +22,7 @@ const update = ( entry, value ) =>
             ( err, data ) => {
                 if (err)
                 {
-                    return reject(error)
+                    return reject(err)
                 }
                 return resolve(data)
             }

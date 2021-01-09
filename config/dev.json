@@ -2,11 +2,13 @@
 {
     "port": 3000,
     "schedule": {
-        "hour": 3
+        "hour": 3,
+        "excelFilenameClassic" : "./test/footballPlayerListClassic.xls",
+        "excelFilenameMantra" : "./test/footballPlayerListMantra.xls"
     },
     "mongodb": {
-        "endpoint": "mongodb://localhost",
+        "endpoint": "mongodb://fantastacore_mongo",
         "port": 27017,
-        "database": "fantasta"
+        "database": "fantasta_debug"
     }
 }

@@ -4,5 +4,5 @@ services:
     environment:
       - NODE_ENV=dev
     volumes:
-      - ./src:/usr/fantasta_core/src
+      - ./:/usr/fantasta_core/
     command: npm run debug

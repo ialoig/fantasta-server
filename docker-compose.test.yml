@@ -5,6 +5,7 @@ services:
     environment:
       - NODE_ENV=test
     volumes:
-      - ./coverage:/usr/fantasta_core/coverage
+      #- ./coverage:/usr/fantasta_core/coverage
+      - ./test:/usr/fantasta_core/test
     command: npm run start
     

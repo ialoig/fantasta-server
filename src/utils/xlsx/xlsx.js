@@ -1,9 +1,11 @@
 
 import { readFile, utils } from 'xlsx'
 
-const Read = ( fileName ) =>
+const Read = (fileName, skipRows) =>
 {
-    let json = {}
+    console.log(`Reading file: ${fileName}`)
+    console.log(`Skipping ${skipRows} rows`)
+
     let file = {}
 
     try
@@ -12,21 +14,24 @@ const Read = ( fileName ) =>
     }
     catch (error)
     {
-        console.error("Errore nella lettura del file: ", error)
+        console.error(`Error reading file: ${fileName}. ${error}`)
     }
 
-    for ( let i in file.SheetNames )
-    {
-        let sheetName = file.SheetNames[i]
+    // Read single sheet
+    var worksheet = file.Sheets["Tutti"]
 
-        let xlData = utils.sheet_to_json(file.Sheets[sheetName])
-
-        if ( sheetName )
-        {
-            json[sheetName] = xlData
-        }
+    // Skip rows
+    if (skipRows > 0){
+        var range = utils.decode_range(worksheet['!ref']);
+        range.s.r+= skipRows;
+        if(range.s.r >= range.e.r) range.s.r = range.e.r;
+        // update range
+        worksheet['!ref'] = utils.encode_range(range);
     }
-    return json
+
+    let excelContent_obj = utils.sheet_to_json(worksheet)
+
+    return excelContent_obj
 }
 
 export { Read }

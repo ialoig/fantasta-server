@@ -1,40 +1,62 @@
-
-import { Schema, model } from 'mongoose'
+import { Schema, model } from "mongoose";
 
 const footballPlayerSchema = new Schema(
-    {
-        name: {
-            type: String,
-            required: true
-        },
-        team: {
-            type: String,
-            required: true
-        },
-        role: {
-            type: String,
-            enum: [ "por", "dif", "cen", "att" ],
-            required: true
-        },
-        roleMantra: [{
-            type: String,
-            enum: [ "por", "ds", "dc", "dd", "e", "m", "c", "w", "t", "a", "pc" ],
-            required: true
-        }],
-        price: {
-            type: Number,
-            required: true,
-            validate: {
-                validator: Number.isInteger,
-                message: "{VALUE} is not an integer value for price"
-            }
-        }
+  {
+    id: {
+      type: Number,
+      required: true,
     },
-    {
-        timestamps: true
+    name: {
+      type: String,
+      required: true,
+    },
+    team: {
+      type: String,
+      required: true,
+    },
+    roleClassic: {
+      type: String,
+      enum: ["P", "D", "C", "A"],
+      required: true,
+    },
+    roleMantra: [
+      {
+        type: String,
+        enum: ["Por", "Dd", "Ds", "Dc", "E", "M", "C", "W", "T", "A", "Pc"],
+        required: true,
+      },
+    ],
+    actualPrice: {
+      type: Number,
+      required: true,
+      validate: {
+        validator: Number.isInteger,
+        message: "{VALUE} is not an integer value for 'actualPrice'",
+      },
+    },
+    initialPrice: {
+      type: Number,
+      required: true,
+      validate: {
+        validator: Number.isInteger,
+        message: "{VALUE} is not an integer value for 'initialPrice'",
+      },
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+footballPlayerSchema.statics.getAll = function () {
+  return this.find((err, players) => {
+    if (err) {
+      return Promise.reject(err);
     }
-)
+    return Promise.resolve(players);
+  });
+};
 
-const FootballPlayer = model( 'FootballPlayer', footballPlayerSchema )
+const FootballPlayer = model("FootballPlayer", footballPlayerSchema);
 
-export default FootballPlayer
+export default FootballPlayer;

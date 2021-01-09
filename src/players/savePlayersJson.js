@@ -1,77 +1,182 @@
+import _ from "lodash";
+import { Commons, FootballPlayer, Players } from "../database";
+import { Read } from "../utils";
 
-import _ from 'lodash'
 
-import { Commons, Players } from '../database'
-import { Read } from '../utils'
+// -------------------------------------------------------------
 
-const savePlayersJson = async () =>
-{
-    var xlsxJson = Read( 'statistiche.xlsx' )
-    var players = getPlayersJsonFromXlsx(xlsxJson)
-    
-    let entry = null
-    try {
-        entry = await Players.getAll()
-    }
-    catch (error)
-    {
-        console.error(error)
-    }
-    
-    if ( entry && entry.players )
-    {
-        var equals = _.isEqual( entry.players, players )
-        if ( !equals )
-        {
-            var update = { $set: {'players': players, 'version': ++entry.version } }
-            try
-            {
-                let data = await Commons.update( entry, update )
-                console.log(data)
-            }
-            catch (error)
-            {
-                console.error(error)
-            }
-        }
-    }
-    else
-    {
-        let newPlayers = Players({ players: players, version: 1 })
-        try
-        {
-            let data = await newPlayers.save()
-        }
-        catch (error)
-        {
-            console.error(error)
-        }
-    }
+const printCorruptedPlayer = (footballPlayer_obj, reason) => {
+  console.log(`===== corrupted footballPlayer. Reason: ${reason}. ${JSON.stringify(footballPlayer_obj,null,2)}`)
 }
 
-const getPlayersJsonFromXlsx = ( xlsxJson ) =>
-{
-    var obj = {}
-    for ( var i in xlsxJson )
-    {
-        var sheet = xlsxJson[i]
+// -------------------------------------------------------------
 
-        if ( sheet && sheet.length )
-        {
-            if ( !obj[i] )
-            {
-                obj[i] = {}
-            }
-    
-            for ( var j in sheet )
-            {
-                var player = sheet[j]
-                var playerId = player['Id']
-                obj[i][playerId] = player
-            }
-        }
-    }
-    return obj
+const containsCorrectData = (footballPlayer_obj) => {
+
+  const mandatoryFields = ["id", "name", "team", "roleClassic", "roleMantra", "actualPrice", "initialPrice"];
+  if(!mandatoryFields.every(item => footballPlayer_obj.hasOwnProperty(item))){
+    let reason = "Object does not contain mandatory fields"
+    printCorruptedPlayer(footballPlayer_obj, reason)
+    return false;
+  }
+
+  if (footballPlayer_obj["id"] < 0){
+    let reason = "'id' cannot be < 0"
+    printCorruptedPlayer(footballPlayer_obj, reason)
+    return false;
+  }
+  
+  if (footballPlayer_obj["name"] === "" || footballPlayer_obj["name"] === null){
+    let reason = "'name' cannot be null or empty"
+    printCorruptedPlayer(footballPlayer_obj, reason)
+    return false;
+  }
+
+  if (footballPlayer_obj["team"] === "" || footballPlayer_obj["team"] === null){
+    let reason = "'team' cannot be null or empty"
+    printCorruptedPlayer(footballPlayer_obj, reason)
+    return false;
+  }
+
+  var roleClassic = footballPlayer_obj["roleClassic"]
+  var roleMantra = footballPlayer_obj["roleMantra"]
+  if(roleClassic === null && roleMantra === null){
+    let reason = "'classicRoles' or 'roleMantra' must be defined"
+    printCorruptedPlayer(footballPlayer_obj, reason)
+    return false;
+  }
+  
+  const classicRoles = ["P", "D", "C", "A"]
+  if (roleClassic && !classicRoles.includes(footballPlayer_obj["roleClassic"])){
+    let reason = "'classicRoles' value not allowed"
+    printCorruptedPlayer(footballPlayer_obj, reason)
+    return false;
+  }
+
+  const mantraRoles = ["Por", "Dd", "Ds", "Dc", "E", "M", "C", "W", "T", "A", "Pc"]
+  if (roleMantra && !mantraRoles.includes(footballPlayer_obj["roleMantra"])){
+    let reason = "'mantraRoles' value not allowed"
+    printCorruptedPlayer(footballPlayer_obj, reason)
+    return false;
+  }
+
+  if (footballPlayer_obj["actualPrice"] < 0){
+    let reason = "'actualPrice' cannot be < 0"
+    printCorruptedPlayer(footballPlayer_obj, reason)
+    return false;
+  }
+
+  if (footballPlayer_obj["initialPrice"] < 0){
+    let reason = "'initialPrice' cannot be < 0"
+    printCorruptedPlayer(footballPlayer_obj, reason)
+    return false;
+  }
+
+  return true; 
 }
 
-export { savePlayersJson }
+// -------------------------------------------------------------
+
+const getPlayersFromExcelContent = (excelContent_obj, isMantra) => {
+  var footballPlayerList_obj = {};
+
+  excelContent_obj.forEach( (footballPlayer) => {
+
+    var footballPlayerId = footballPlayer["Id"];
+    var roleClassic = null;
+    var roleMantra = null;
+
+    if (isMantra) {
+      roleMantra = footballPlayer["R"];
+    } else {
+      roleClassic = footballPlayer["R"];
+    }
+
+    // Create footballPlayer object
+    var footballPlayer_obj = {
+      id: footballPlayerId,
+      name: footballPlayer["Nome"],
+      team: footballPlayer["Squadra"],
+      roleClassic: roleClassic,
+      roleMantra: roleMantra,
+      actualPrice: footballPlayer["Qt. A"],
+      initialPrice: footballPlayer["Qt. I"],
+    };
+
+    // Check correctness of footballPlayer data
+    if (containsCorrectData(footballPlayer_obj)){
+      footballPlayerList_obj[footballPlayerId] = footballPlayer_obj;
+    }
+  });
+
+  return footballPlayerList_obj;
+};
+
+// -------------------------------------------------------------
+
+const savePlayerWithVersion = async (footballPlayerList_obj, version) => {
+  console.log(`===== saving Player with version: ${version}`);
+
+  let players = Players({
+    players: footballPlayerList_obj,
+    version: version,
+  });
+
+  try {
+    let data = await players.save();
+    //console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// -------------------------------------------------------------
+
+const savePlayersJson = async (excelFilename, isMantra) => {
+  
+  // Excel file to Json
+  var excelContent_obj = Read(excelFilename, 1);
+
+  // Extract players from list
+  var footballPlayers_obj = getPlayersFromExcelContent(excelContent_obj, isMantra);
+
+  // Fetch last version of Players collection
+  let footballPlayersOld_obj = null;
+  try {
+    // footballPlayersOld_obj = await Players.getAll();
+    footballPlayersOld_obj = await Players.getMostUpdatedVersion();
+  } catch (error) {
+    console.error(error);
+  }
+
+  // There is already a version saved in the DB
+  if (footballPlayersOld_obj && footballPlayersOld_obj.players) {
+
+    var versionOld = footballPlayersOld_obj.version
+
+    console.log(`===== Players collection latest version from DB: ${versionOld}`)
+    
+    // Check if an update is needed
+    var equals = _.isEqual(footballPlayersOld_obj.players,footballPlayers_obj);
+    if (!equals) {
+      console.log(`===== Players collection has to be updated`);
+
+      // TODO: remove collection Players with old version or keep both versions so that we have a backup?
+      await Players.deleteVersion(versionOld)
+
+      
+      // save new version of collection Players
+      savePlayerWithVersion(footballPlayers_obj, ++versionOld)
+    }
+    else{
+      console.log(`===== Players collection is up to date`);
+    }
+  }
+
+  // save players for the first time
+  else {
+    savePlayerWithVersion(footballPlayers_obj, 1)
+  }
+};
+
+export { savePlayersJson };

@@ -21,6 +21,9 @@ app.use(cookieParser())
 
 app.use(express.static(path.join(__dirname, 'public')))
 
+
+// ------------------------------
+// ???
 app.use( (req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*")
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Authorization, Content-Type, Accept")
@@ -29,37 +32,44 @@ app.use( (req, res, next) => {
     next()
 })
 
-app.use( (req, res, next) => {
-    let err = new Error('Not Found')
-    err.status = 404
-    next(err)
-})
-
+// ------------------------------------------------------------
+// Error Handling
 app.use( (err, req, res, next) => {
-    res.locals.message = err.message
-    res.locals.error = req.app.get('env') === 'development' ? err : {}
-
+    console.error("!!!!!!!!!!!!!!!!!");
+    console.error("An error occurred");
+    console.error(`request: ${req}`);
+    console.error(`error: ${err.stack}`);
+    console.error("!!!!!!!!!!!!!!!!!");
     res.status(err.status || 500)
     res.render('error')
 })
 
-/* ----- SCHEDULING PROCESS ----- */
+// ------------------------------------------------------------
+// Scheduling processes
 let SavePlayersJson = require('./src/players').savePlayersJson
-SavePlayersJson()
+SavePlayersJson(config.schedule.excelFilenameClassic, false)
 
-/* ----- SETTING API ROUTES ----- */
+// return 'ERROR:  MongooseServerSelectionError: connection timed out' WTF ???
+// SavePlayersJson(config.schedule.excelFilenameMantra, true) 
+
+
+// ------------------------------------------------------------
+// Setting HTTP routes
 let routes = require('./src/routes').default
 app.use('/fantasta', routes)
 
-/* ----- CREATING SOCKET PUB/SUB ----- */
+
+// ------------------------------------------------------------
+// Create socket
 const SocketInit = require('./src/socket').init
 const server = SocketInit( app )
 
-const port = process.env.PORT || config.port
-server.listen( port, () => {
-    console.log(`// ***** FANTA ASTA SERVER ***** \\\\`)
-    console.log(`// Server environment: ` + process.env.NODE_ENV + ' \\\\' )
-    console.log(`// Server started on port <${port}> \\\\`)
+server.listen( config.port, () => {
+    console.log(`*******************************`)
+    console.log(`*** Environment: ${process.env.NODE_ENV}`)
+    console.log(`*** Config: ${JSON.stringify(config, null, 2)}`)
+    console.log(`*** Fantasta Server running on port ${config.port}`)
+    console.log(`*******************************`)
 })
 
 module.exports = app
