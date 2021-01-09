@@ -2,7 +2,7 @@ import { Schema, model } from "mongoose";
 
 const footballPlayersSchema = new Schema(
   {
-    players: {
+    footballPlayers: {
       type: Object,
       required: true,
     },
@@ -19,29 +19,46 @@ const footballPlayersSchema = new Schema(
 // -------------------------------------------------------------
 
 footballPlayersSchema.statics.getAll = function () {
-  return this.findOne((err, players) => {
+  return this.findOne((err, footballPlayers) => {
     if (err) {
       return Promise.reject(err);
     }
-    return Promise.resolve(players);
+    return Promise.resolve(footballPlayers);
   });
 };
 
 // -------------------------------------------------------------
 
-footballPlayersSchema.statics.getMostUpdatedVersion = function ()
+footballPlayersSchema.statics.getMostUpdatedList = function ()
 {
     return this
-        .findOne({}, null, {sort: {version: -1}}, (err, players) =>
+        .findOne({}, null, {sort: {version: -1}}, (err, footballPlayers) =>
         {
             if (err)
             {
                 return Promise.reject(err)
             }
-            return Promise.resolve(players)
+            return Promise.resolve(footballPlayers)
         }
     )
 }
+
+// -------------------------------------------------------------
+
+footballPlayersSchema.statics.getVersion = function()
+{
+  return this
+  .findOne({}, "version" , {sort: {version: -1}}, (err, footballPlayerVersion) =>
+  {
+      if (err)
+      {
+          return Promise.reject(err)
+      }
+
+      return Promise.resolve(footballPlayerVersion)
+  }
+)
+} 
 
 // -------------------------------------------------------------
 

@@ -3,8 +3,7 @@ import { readFile, utils } from 'xlsx'
 
 const Read = (fileName, skipRows) =>
 {
-    console.log(`Reading file: ${fileName}`)
-    console.log(`Skipping ${skipRows} rows`)
+    console.log(`Reading file: ${fileName}. Skipping ${skipRows} rows`)
 
     let file = {}
 
@@ -25,7 +24,6 @@ const Read = (fileName, skipRows) =>
         var range = utils.decode_range(worksheet['!ref']);
         range.s.r+= skipRows;
         if(range.s.r >= range.e.r) range.s.r = range.e.r;
-        // update range
         worksheet['!ref'] = utils.encode_range(range);
     }
 

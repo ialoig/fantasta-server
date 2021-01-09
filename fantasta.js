@@ -46,11 +46,8 @@ app.use( (err, req, res, next) => {
 
 // ------------------------------------------------------------
 // Scheduling processes
-let SavePlayersJson = require('./src/players').savePlayersJson
-SavePlayersJson(config.schedule.excelFilenameClassic, false)
-
-// return 'ERROR:  MongooseServerSelectionError: connection timed out' WTF ???
-// SavePlayersJson(config.schedule.excelFilenameMantra, true) 
+let SavePlayersJson = require('./src/footballPlayers').saveFootballPlayers
+SavePlayersJson(config.schedule.excelFilenameClassic, config.schedule.excelFilenameMantra) 
 
 
 // ------------------------------------------------------------
@@ -66,9 +63,9 @@ const server = SocketInit( app )
 
 server.listen( config.port, () => {
     console.log(`*******************************`)
-    console.log(`*** Environment: ${process.env.NODE_ENV}`)
-    console.log(`*** Config: ${JSON.stringify(config, null, 2)}`)
-    console.log(`*** Fantasta Server running on port ${config.port}`)
+    console.log(`Environment: ${process.env.NODE_ENV}`)
+    console.log(`Config: ${JSON.stringify(config, null, 2)}`)
+    console.log(`Fantasta Server running on port ${config.port}`)
     console.log(`*******************************`)
 })
 

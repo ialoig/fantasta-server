@@ -17,8 +17,11 @@ routing.route('/league')
     .post(apis.league.join)
 
 //----- PLAYERS APIS -----//
-routing.route('/players')
-    .get(apis.players.get)
+routing.route('/footballPlayers')
+    .get(apis.footballPlayers.get)
+
+routing.route('/footballPlayersVersion')
+    .get(apis.footballPlayers.getVersion)
 
 
 routing.use('/asta', routing)
