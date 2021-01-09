@@ -1,46 +1,14 @@
 import { Schema, model } from "mongoose";
 
-const footballPlayerSchema = new Schema(
+const footballPlayersSchema = new Schema(
   {
-    id: {
+    players: {
+      type: Object,
+      required: true,
+    },
+    version: {
       type: Number,
       required: true,
-    },
-    name: {
-      type: String,
-      required: true,
-    },
-    team: {
-      type: String,
-      required: true,
-    },
-    roleClassic: {
-      type: String,
-      enum: ["P", "D", "C", "A"],
-      required: true,
-    },
-    roleMantra: [
-      {
-        type: String,
-        enum: ["Por", "Dd", "Ds", "Dc", "E", "M", "C", "W", "T", "A", "Pc"],
-        required: true,
-      },
-    ],
-    actualPrice: {
-      type: Number,
-      required: true,
-      validate: {
-        validator: Number.isInteger,
-        message: "{VALUE} is not an integer value for 'actualPrice'",
-      },
-    },
-    initialPrice: {
-      type: Number,
-      required: true,
-      validate: {
-        validator: Number.isInteger,
-        message: "{VALUE} is not an integer value for 'initialPrice'",
-      },
     },
   },
   {
@@ -48,8 +16,10 @@ const footballPlayerSchema = new Schema(
   }
 );
 
-footballPlayerSchema.statics.getAll = function () {
-  return this.find((err, players) => {
+// -------------------------------------------------------------
+
+footballPlayersSchema.statics.getAll = function () {
+  return this.findOne((err, players) => {
     if (err) {
       return Promise.reject(err);
     }
@@ -57,6 +27,40 @@ footballPlayerSchema.statics.getAll = function () {
   });
 };
 
-const FootballPlayer = model("FootballPlayer", footballPlayerSchema);
+// -------------------------------------------------------------
 
-export default FootballPlayer;
+footballPlayersSchema.statics.getMostUpdatedVersion = function ()
+{
+    return this
+        .findOne({}, null, {sort: {version: -1}}, (err, players) =>
+        {
+            if (err)
+            {
+                return Promise.reject(err)
+            }
+            return Promise.resolve(players)
+        }
+    )
+}
+
+// -------------------------------------------------------------
+
+footballPlayersSchema.statics.deleteVersion = function(version)
+{
+    return this
+        .deleteOne({version: version}, (err) => 
+        {
+            if (err)
+            {
+                return Promise.reject(err)
+            }
+            console.log(`===== FootballPlayer collection version ${version} successfully deleted`);
+        });
+}
+  
+
+// -------------------------------------------------------------
+
+const FootballPlayers = model("FootballPlayers", footballPlayersSchema);
+
+export default FootballPlayers;

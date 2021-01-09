@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { Commons, FootballPlayer, Players } from "../database";
+import { Commons, FootballPlayer } from "../database";
 import { Read } from "../utils";
 
 
@@ -115,15 +115,15 @@ const getPlayersFromExcelContent = (excelContent_obj, isMantra) => {
 // -------------------------------------------------------------
 
 const savePlayerWithVersion = async (footballPlayerList_obj, version) => {
-  console.log(`===== saving Player with version: ${version}`);
+  console.log(`===== saving FootballPlayer with version: ${version}`);
 
-  let players = Players({
+  let footballPlayer = FootballPlayer({
     players: footballPlayerList_obj,
     version: version,
   });
 
   try {
-    let data = await players.save();
+    let data = await footballPlayer.save();
     //console.log(data);
   } catch (error) {
     console.error(error);
@@ -137,14 +137,14 @@ const savePlayersJson = async (excelFilename, isMantra) => {
   // Excel file to Json
   var excelContent_obj = Read(excelFilename, 1);
 
-  // Extract players from list
+  // Extract footballPlayer from list
   var footballPlayers_obj = getPlayersFromExcelContent(excelContent_obj, isMantra);
 
-  // Fetch last version of Players collection
+  // Fetch last version of FootballPlayer collection
   let footballPlayersOld_obj = null;
   try {
-    // footballPlayersOld_obj = await Players.getAll();
-    footballPlayersOld_obj = await Players.getMostUpdatedVersion();
+    // footballPlayersOld_obj = await FootballPlayer.getAll();
+    footballPlayersOld_obj = await FootballPlayer.getMostUpdatedVersion();
   } catch (error) {
     console.error(error);
   }
@@ -154,22 +154,22 @@ const savePlayersJson = async (excelFilename, isMantra) => {
 
     var versionOld = footballPlayersOld_obj.version
 
-    console.log(`===== Players collection latest version from DB: ${versionOld}`)
+    console.log(`===== FootballPlayer collection latest version from DB: ${versionOld}`)
     
     // Check if an update is needed
     var equals = _.isEqual(footballPlayersOld_obj.players,footballPlayers_obj);
     if (!equals) {
-      console.log(`===== Players collection has to be updated`);
+      console.log(`===== FootballPlayer collection has to be updated`);
 
-      // TODO: remove collection Players with old version or keep both versions so that we have a backup?
-      await Players.deleteVersion(versionOld)
+      // TODO: remove collection FootballPlayer with old version or keep both versions so that we have a backup?
+      await FootballPlayer.deleteVersion(versionOld)
 
       
-      // save new version of collection Players
+      // save new version of collection FootballPlayer
       savePlayerWithVersion(footballPlayers_obj, ++versionOld)
     }
     else{
-      console.log(`===== Players collection is up to date`);
+      console.log(`===== FootballPlayer collection is up to date`);
     }
   }
 

@@ -1,5 +1,5 @@
 
-import { Players } from '../../../database'
+import { FootballPlayer } from '../../../database'
 import { Constants, Response } from '../../../utils'
 
 export const get = async ( req, res, next ) =>
@@ -7,7 +7,7 @@ export const get = async ( req, res, next ) =>
     let players = {}
     try
     {
-        players = await Players.getAll()
+        players = await FootballPlayer.getAll()
     }
     catch (error)
     {

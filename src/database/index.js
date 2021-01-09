@@ -53,4 +53,4 @@ connect( mongodbConnection, mongoConnectionParams )
 
 export { default as Commons } from './commons'
 
-export { AuctionConfig, FootballPlayer, League, LeagueConfig, Players, Team, User } from './models'
+export { AuctionConfig, League, LeagueConfig, FootballPlayer, Team, User } from './models'
