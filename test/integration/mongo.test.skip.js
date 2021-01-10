@@ -1,16 +1,18 @@
 //"use strict";
-import mongoose from "mongoose";
-import { Commons, User } from "database";
+// import mongoose from "mongoose";
+const mongoose = require('src/mongoose');
 
-const assert = require("assert");
+// import { Commons, User } from 'src/database';
+const Commons = require('src/database');
+const User = require('src/database');
 
 const dropCollection = function(collectionName, done) {
-  mongoose.connection.db
+  connection.db
     .listCollections({ name: collectionName })
     .next(function(err, collinfo) {
       if (collinfo) {
         // collection exists => remove it
-        mongoose.connection.dropCollection(collectionName, function(
+        connection.dropCollection(collectionName, function(
           err,
           result
         ) {
@@ -49,9 +51,9 @@ describe("Database", function() {
 
   // TEST 1: connection to mongodb established
   it(`should be able to connect to mongodb`, done => {
-    assert.equal(
-      mongoose.connection.states.connected,
-      mongoose.connection.readyState
+    equal(
+      connection.states.connected,
+      connection.readyState
     );
     done();
   });
@@ -68,12 +70,12 @@ describe("Database", function() {
 
     Commons.save(newUser).then(
       function(newUserResult) {
-        assert.equal(newUser.name, newUserResult.name);
-        assert.equal(newUser.email, newUserResult.email);
-        assert.equal(newUser.password, newUserResult.password);
-        assert.equal(newUser.uuid, newUserResult.uuid);
-        assert.equal(newUser.teams, newUserResult.teams);
-        assert.equal(false, newUser.isNew);
+        equal(newUser.name, newUserResult.name);
+        equal(newUser.email, newUserResult.email);
+        equal(newUser.password, newUserResult.password);
+        equal(newUser.uuid, newUserResult.uuid);
+        equal(newUser.teams, newUserResult.teams);
+        equal(false, newUser.isNew);
         done();
       },
       function(error) {
@@ -96,7 +98,7 @@ describe("Database", function() {
 
   // Close connection
   after(done => {
-    mongoose.connection.close();
+    connection.close();
     done();
   });
 }); // end Database

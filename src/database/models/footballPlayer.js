@@ -29,6 +29,21 @@ footballPlayersSchema.statics.getAll = function () {
 
 // -------------------------------------------------------------
 
+footballPlayersSchema.statics.deleteAll = function()
+{
+    return this
+        .deleteMany({}, (err, status) => 
+        {
+            if (err)
+            {
+                return Promise.reject(err)
+            }
+            console.log(`deleteAll FootballPlayer. ${JSON.stringify(status,null,2)}`);
+        });
+}
+
+// -------------------------------------------------------------
+
 footballPlayersSchema.statics.getMostUpdatedList = function ()
 {
     return this
@@ -74,7 +89,6 @@ footballPlayersSchema.statics.deleteVersion = function(version)
             console.log(`===== FootballPlayer collection version ${version} successfully deleted`);
         });
 }
-  
 
 // -------------------------------------------------------------
 

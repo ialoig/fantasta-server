@@ -191,7 +191,12 @@ const saveFootballPlayers = async (excelFilenameClassic, excelFilenameMantra) =>
       console.log(`FootballPlayer collection has to be updated. Current version: ${versionOld}`);
 
       // TODO: remove collection FootballPlayer with old version or keep both versions so that we have a backup?
-      await FootballPlayer.deleteVersion(versionOld)
+      try {
+        // await FootballPlayer.deleteVersion(versionOld);
+        await FootballPlayer.deleteAll();
+      } catch (error) {
+        console.error(error);
+      }
       
       // save new version of FootballPlayer collection
       saveFootballPlayerWithVersion(footballPlayerList_obj, ++versionOld)

@@ -46,8 +46,8 @@ app.use( (err, req, res, next) => {
 
 // ------------------------------------------------------------
 // Scheduling processes
-let SavePlayersJson = require('./src/footballPlayers').saveFootballPlayers
-SavePlayersJson(config.schedule.excelFilenameClassic, config.schedule.excelFilenameMantra) 
+let saveFootballPlayers = require('./src/footballPlayers').saveFootballPlayers
+saveFootballPlayers(config.schedule.excelFilenameClassic, config.schedule.excelFilenameMantra) 
 
 
 // ------------------------------------------------------------
