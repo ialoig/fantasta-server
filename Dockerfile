@@ -2,14 +2,14 @@
 FROM node:lts-slim
 
 # Create app directory and cd into it
-RUN mkdir -p /usr/fantasta_core
-WORKDIR /usr/fantasta_core
+RUN mkdir -p /usr/fantasta_server
+WORKDIR /usr/fantasta_server
 
 # copy the npmrc file in order to install the private npm package from azure
 COPY .npmrc .npmrc
 
 # copy package.json and package-lock.json
-COPY package.json package-lock.json /usr/fantasta_core/
+COPY package.json package-lock.json /usr/fantasta_server/
 
 # Install app dependencies
 #RUN if [ "$NODE_ENV" = "dev" ]; \
@@ -21,7 +21,7 @@ COPY package.json package-lock.json /usr/fantasta_core/
 RUN npm install
 
 # Bundle app source
-COPY . /usr/fantasta_core
+COPY . /usr/fantasta_server
 
 # removing the npmrc file after npm install
 RUN rm -f .npmrc

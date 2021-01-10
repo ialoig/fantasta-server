@@ -1,8 +1,8 @@
 version: "3"
 services:
-  fantasta_core:
+  fantasta_server:
     environment:
       - NODE_ENV=dev
     volumes:
-      - ./:/usr/fantasta_core/
+      - ./:/usr/fantasta_server/
     command: npm run debug

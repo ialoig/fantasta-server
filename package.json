@@ -1,5 +1,5 @@
 {
-  "name": "fantasta_core",
+  "name": "fantasta_server",
   "version": "1.0.0",
   "description": "Fantasta server module",
   "private": true,
@@ -8,9 +8,9 @@
     "serve": "pm2 start dist/index.js",
     "test": "nyc mocha test/integration/*.test.js",
     "start": "npm run build && nodemon --exec babel-node ./fantasta.js",
-    "debug": "set NODE_ENV=dev && npm run build && nodemon --exec babel-node --legacy-watch --watch /usr/fantasta_core --inspect=0.0.0.0:9222 --nolazy /usr/fantasta_core/fantasta.js",
+    "debug": "set NODE_ENV=dev && npm run build && nodemon --exec babel-node --legacy-watch --watch /usr/fantasta_server --inspect=0.0.0.0:9222 --nolazy /usr/fantasta_server/fantasta.js",
     "docker-debug": "docker-compose -f ./docker-compose.yml -f ./docker-compose.debug.yml up --build",
-    "docker-test": "docker-compose -f ./docker-compose.yml -f ./docker-compose.test.yml up -d --build && docker exec -it fantasta_core npm run test && docker-compose down",
+    "docker-test": "docker-compose -f ./docker-compose.yml -f ./docker-compose.test.yml up -d --build && docker exec -it fantasta_server npm run test && docker-compose down",
     "docker-prod": "docker-compose -f ./docker-compose.yml -f ./docker-compose.prod.yml up --build",
     "docker-build": "docker-compose build"
   },

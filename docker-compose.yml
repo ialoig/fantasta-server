@@ -15,9 +15,9 @@ services:
     networks: 
       -  default
 
-  fantasta_core:
-    container_name: fantasta_core
-    image: fantasta_core:latest # use this image if already present in the local machine, build it otherwise
+  fantasta_server:
+    container_name: fantasta_server
+    image: fantasta_server:latest # use this image if already present in the local machine, build it otherwise
     # build:
     #   context: .
     #   dockerfile: Dockerfile
