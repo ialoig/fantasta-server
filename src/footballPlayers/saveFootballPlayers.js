@@ -208,6 +208,7 @@ const saveFootballPlayers = async (excelFilenameClassic, excelFilenameMantra) =>
 
   // save footballPlayers collection for the first time
   else {
+    console.log(`creation of FootballPlayer collection`);
     saveFootballPlayerWithVersion(footballPlayerList_obj, 1)
   }
 };

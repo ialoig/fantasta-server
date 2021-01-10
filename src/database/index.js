@@ -41,9 +41,9 @@ console.log( `mongodb endpoint: ${mongodbConnection}`)
 
 const mongoConnectionParams = {
     useNewUrlParser: true, // MongoDB driver has deprecated their current connection string parser
-    autoReconnect: true, // Reconnect on error (default true)
-    reconnectTries: 10, // Server attempt to reconnect #times (default 30)
-    reconnectInterval: 1000, // Server will wait # milliseconds between retries (default 1000)
+    // autoReconnect: true, // Reconnect on error (default true)
+    // reconnectTries: 10, // Server attempt to reconnect #times (default 30)
+    // reconnectInterval: 1000, // Server will wait # milliseconds between retries (default 1000)
     poolSize: 5, // Set the maximum poolSize for each individual server or proxy connection (default 5)
     autoIndex: false, // disabled in production since index creation can cause a significant performance impact (default: true?)
     useUnifiedTopology: true
