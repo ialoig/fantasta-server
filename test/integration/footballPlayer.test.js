@@ -80,7 +80,7 @@ describe("Database", function() {
   // Drop users collection
   beforeEach(done => {
     try {
-      FootballPlayer.deleteAll();
+      FootballPlayer.delete();
     } catch (error) {
       console.error(error);
     }
@@ -98,7 +98,7 @@ describe("Database", function() {
   // Drop users collection
   after(done => {
     try {
-      FootballPlayer.deleteAll();
+      FootballPlayer.delete();
     } catch (error) {
       console.error(error);
     }

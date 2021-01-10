@@ -45,7 +45,7 @@ const footballPlayersSchema = new Schema(
 
 // -------------------------------------------------------------
 
-footballPlayersSchema.statics.getAll = function () {
+footballPlayersSchema.statics.get = function () {
   return this.findOne((err, footballPlayers) => {
     if (err) {
       return Promise.reject(err);
@@ -56,66 +56,14 @@ footballPlayersSchema.statics.getAll = function () {
 
 // -------------------------------------------------------------
 
-footballPlayersSchema.statics.deleteAll = function()
-{
-    return this
-        .deleteMany({}, (err, status) => 
-        {
-            if (err)
-            {
-                return Promise.reject(err)
-            }
-            console.log(`deleteAll FootballPlayer. ${JSON.stringify(status,null,2)}`);
-        });
-}
-
-// -------------------------------------------------------------
-
-footballPlayersSchema.statics.getMostUpdatedList = function ()
-{
-    return this
-        .findOne({}, null, {sort: {version: -1}}, (err, footballPlayers) =>
-        {
-            if (err)
-            {
-                return Promise.reject(err)
-            }
-            return Promise.resolve(footballPlayers)
-        }
-    )
-}
-
-// -------------------------------------------------------------
-
-footballPlayersSchema.statics.getVersion = function()
-{
-  return this
-  .findOne({}, "version" , {sort: {version: -1}}, (err, footballPlayerVersion) =>
-  {
-      if (err)
-      {
-          return Promise.reject(err)
-      }
-
-      return Promise.resolve(footballPlayerVersion)
-  }
-)
-} 
-
-// -------------------------------------------------------------
-
-footballPlayersSchema.statics.deleteVersion = function(version)
-{
-    return this
-        .deleteOne({version: version}, (err) => 
-        {
-            if (err)
-            {
-                return Promise.reject(err)
-            }
-            console.log(`===== FootballPlayer collection version ${version} successfully deleted`);
-        });
-}
+footballPlayersSchema.statics.delete = function () {
+  return this.deleteMany({}, (err, status) => {
+    if (err) {
+      return Promise.reject(err);
+    }
+    return Promise.resolve(status);
+  });
+};
 
 // -------------------------------------------------------------
 

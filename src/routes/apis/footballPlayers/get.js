@@ -12,7 +12,7 @@ export const get = async ( req, res, next ) =>
     let footballPlayers = {}
     try
     {
-        footballPlayers = await FootballPlayer.getAll()
+        footballPlayers = await FootballPlayer.get()
     }
     catch (error)
     {

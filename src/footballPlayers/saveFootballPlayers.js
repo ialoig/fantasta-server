@@ -177,8 +177,7 @@ const saveFootballPlayers = async (excelFilenameClassic, excelFilenameMantra) =>
   // Fetch last version of FootballPlayer collection from DB
   let footballPlayerListOld_obj = null;
   try {
-    footballPlayerListOld_obj = await FootballPlayer.getAll();
-    // footballPlayerListOld_obj = await FootballPlayer.getMostUpdatedList(); // TODO: remove? 
+    footballPlayerListOld_obj = await FootballPlayer.get();
   } catch (error) {
     console.error(error);
   }
@@ -191,12 +190,12 @@ const saveFootballPlayers = async (excelFilenameClassic, excelFilenameMantra) =>
     // Check if an update is needed
     let equals = _.isEqual(footballPlayerListOld_obj.footballPlayers,footballPlayerList_obj);
     if (!equals) {
-      console.log(`FootballPlayer collection has to be updated. Current version: ${versionOld}`);
+      console.log(`FootballPlayer collection has to be updated`);
 
-      // TODO: remove collection FootballPlayer with old version or keep both versions so that we have a backup?
       try {
-        // await FootballPlayer.deleteVersion(versionOld);
-        await FootballPlayer.deleteAll();
+        console.log(`deleting FootballPlayer collection version: ${versionOld}`);
+        let status = await FootballPlayer.delete();
+        //console.log(`delete FootballPlayer status: ${JSON.stringify(status, null, 2)}`);
       } catch (error) {
         console.error(error);
       }
