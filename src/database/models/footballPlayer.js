@@ -1,5 +1,32 @@
 import { Schema, model } from "mongoose";
 
+/* Example
+"footballPlayers": 
+{
+  "26": 
+  {
+    "id": 26,
+    "name": "GOMEZ A",
+    "team": "Atalanta",
+    "roleClassic": "C",
+    "roleMantra": ["T","A"],
+    "actualPrice": 25,
+    "initialPrice": 26
+  },
+  "226": 
+  {
+    "id": 226,
+    "name": "IZZO",
+    "team": "Torino",
+    "roleClassic": "D",
+    "roleMantra": ["Dd","Dc"],
+    "actualPrice": 17,
+    "initialPrice": 16
+  },
+  ...
+  "version": 1
+*/
+
 const footballPlayersSchema = new Schema(
   {
     footballPlayers: {

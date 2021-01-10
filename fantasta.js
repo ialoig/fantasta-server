@@ -62,11 +62,12 @@ const SocketInit = require('./src/socket').init
 const server = SocketInit( app )
 
 server.listen( config.port, () => {
-    console.log(`*******************************`)
+    console.log(`************************************`)
     console.log(`Environment: ${process.env.NODE_ENV}`)
     console.log(`Config: ${JSON.stringify(config, null, 2)}`)
+    console.log(`************************************`)
     console.log(`Fantasta Server running on port ${config.port}`)
-    console.log(`*******************************`)
+    console.log(`************************************`)
 })
 
 module.exports = app

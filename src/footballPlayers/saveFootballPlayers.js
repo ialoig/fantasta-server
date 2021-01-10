@@ -160,6 +160,9 @@ const saveFootballPlayerWithVersion = async (footballPlayerList_obj, version) =>
 
 const saveFootballPlayers = async (excelFilenameClassic, excelFilenameMantra) => {
   
+  // use to measure execution time
+  let start = process.hrtime()
+
   // Excel file to Json object
   let excelContentClassic_obj = Read(excelFilenameClassic, 1);
   let excelContentMantra_obj = Read(excelFilenameMantra, 1);
@@ -175,7 +178,7 @@ const saveFootballPlayers = async (excelFilenameClassic, excelFilenameMantra) =>
   let footballPlayerListOld_obj = null;
   try {
     footballPlayerListOld_obj = await FootballPlayer.getAll();
-    // footballPlayerListOld_obj = await FootballPlayer.getMostUpdatedList();
+    // footballPlayerListOld_obj = await FootballPlayer.getMostUpdatedList(); // TODO: remove? 
   } catch (error) {
     console.error(error);
   }
@@ -211,6 +214,9 @@ const saveFootballPlayers = async (excelFilenameClassic, excelFilenameMantra) =>
     console.log(`creation of FootballPlayer collection`);
     saveFootballPlayerWithVersion(footballPlayerList_obj, 1)
   }
+  
+  let end = process.hrtime(start)  
+  console.info(`saveFootballPlayers() execution time: ${end[0]}s ${end[1] / 1000000}ms`)
 };
 
 export { saveFootballPlayers };
