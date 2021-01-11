@@ -23,11 +23,6 @@ export const get = async (req, res, next) => {
   if (footballPlayers) {
 
     let mobileVersion = parseInt(req.query.version) || 0;
-
-    // if(footballPlayers.version < mobileVersion){
-    //     console.error("mobile version of footballPlayers > then current version")
-    //     res.json(Response.resolve(Constants.INT_SERV_ERR, response_obj));
-    // }
     
     response_obj = {
     version: footballPlayers.version,
