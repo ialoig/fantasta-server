@@ -16,18 +16,24 @@ const Read = (fileName, skipRows) =>
         console.error(`Error reading file: ${fileName}. ${error}`)
     }
 
-    // Read single sheet
-    var worksheet = file.Sheets["Tutti"]
+    let excelContent_obj = []
 
-    // Skip rows
-    if (skipRows > 0){
-        var range = utils.decode_range(worksheet['!ref']);
-        range.s.r+= skipRows;
-        if(range.s.r >= range.e.r) range.s.r = range.e.r;
-        worksheet['!ref'] = utils.encode_range(range);
+    if ( file && file.Sheets )
+    {
+        // Read single sheet
+        let worksheet = file.Sheets && file.Sheets["Tutti"] || {}
+
+        // Skip rows
+        if ( skipRows > 0 && worksheet['!ref'] )
+        {
+            let range = utils.decode_range(worksheet['!ref']);
+            range.s.r+= skipRows;
+            if(range.s.r >= range.e.r) range.s.r = range.e.r;
+            worksheet['!ref'] = utils.encode_range(range);
+        }
+
+        excelContent_obj = utils.sheet_to_json(worksheet)
     }
-
-    let excelContent_obj = utils.sheet_to_json(worksheet)
 
     return excelContent_obj
 }

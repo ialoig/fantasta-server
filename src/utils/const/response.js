@@ -5,8 +5,7 @@ const resolve = ( status, data, token ) =>
         'ok': true,
         'code': HttpStatus[status].code,
         'status': HttpStatus[status].status,
-        'data': data || {},
-        'token': token || null
+        'data': data || {}
     }
 }
 

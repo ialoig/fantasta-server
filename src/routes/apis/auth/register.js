@@ -1,37 +1,32 @@
 
+import Validator from 'validator'
+import config from 'config'
+
 import { User } from '../../../database'
-import { Constants, Response } from '../../../utils'
+import { Constants, PASSWORD_OPT, Response } from '../../../utils'
 import { Create } from '../../../token'
 
 const register = async ( req, res, next ) =>
 {
-    let body = req.body;
-    if ( body && body.name && body.email && body.password && body.uuid )
-    {
-        let newUser = User({
-            name: body.name,
-            email: body.email,
-            password: body.password,
-            uuid: body.uuid
-        });
+    let body = req.body || {}
+    const { email, password } = body
 
-        let user = {}
+    if ( email && password && Validator.isEmail(email) && Validator.isStrongPassword( password, PASSWORD_OPT ) )
+    {
+        let newUser = User({ email, password })
+
         try
         {
-            user = await newUser.save()
+            await newUser.save()
         }
         catch (error)
         {
             console.error(error)
             res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.USER_PRESENT, error ) )
         }
-
-        delete user.password
-        delete user.uuid
         
         let data = {
-            user: user,
-            token: Create(req, newUser.id, body.email, body.password)
+            token: Create( config.token.kid, email, password )
         }
         res.json( Response.resolve( Constants.OK, data) )
     }

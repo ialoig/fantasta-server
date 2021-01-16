@@ -3,11 +3,9 @@ let express = require('express')
 let path = require('path')
 let favicon = require('serve-favicon')
 let morgan = require('morgan')
-let http = require('http')
 let cookieParser = require('cookie-parser')
 let bodyParser = require('body-parser')
 let config = require('config')
-let socket = require('socket.io')
 
 let app = express()
 
@@ -26,7 +24,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 // ???
 app.use( (req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*")
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Authorization, Content-Type, Accept")
+    res.header("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, Origin, X-Requested-With")
     res.header("Access-Control-Allow-Methods", "POST, PUT, GET")
     res.header("Access-Control-Allow-Credentials", true)
     next()

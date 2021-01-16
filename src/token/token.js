@@ -1,11 +1,10 @@
 
 import { sign, verify } from 'jsonwebtoken'
 
-const Create = ( tokenPassword, userId, email, password ) =>
+const Create = ( tokenPassword, email, password ) =>
 {
     return sign(
         {
-            userId,
             email,
             password
         },
@@ -25,7 +24,6 @@ const Verify = ( token, tokenPassword ) =>
         
         /*
             decoded = {
-                userId: 'id',
                 email: 'ciao',
                 password: 'ciao',
                 iat: 1490347709,
@@ -33,7 +31,7 @@ const Verify = ( token, tokenPassword ) =>
             }
         */
 
-        let newToken = Create( tokenPassword, decoded.userId, decoded.email, decoded.password )
+        let newToken = Create( tokenPassword, decoded.email, decoded.password )
 
         decoded.token = newToken
 

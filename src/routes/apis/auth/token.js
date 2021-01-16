@@ -1,24 +1,40 @@
 
+import config from 'config'
+
 import { User } from '../../../database'
 import { Constants, Response } from '../../../utils'
-import { Create, Verify } from '../../../token'
+import { Verify } from '../../../token'
 
-const validate = async ( req, res, next ) =>
+const token = async ( req, res, next ) =>
 {
-    let token = req.header('token') || null;
+    const Authorization = req.header('Authorization') || '';
+    const token = Authorization && Authorization.split(' ')[1];
+
+    console.log(token)
+
     if ( token )
     {
-        let auth = Verify( token, req )
-        if ( auth.error )
+        let auth = {}
+        try
+        {
+            auth = Verify( token, config.token.kid )
+
+            if ( auth.error )
+            {
+                console.error(auth)
+                res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, auth ) )
+            }
+        }
+        catch (error)
         {
             console.error(auth)
             res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, auth ) )
         }
 
-        let user = {}
+        let user = null
         try
         {
-            user = await User.findById( auth.userId )
+            user = await User.findOne({ email: auth.email })
         }
         catch (error)
         {
@@ -32,17 +48,15 @@ const validate = async ( req, res, next ) =>
         }
         else if ( user.password && user.password==auth.password )
         {
-            let newToken = Create(req, user.id || user._id, user.email, user.password)
-
-            delete user.password
-            delete user.uuid
-
+            
             let data = {
-                user: user,
-                token: newToken
+                user: {
+                    leagues: user.leagues,
+                    id: user._id,
+                    email: user.email
+                },
+                token: auth.token
             }
-            res.setHeader( 'token', JSON.stringify(newToken) )
-            res.setHeader( 'user', JSON.stringify(user) )
             res.json( Response.resolve( Constants.OK, data) )
         }
         else
@@ -57,4 +71,4 @@ const validate = async ( req, res, next ) =>
     }
 };
 
-export default validate
+export default token

@@ -43,8 +43,6 @@ const footballPlayersSchema = new Schema(
   }
 );
 
-// -------------------------------------------------------------
-
 footballPlayersSchema.statics.get = function () {
   return this.findOne((err, footballPlayers) => {
     if (err) {
@@ -54,8 +52,6 @@ footballPlayersSchema.statics.get = function () {
   });
 };
 
-// -------------------------------------------------------------
-
 footballPlayersSchema.statics.delete = function () {
   return this.deleteMany({}, (err, status) => {
     if (err) {
@@ -64,8 +60,6 @@ footballPlayersSchema.statics.delete = function () {
     return Promise.resolve(status);
   });
 };
-
-// -------------------------------------------------------------
 
 const FootballPlayers = model("FootballPlayers", footballPlayersSchema);
 

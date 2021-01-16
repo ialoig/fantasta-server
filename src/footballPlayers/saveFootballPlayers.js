@@ -1,15 +1,11 @@
 import _ from "lodash";
-import { Commons, FootballPlayer } from "../database";
+import { FootballPlayer } from "../database";
 import { Read } from "../utils";
 
-
-// -------------------------------------------------------------
 
 const printCorruptedPlayer = (footballPlayer_obj, reason) => {
   console.error(`===== corrupted footballPlayer. Reason: ${reason}. ${JSON.stringify(footballPlayer_obj,null,2)}`)
 }
-
-// -------------------------------------------------------------
 
 const containsCorrectData = (footballPlayer_obj) => {
 
@@ -29,14 +25,14 @@ const containsCorrectData = (footballPlayer_obj) => {
   }
 
   // Check "name"
-  if (footballPlayer_obj["name"] === "" || footballPlayer_obj["name"] === null){
+  if ( !footballPlayer_obj["name"] ){
     let reason = "'name' cannot be null or empty"
     printCorruptedPlayer(footballPlayer_obj, reason)
     return false;
   }
 
   // Check "team"
-  if (footballPlayer_obj["team"] === "" || footballPlayer_obj["team"] === null){
+  if ( !footballPlayer_obj["team"] ){
     let reason = "'team' cannot be null or empty"
     printCorruptedPlayer(footballPlayer_obj, reason)
     return false;
@@ -44,8 +40,8 @@ const containsCorrectData = (footballPlayer_obj) => {
 
   // Check "roleClassic"
   let roleClassic = footballPlayer_obj["roleClassic"]
-  if(roleClassic === null){
-    let reason = "'roleClassic' ust be defined"
+  if( !roleClassic ){
+    let reason = "'roleClassic' must be defined"
     printCorruptedPlayer(footballPlayer_obj, reason)
     return false;
   }
@@ -59,7 +55,7 @@ const containsCorrectData = (footballPlayer_obj) => {
   
   // Check "roleMantra"
   let roleMantra = footballPlayer_obj["roleMantra"]
-  if(roleMantra === null){
+  if( !roleMantra ){
     let reason = "'roleMantra' must be defined"
     printCorruptedPlayer(footballPlayer_obj, reason)
     return false;
@@ -91,8 +87,6 @@ const containsCorrectData = (footballPlayer_obj) => {
   return true; 
 }
 
-// -------------------------------------------------------------
-
 const mergeRoles = (footballPlayerListClassic_obj, footballPlayerListMantra_obj) => {
   let footballPlayerList_obj = {}
 
@@ -112,8 +106,6 @@ const mergeRoles = (footballPlayerListClassic_obj, footballPlayerListMantra_obj)
 
   return footballPlayerList_obj
 }
-
-// -------------------------------------------------------------
 
 const getPlayersFromExcelContent = (excelContent_obj, isMantra) => {
   
@@ -138,9 +130,7 @@ const getPlayersFromExcelContent = (excelContent_obj, isMantra) => {
   });
 
   return footballPlayerList_obj;
-};
-
-// -------------------------------------------------------------
+}
 
 const saveFootballPlayerWithVersion = async (footballPlayerList_obj, version) => {
 
@@ -155,8 +145,6 @@ const saveFootballPlayerWithVersion = async (footballPlayerList_obj, version) =>
     console.error(error);
   }
 }
-
-// -------------------------------------------------------------
 
 const saveFootballPlayers = async (excelFilenameClassic, excelFilenameMantra) => {
   
@@ -188,7 +176,7 @@ const saveFootballPlayers = async (excelFilenameClassic, excelFilenameMantra) =>
     let versionOld = footballPlayerListOld_obj.version
 
     // Check if an update is needed
-    let equals = _.isEqual(footballPlayerListOld_obj.footballPlayers,footballPlayerList_obj);
+    let equals = _.isEqual(footballPlayerListOld_obj.footballPlayers, footballPlayerList_obj);
     if (!equals) {
       console.log(`FootballPlayer collection has to be updated`);
 
@@ -201,7 +189,7 @@ const saveFootballPlayers = async (excelFilenameClassic, excelFilenameMantra) =>
       }
       
       // save new version of FootballPlayer collection
-      saveFootballPlayerWithVersion(footballPlayerList_obj, ++versionOld)
+      saveFootballPlayerWithVersion( footballPlayerList_obj, new Date().getTime() )
     }
     else{
       console.log(`FootballPlayer collection is up to date. Current version: ${versionOld}`);
@@ -211,11 +199,11 @@ const saveFootballPlayers = async (excelFilenameClassic, excelFilenameMantra) =>
   // save footballPlayers collection for the first time
   else {
     console.log(`creation of FootballPlayer collection`);
-    saveFootballPlayerWithVersion(footballPlayerList_obj, 1)
+    saveFootballPlayerWithVersion( footballPlayerList_obj, new Date().getTime() )
   }
   
   let end = process.hrtime(start)  
   console.info(`saveFootballPlayers() execution time: ${end[0]}s ${end[1] / 1000000}ms`)
-};
+}
 
 export { saveFootballPlayers };

@@ -1,29 +1,37 @@
 
+import config from 'config'
+
 import { User } from '../../../database'
 import { Constants, Response } from '../../../utils'
 import { Create } from '../../../token'
 
 const login = async ( req, res, next ) =>
 {
-    let body = req.body;
-    if ( body && body.email && body.password )
+    let body = req.body || {}
+    const { email, password } = body
+
+    if ( email && password )
     {
         try
         {
-            let user = await User.findOne({ email: body.email })
+            let user = await User.findOne({ email })
 
             if ( !user )
             {
                 res.status(404).send( Response.reject( Constants.NOT_FOUND, Constants.USER_NOT_FOUND, null ) )
             }
-            else if ( user && user.password && user.password==body.password )
+            else if ( user && user.password && user.password==password )
             {
                 delete user.password
                 delete user.uuid
                 
                 let data = {
-                    user: user,
-                    token: Create( req, user.id, body.email, body.password )
+                    user: {
+                        leagues: user.leagues,
+                        id: user._id,
+                        email: user.email
+                    },
+                    token: Create( config.token.kid, email, password )
                 }
                 res.json( Response.resolve( Constants.OK, data ) )
             }

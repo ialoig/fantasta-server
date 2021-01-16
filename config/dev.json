@@ -6,6 +6,13 @@
         "excelFilenameClassic" : "./test/footballPlayerListClassic.xls",
         "excelFilenameMantra" : "./test/footballPlayerListMantra.xls"
     },
+    "token": {
+        "kty": "oct",
+        "use": "sig",
+        "kid": "3ij-j5gdmJNB_5igiburpYpIzPj35v2oS8JWpd0F0LI",
+        "k": "jU8lDNWvwB9N51ptyZeTn467VeIXLLLdmuZwyU9Ocu8ReFxc2Iy5U5ZRxOFc0FOYL85nOQRbqdu5MFJdzXFfAlUwof5j9eyIwPL9oKDWYTWqmtthoLz9GOoKaM2Btz0-czRsFNj1AvJoOF-r1d8yn0uquMIDyoO-CrZWYQmWUJPPHG790Gh7_B_9GKUTjM35Ewj-7A_UJHmbjR1TAzmN70wsWncfygZu6NqkabZhI09KM86D61dyS-xCksndAG5yYtgYf87V5-B997TzPlPzIIgeUYAR1VKtA66d49OFnc80Tu2JFmeSqCCjBItiosyuiPrdgLRcZiwrL6WlNv-hLg",
+        "alg": "HS256"
+    },
     "mongodb": {
         "endpoint": "mongodb://fantastacore_mongo",
         "port": 27017,

@@ -3,26 +3,22 @@ import { Schema, model } from 'mongoose'
 
 const userSchema = new Schema(
     {
-        name: {
-            type: String,
-            required: true
-        },
         email: {
             type: String,
-            required: true
+            required: true,
+            unique: true
         },
         password: {
             type: String,
             required: true
         },
-        uuid: {
+        name: {
             type: String,
-            required: true,
-            unique: true
+            required: false
         },
-        teams: [{
+        leagues: [{
             type: Schema.Types.ObjectId,
-            ref: "Team"
+            ref: "League"
         }]
     },
     {
