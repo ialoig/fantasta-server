@@ -17,18 +17,23 @@ const register = async ( req, res, next ) =>
 
         try
         {
-            await newUser.save()
+            let user = await newUser.save()
+
+            let data = {
+                user: {
+                    leagues: user.leagues,
+                    id: user._id,
+                    email: user.email
+                },
+                token: Create( config.token.kid, email, password )
+            }
+            res.json( Response.resolve( Constants.OK, data) )
         }
         catch (error)
         {
             console.error(error)
             res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.USER_PRESENT, error ) )
         }
-        
-        let data = {
-            token: Create( config.token.kid, email, password )
-        }
-        res.json( Response.resolve( Constants.OK, data) )
     }
     else
     {
