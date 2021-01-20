@@ -7,11 +7,10 @@ import { Verify } from '../../../token'
 
 const token = async ( req, res, next ) =>
 {
-    const Authorization = req.header('Authorization') || '';
-    const token = Authorization && Authorization.split(' ')[1];
-
-    console.log(token)
-
+    let Authorization = req.header('Authorization') || req.header('authorization') ||  ''
+    Authorization = Authorization && Authorization.split(' ');
+    
+    const token = Authorization[0]=='Bearer' ? Authorization[1] : Authorization[0]
     if ( token )
     {
         let auth = {}
