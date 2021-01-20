@@ -4,7 +4,6 @@ let path = require('path')
 let favicon = require('serve-favicon')
 let morgan = require('morgan')
 let cookieParser = require('cookie-parser')
-let bodyParser = require('body-parser')
 let config = require('config')
 
 let app = express()
@@ -13,8 +12,8 @@ app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'pug')
 
 app.use(morgan('dev')) //'combined'
-app.use(bodyParser.urlencoded({ extended: true }))
-app.use(bodyParser.json())
+app.use(express.urlencoded({ extended: true }))
+app.use(express.json())
 app.use(cookieParser())
 
 app.use(express.static(path.join(__dirname, 'public')))
@@ -23,8 +22,9 @@ app.use(express.static(path.join(__dirname, 'public')))
 // ------------------------------
 // ???
 app.use( (req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "*")
-    res.header("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, Origin, X-Requested-With")
+    res.header("Accept", "*")
+    res.header("Access-Control-Allow-Origin", "http://localhost:19006")
+    res.header("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, Origin, X-Requested-With, Access-Control-Allow-Origin, access-control-allow-credentials, access-control-allow-headers, access-control-allow-methods, ")
     res.header("Access-Control-Allow-Methods", "POST, PUT, GET")
     res.header("Access-Control-Allow-Credentials", true)
     next()
