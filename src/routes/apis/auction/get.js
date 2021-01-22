@@ -4,14 +4,14 @@ import { Constants, LeagueUtils, Response } from '../../../utils'
 
 export const get = async ( req, res, next ) =>
 {
-    let user = req.header('user');
+    let user = req.header('user')
     let leagueId = req.query.leagueId
     
-    console.log(user);
+    console.log(user)
     
     if ( leagueId )
     {
-        let league = null;
+        let league = null
         try
         {
             league = await League.findById( leagueId )
@@ -22,7 +22,7 @@ export const get = async ( req, res, next ) =>
             res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, error ) )
         }
 
-        let auction = null;
+        let auction = null
         try
         {
             auction = await AuctionConfig.findById( league.auction.id )
@@ -37,10 +37,10 @@ export const get = async ( req, res, next ) =>
             user: user,
             league: LeagueUtils.getleagueObj(league),
             auction: LeagueUtils.getAuctionObj(auction)
-        };
-        resp.user.admin = user.id==league.administrator.id;
+        }
+        resp.user.admin = user.id==league.administrator.id
 
-        res.json( Response.resolve(Constants.OK, resp) );
+        res.json( Response.resolve(Constants.OK, resp) )
     }
     else
     {

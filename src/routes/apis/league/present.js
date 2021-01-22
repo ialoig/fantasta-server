@@ -9,11 +9,11 @@ export const present = async ( req, res, next ) =>
     {
         let present = await League.present( params.name )
         
-        res.json( !!present );
+        res.json( !!present )
     }
     else
     {
-        res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, null ) );
+        res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, null ) )
     }
 
 }

@@ -5,10 +5,10 @@ import { Socket } from '../../../socket'
 
 export const create = async ( req, res, next ) =>
 {
-    let leagueData = req.body && req.body.league || {};
-    let settings = req.body && req.body.settings || {};
+    let leagueData = req.body && req.body.league || {}
+    let settings = req.body && req.body.settings || {}
 
-    var leagueValid = LeagueUtils.validateleague(leagueData, true);
+    var leagueValid = LeagueUtils.validateleague(leagueData, true)
     var settingsValid = LeagueUtils.validateSettings(settings)
 
     if ( leagueValid.valid && settingsValid.valid )
@@ -24,16 +24,16 @@ export const create = async ( req, res, next ) =>
             res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, error ) )
         }
 
-        var newAuct = AuctionConfig({ user, leagueData, settings });
-        var newLeag = League({ leagueData, user, newAuct });
+        var newAuct = AuctionConfig({ user, leagueData, settings })
+        var newLeag = League({ leagueData, user, newAuct })
 
         var leag = {
             leagueId: newLeag.id,
             leagueName: newLeag.name,
             username: leagueData.username,
             admin: true,
-        };
-        var newvalues = { $push: {'leagues': leag} };
+        }
+        var newvalues = { $push: {'leagues': leag} }
 
         try
         {
@@ -48,12 +48,12 @@ export const create = async ( req, res, next ) =>
                 league: newLeague.id,
                 full: false,
                 attendees: attendees
-            };
+            }
 
-            Socket.addAttendee( req, newLeag.name, '' );
-            Socket.leagueCreate( req, newLeag.name, '' );
+            Socket.addAttendee( req, newLeag.name, '' )
+            Socket.leagueCreate( req, newLeag.name, '' )
 
-            res.json( Response.resolve(Constants.OK, resp) );
+            res.json( Response.resolve(Constants.OK, resp) )
         }
         catch (error)
         {

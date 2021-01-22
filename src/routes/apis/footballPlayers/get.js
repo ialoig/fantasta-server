@@ -1,35 +1,32 @@
-import { FootballPlayer } from "../../../database";
-import { Constants, Response } from "../../../utils";
 
-/**
- * handle API "fantasta/footballPlayers?version=0"
- * use query param "version" to check the freshness of the footballPlayer list on the mobile
- */
-export const get = async (req, res, next) => {
-  let footballPlayers = {};
-  try {
-    footballPlayers = await FootballPlayer.get();
-  } catch (error) {
-    console.error(error);
-    res
-      .status(400)
-      .send(
-        Response.reject(Constants.BAD_REQUEST, Constants.BAD_REQUEST, error)
-      );
-  }
+import { FootballPlayer } from "../../../database"
+import { Constants, Response } from "../../../utils"
 
-  let response_obj = {};
+export const get = async (req, res, next) =>
+{
+    let footballPlayers = {}
+    try
+    {
+        footballPlayers = await FootballPlayer.get()
+    }
+    catch (error)
+    {
+        console.error(error)
+        
+        res.status(400).send( Response.reject(Constants.BAD_REQUEST, Constants.BAD_REQUEST, error) )
+    }
 
-  if (footballPlayers) {
+    if ( footballPlayers )
+    {
+        let dbVersion = footballPlayers.version ? parseInt(footballPlayers.version) : 0
+        let mobileVersion = req.query.version ? parseInt(req.query.version) : 0
+        
+        let response_obj = {
+            version: dbVersion,
+            footballPlayers: dbVersion === mobileVersion ? {} : footballPlayers.footballPlayers,
+            updated: mobileVersion !== dbVersion,
+        }
 
-    let mobileVersion = parseInt(req.query.version) || 0;
-    
-    response_obj = {
-    version: footballPlayers.version,
-    footballPlayers: footballPlayers.version === mobileVersion? {}: footballPlayers.footballPlayers,
-    updated: mobileVersion === footballPlayers.version,
-    };
-
-    res.json(Response.resolve(Constants.OK, response_obj));
-  }
-};
+        res.json( Response.resolve(Constants.OK, response_obj) )
+    }
+}
