@@ -5,6 +5,8 @@ import { Socket } from '../../../socket'
 
 export const create = async ( req, res, next ) =>
 {
+    //todo: send metric (League.create api call)
+
     let leagueData = req.body && req.body.league || {}
     let settings = req.body && req.body.settings || {}
 

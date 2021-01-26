@@ -8,6 +8,8 @@ import { Create } from '../../../token'
 
 const register = async ( req, res, next ) =>
 {
+    //todo: send metric (register api call)
+
     let body = req.body || {}
     const { email, password } = body
 

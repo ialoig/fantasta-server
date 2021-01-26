@@ -7,6 +7,8 @@ import { Verify } from '../../../token'
 
 const token = async ( req, res, next ) =>
 {
+    //todo: send metric (token api call)
+
     let Authorization = req.header('Authorization') || req.header('authorization') ||  ''
     Authorization = Authorization && Authorization.split(' ');
     

@@ -4,6 +4,8 @@ import { Constants, Response } from "../../../utils"
 
 export const get = async (req, res, next) => {
 
+    //todo: send metric (footballPlayer.get api call)
+
     FootballPlayer.findOne((error, footballPlayers) => {
         if (error) {
             console.error(error)

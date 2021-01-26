@@ -4,6 +4,9 @@ import { Constants, LeagueUtils, Response } from '../../../utils'
 import { Socket } from '../../../socket'
 
 export const join = async (req, res, next) => {
+    
+    //todo: send metric (League.join api call)
+
     var body = req.body || {}
     var leagueData = body.leagueData || {}
     var leagueValid = LeagueUtils.validateleague(leagueData, false)
