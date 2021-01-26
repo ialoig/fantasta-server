@@ -8,8 +8,8 @@ const teamSchema = new Schema(
             required: true
         },
         footballPlayers: [{
-            type: Schema.Types.ObjectId,
-            ref: "FootballPlayer"
+            type: Number,
+            required: false
         }],
         budget: {
             type: Number,
@@ -21,11 +21,12 @@ const teamSchema = new Schema(
         },
         league: {
             type: Schema.Types.ObjectId,
-            ref: "League"
+            ref: "League",
+            required: true
         }
     },
     {
-        timestamps: true
+        timestamps: true // createdAt, updatedAt automatically added by mongoose
     }
 )
 
