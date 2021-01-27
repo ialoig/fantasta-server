@@ -14,20 +14,19 @@ const userSchema = new Schema(
         },
         name: {
             type: String,
-            required: false
+            required: true
         },
         leagues: [{
             type: Schema.Types.ObjectId,
-            ref: "League"
+            ref: "League",
+            required: false
         }]
     },
     {
-        // createdAt: Date (default added by mongoose)
-        // updatedAt: Date (default added by mongoose)
-        timestamps: true
+        timestamps: true // createdAt, updatedAt automatically added by mongoose
     }
-)
+);
 
-const User = model( 'User', userSchema )
+const User = model('User', userSchema)
 
 export default User

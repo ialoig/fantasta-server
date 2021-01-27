@@ -28,38 +28,20 @@ import { Schema, model } from "mongoose";
 */
 
 const footballPlayersSchema = new Schema(
-  {
-    footballPlayers: {
-      type: Object,
-      required: true,
+    {
+        footballPlayers: {
+            type: Object,
+            required: true,
+        },
+        version: {
+            type: Number,
+            required: true,
+        },
     },
-    version: {
-      type: Number,
-      required: true,
-    },
-  },
-  {
-    timestamps: true,
-  }
+    {
+        timestamps: true, // createdAt, updatedAt automatically added by mongoose
+    }
 );
-
-footballPlayersSchema.statics.get = function () {
-  return this.findOne((err, footballPlayers) => {
-    if (err) {
-      return Promise.reject(err);
-    }
-    return Promise.resolve(footballPlayers);
-  });
-};
-
-footballPlayersSchema.statics.delete = function () {
-  return this.deleteMany({}, (err, status) => {
-    if (err) {
-      return Promise.reject(err);
-    }
-    return Promise.resolve(status);
-  });
-};
 
 const FootballPlayers = model("FootballPlayers", footballPlayersSchema);
 

@@ -90,34 +90,9 @@ const getleagueObj = ( league ) =>
     return leag
 }
 
-const getAuctionObj = ( auction ) =>
-{
-    var obj = JSON.parse(JSON.stringify(auction))
-
-    var auct = {
-        id: obj._id,
-        attendees: obj.attendees,
-        countdown: obj.countdown,
-        totalAttendees: obj.totalAttendees,
-        customPrice: obj.customPrice,
-        leagueSystem: obj.leagueSystem,
-        millions: obj.millions,
-        name: obj.name,
-        num_defenders: obj.num_defenders,
-        num_goalkeepers: obj.num_goalkeepers,
-        num_midfielders: obj.num_midfielders,
-        num_players: obj.num_players,
-        num_strikers: obj.num_strikers,
-        startingPrice: obj.startingPrice,
-        teams: obj.teams
-    }
-
-    return auct
-}
 
 export default {
     validateSettings,
     validateleague,
     getleagueObj,
-    getAuctionObj,
 }

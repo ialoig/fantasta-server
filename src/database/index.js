@@ -51,6 +51,4 @@ const mongoConnectionParams = {
 
 connect( mongodbConnection, mongoConnectionParams )
 
-export { default as Commons } from './commons'
-
-export { AuctionConfig, League, LeagueConfig, FootballPlayer, Team, User } from './models'
+export { League, FootballPlayer, Team, User } from './models'

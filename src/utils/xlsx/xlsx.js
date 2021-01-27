@@ -14,6 +14,7 @@ const Read = (fileName, skipRows) =>
     catch (error)
     {
         console.error(`Error reading file: ${fileName}. ${error}`)
+        // todo: send metric (Error reading file)
     }
 
     let excelContent_obj = []

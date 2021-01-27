@@ -11,30 +11,85 @@ const leagueSchema = new Schema(
             type: String,
             required: true
         },
-        administrators: [{
+        admin: {
             type: Schema.Types.ObjectId,
             ref: "User",
             required: true
-        }],
-        leagueConfig: {
-            type: Schema.Types.ObjectId,
-            ref: "LeagueConfig"
-        },
-        auctionConfig: {
-            type: Schema.Types.ObjectId,
-            ref: "AuctionConfig"
         },
         numParticipants: {
             type: Number,
             required: true
         },
-        teams: {
+        type: {
+            type: String,
+            enum: [ "alphabetic", "call", "random" ],
+            required: true
+        },
+        numGoalkeeper: {
+            type: Number,
+            required: true,
+            validate: {
+                validator: Number.isInteger,
+                message: "{VALUE} is not an integer value for numGoalkeeper"
+            }
+        },
+        numDefenders: {
+            type: Number,
+            required: true,
+            validate: {
+                validator: Number.isInteger,
+                message: "{VALUE} is not an integer value for numDefenders"
+            }
+        },
+        numMidfielders: {
+            type: Number,
+            required: true,
+            validate: {
+                validator: Number.isInteger,
+                message: "{VALUE} is not an integer value for numMidfielders"
+            }
+        },
+        numStrikers: {
+            type: Number,
+            required: true,
+            validate: {
+                validator: Number.isInteger,
+                message: "{VALUE} is not an integer value for numStrikers"
+            }
+        },
+        teamBudget: {
+            type: Number,
+            required: true,
+            validate: {
+                validator: Number.isInteger,
+                message: "{VALUE} is not an integer value for teamBudget"
+            }
+        },
+        auctionCountdownSeconds: {
+            type: Number,
+            required: true,
+            validate: {
+                validator: Number.isInteger,
+                message: "{VALUE} is not an integer value for auctionCountdownSeconds"
+            }
+        },
+        auctionType: {
+            type: String,
+            enum: [ "alphabetic", "call", "random" ],
+            required: true
+        },
+        auctionStartPrice: {
+            type: String,
+            enum: [ "zero", "listPrice" ],
+            required: true
+        },
+        teams: [{
             type: Schema.Types.ObjectId,
             ref: "Team"
-        }
+        }]
     },
     {
-        timestamps: true
+        timestamps: true, // createdAt, updatedAt automatically added by mongoose
     }
 );
 

@@ -7,6 +7,8 @@ import * as Token from '../../../token'
 
 const token = async ( req, res, next ) =>
 {
+    //todo: send metric (token api call)
+    
     const token = Token.Get( req )
     if ( token )
     {
