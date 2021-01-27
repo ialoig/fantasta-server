@@ -62,13 +62,13 @@ const containsCorrectData = (footballPlayer_obj) => {
     }
 
     const mantraRolesAllowed = ["Por", "Dd", "Ds", "Dc", "E", "M", "C", "W", "T", "A", "Pc"]
-    roleMantra.forEach(mantraRole => {
-        if (!mantraRolesAllowed.includes(mantraRole)) {
+    for (var i = 0; i < roleMantra.length; i++) {
+        if (!mantraRolesAllowed.includes(roleMantra[i])) {
             let reason = "'roleMantra' value not allowed"
             printCorruptedPlayer(footballPlayer_obj, reason)
             return false;
         }
-    })
+    }
 
     // Check "actualPrice"
     if (footballPlayer_obj["actualPrice"] < 0) {
@@ -206,4 +206,4 @@ const saveFootballPlayers = async (excelFilenameClassic, excelFilenameMantra) =>
     }
 }
 
-export { saveFootballPlayers };
+export { saveFootballPlayers, containsCorrectData };
