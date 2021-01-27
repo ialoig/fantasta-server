@@ -67,4 +67,13 @@ const Verify = ( token, tokenPassword ) =>
     
 }
 
-export { Create, Verify }
+const Get = ( req ) =>
+{
+    let authorization = req.header('Authorization') || req.header('authorization') ||  ''
+    
+    let auth = authorization && authorization.split && authorization.split(' ')
+    
+    return auth[0]=='Bearer' ? auth[1] : auth[0]
+}
+
+export { Create, Verify, Get }

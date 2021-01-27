@@ -1,1 +1,1 @@
-export { Create, Verify } from './token'
+export { Create, Get, Verify } from './token'

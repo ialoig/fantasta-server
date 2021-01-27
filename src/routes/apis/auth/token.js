@@ -3,20 +3,17 @@ import config from 'config'
 
 import { User } from '../../../database'
 import { Constants, Response } from '../../../utils'
-import { Verify } from '../../../token'
+import * as Token from '../../../token'
 
 const token = async ( req, res, next ) =>
 {
-    let Authorization = req.header('Authorization') || req.header('authorization') ||  ''
-    Authorization = Authorization && Authorization.split(' ');
-    
-    const token = Authorization[0]=='Bearer' ? Authorization[1] : Authorization[0]
+    const token = Token.Get( req )
     if ( token )
     {
         let auth = {}
         try
         {
-            auth = Verify( token, config.token.kid )
+            auth = Token.Verify( token, config.token.kid )
 
             if ( auth.error )
             {

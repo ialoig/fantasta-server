@@ -14,8 +14,8 @@ routing.route("/auth/register").post(apis.auth.register)
 
 //----- LEAGUE APIS -----//
 routing.route("/league").get(apis.league.present)
-routing.route("/league").post(apis.league.create)
-routing.route("/league").post(apis.league.join)
+routing.route("/league/create").post(apis.league.create)
+routing.route("/league/join").post(apis.league.join)
 
 //----- PLAYERS APIS -----//
 routing.route("/footballPlayers").get(apis.footballPlayers.get)

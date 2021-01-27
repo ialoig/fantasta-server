@@ -2,98 +2,109 @@
 import { AuctionConfig, Commons, League } from '../../../database'
 import { Constants, LeagueUtils, Response } from '../../../utils'
 import { Socket } from '../../../socket'
+import * as Token from '../../../token'
 
 export const join = async ( req, res, next ) =>
 {
-    var body = req.body || {}
-    var leagueData = body.leagueData || {}
-    var leagueValid = LeagueUtils.validateleague( leagueData, false )
+    let body = req.body || {}
+    const { id='', name='', password='', team='' } = body
 
-    if ( leagueValid.valid && body.token )
+    const token = Token.Get( req )
+    
+    if ( token && (id || name && password && team) )
     {
         try
         {
-            let league = await League.findByName( leagueData.name )
+            let league = null
 
-            if ( league.password!=leagueData.password )
+            if ( id )
             {
-                res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.WRONG_PASSWORD ) )
+                league = await League.findById( id )
             }
-            else if ( league.attendees.length>=league.total_attendees )
+            else if ( name )
             {
-                res.status(400).send( Response.reject( Constants.FULL_LEAGUE, Constants.FULL_LEAGUE ) )
-            }
-            else
-            {
-                let auction = await AuctionConfig.findById( league.auction.id )
-                
-                let tok = await Token.read( body.token, req )
+                league = await League.findOne({ name: name })
 
-                let user = await User.findById( tok.id )
-                    
-                var part = {
-                    name: user.name,
-                    id: user.id,
-                    username: leagueData.username,
-                    admin: false
-                }
-                var newPart = { $push: {'attendees': part} }
-
-                var leag = {
-                    leagueId: league.id,
-                    leagueName: league.name,
-                    username: leagueData.username,
-                    admin: false
-                }
-                var newLeag = { $push: {'leagues': leag} }
-
-                var attendees = auction.attendees
-                var teams = auction.teams
-                attendees[user.id] = part
-                teams[user.id] = []
-                var newAuct = { $set: {'attendees': attendees, 'teams': teams} }
-
-                let data = await Promise.all([
-                    Commons.update( league, newPart ),
-                    Commons.update( auction, newAuct ),
-                    Commons.update( user, newLeag )
-                ])
-
-                data = await Promise.all([
-                    User.findById( user.id ),
-                    League.findById( league.id ),
-                    AuctionConfig.findById( auction.id )
-                ])
-                
-                var attendees = LeagueUtils.getleagueObj(data[1]).attendees
-                var resp = {
-                    league: data[1].id,
-                    full: false,
-                    attendees: attendees
-                }
-                var newLeague = data[1]
-                if ( newLeague.attendees.length==newLeague.total_attendees )
+                if ( league.password!=password )
                 {
-                    resp.full = true
-                    Socket.leagueCreate( req, newLeague.name, 'OK' )
+                    res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.WRONG_PASSWORD ) )
+                    return;
                 }
-
-                if ( newLeague.attendees.length<newLeague.total_attendees )
+                else if ( league.attendees.length>=league.total_attendees )
                 {
-                    Socket.addAttendee( req, newLeague.name, attendees )
+                    res.status(400).send( Response.reject( Constants.FULL_LEAGUE, Constants.FULL_LEAGUE ) )
+                    return;
                 }
-
-                res.json( Response.resolve(Constants.OK, resp) )
             }
+            
+            let auction = await AuctionConfig.findById( league.auction.id )
+            
+            let tok = await Token.read( body.token, req )
+
+            let user = await User.findById( tok.id )
+                
+            let part = {
+                name: user.name,
+                id: user.id,
+                username: leagueData.username,
+                admin: false
+            }
+            let newPart = { $push: {'attendees': part} }
+
+            let leag = {
+                leagueId: league.id,
+                leagueName: league.name,
+                username: leagueData.username,
+                admin: false
+            }
+            let newLeag = { $push: {'leagues': leag} }
+
+            let attendees = auction.attendees
+            let teams = auction.teams
+            attendees[user.id] = part
+            teams[user.id] = []
+            let newAuct = { $set: {'attendees': attendees, 'teams': teams} }
+
+            let data = await Promise.all([
+                Commons.update( league, newPart ),
+                Commons.update( auction, newAuct ),
+                Commons.update( user, newLeag )
+            ])
+
+            data = await Promise.all([
+                User.findById( user.id ),
+                League.findById( league.id ),
+                AuctionConfig.findById( auction.id )
+            ])
+            
+            let attendees1 = LeagueUtils.getleagueObj(data[1]).attendees
+            let resp = {
+                league: data[1].id,
+                full: false,
+                attendees: attendees1
+            }
+            let newLeague = data[1]
+            if ( newLeague.attendees.length==newLeague.total_attendees )
+            {
+                resp.full = true
+                Socket.leagueCreate( req, newLeague.name, 'OK' )
+            }
+
+            if ( newLeague.attendees.length<newLeague.total_attendees )
+            {
+                Socket.addAttendee( req, newLeague.name, attendees )
+            }
+
+            res.json( Response.resolve(Constants.OK, resp) )
         }
         catch (error)
         {
-            res.status(404).send( Response.reject( Constants.NOT_FOUND, Constants.LEAGUE_NOT_FOUND ) )
+            res.status(404).send( Response.reject( Constants.NOT_FOUND, Constants.LEAGUE_NOT_FOUND, error ) )
         }
     }
     else
     {
-        res.status(400).send( Response.reject( Constants.BAD_REQUEST, leagueValid.error ) )
+        res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, null ) )
     }
 
 }
