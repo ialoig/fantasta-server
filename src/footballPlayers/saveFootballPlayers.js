@@ -4,7 +4,7 @@ import { Read } from "../utils";
 
 
 const printCorruptedPlayer = (footballPlayer_obj, reason) => {
-    console.error(`===== corrupted footballPlayer. Reason: ${reason}. ${JSON.stringify(footballPlayer_obj, null, 2)}`)
+    console.error(`corrupted footballPlayer. Reason: ${reason}. ${JSON.stringify(footballPlayer_obj, null, 2)}`)
 }
 
 const containsCorrectData = (footballPlayer_obj) => {
