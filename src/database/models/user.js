@@ -14,7 +14,7 @@ const userSchema = new Schema(
         },
         name: {
             type: String,
-            required: true
+            required: false
         },
         leagues: [{
             type: Schema.Types.ObjectId,
