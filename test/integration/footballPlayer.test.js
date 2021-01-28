@@ -1,113 +1,185 @@
-//"use strict";
-// const mongoose = require('mongoose');
+import "regenerator-runtime/runtime.js"
+import { containsCorrectData } from "../../src/footballPlayers/saveFootballPlayers"
 
-const FootballPlayer = require('../../src/database');
-const containsCorrectData = require('../../src/footballPlayers');
+const assert = require("assert")
 
+describe("FootballPlayer validation", function () {
+   
+    it(`should be able to validate footballPlayers`, done => {
 
-const assert = require("assert");
+        const footballPlayerList_obj = {
+            "1": {
+                id: 1,
+                name: "PIPPOTTO",
+                team: "Milan",
+                roleClassic: "P",
+                roleMantra: ["Pc"],
+                actualPrice: 25,
+                initialPrice: 26
+            },
+            "2": {
+                id: 2,
+                name: "INKUBO",
+                team: "Roma",
+                roleClassic: "D",
+                roleMantra: ["Dd", "Dc"],
+                actualPrice: 25,
+                initialPrice: 26
+            },
+            "3": {
+                id: 3,
+                name: "BELOX",
+                team: "Inter",
+                roleClassic: "C",
+                roleMantra: ["T", "A"],
+                actualPrice: 25,
+                initialPrice: 26
+            }
+        }
 
-const footballPlayerList_obj = {
-  "1": {
-    id: "1",
-    name: "PIPPOTTO",
-    team: "Roma",
-    roleClassic: "P",
-    roleMantra: ["Pc"],
-    actualPrice: 25,
-    initialPrice: 26
-  },
-  "2": {
-    id: "2",
-    name: "INKUBO",
-    team: "Roma",
-    roleClassic: "D",
-    roleMantra: ["Dd","Dc"],
-    actualPrice: 25,
-    initialPrice: 26
-  },
-  "3": {
-    id: "3",
-    name: "BELOX",
-    team: "Inter",
-    roleClassic: "C",
-    roleMantra: ["T","A"],
-    actualPrice: 25,
-    initialPrice: 26
-  }
-}
+        for (const [footballPlayerId, footballPlayer_obj] of Object.entries(footballPlayerList_obj)) {
+            assert.strictEqual(containsCorrectData(footballPlayer_obj), true)
+        }
+        done()
+    })
 
-const footballPlayerList_obj_wrong_actualPrice = {
-  "4": {
-    id: "4",
-    name: "ActualPrice wrong",
-    team: "aaa",
-    roleClassic: "P",
-    roleMantra: ["Por"],
-    actualPrice: -25,
-    initialPrice: 26
-  },
-}
+    it(`should be able to validate footballPlayerList with wrong id`, done => {
 
-const footballPlayerList_obj_wrong_roleClassic = {
-  "5": {
-    id: "5",
-    name: "roleClassic wrong",
-    team: "aaa",
-    roleClassic: "X",
-    roleMantra: ["Por"],
-    actualPrice: 25,
-    initialPrice: 26
-  },
-}
+        const footballPlayerList_obj_wrong_id = {
+            "4": {
+                id: -1,
+                name: "name1",
+                team: "team1",
+                roleClassic: "P",
+                roleMantra: ["Por"],
+                actualPrice: 25,
+                initialPrice: 26
+            }
+        }
 
-const footballPlayerList_obj_wrong_roleMantra = {
-  "6": {
-    id: "6",
-    name: "roleMantra wrong",
-    team: "aaa",
-    roleClassic: "P",
-    roleMantra: ["Portiere"],
-    actualPrice: 25,
-    initialPrice: 26
-  },
-}
+        for (const [footballPlayerId, footballPlayer_obj] of Object.entries(footballPlayerList_obj_wrong_id)) {
+            assert.strictEqual(containsCorrectData(footballPlayer_obj), false)
+        }
+        done()
+    })
 
+    it(`should be able to validate footballPlayerList with wrong name`, done => {
 
-describe("Database", function() {
-  //this.timeout(15000)
+        const footballPlayerList_obj_wrong_name = {
+            "4": {
+                id: 4,
+                name: "",
+                team: "team1",
+                roleClassic: "P",
+                roleMantra: ["Por"],
+                actualPrice: 25,
+                initialPrice: 26
+            }
+        }
 
-  // Drop users collection
-  beforeEach(done => {
-    try {
-      FootballPlayer.delete();
-    } catch (error) {
-      console.error(error);
-    }
-    done();
-  });
+        for (const [footballPlayerId, footballPlayer_obj] of Object.entries(footballPlayerList_obj_wrong_name)) {
+            assert.strictEqual(containsCorrectData(footballPlayer_obj), false)
+        }
+        done()
+    })
 
-  it(`should be able to validate footballPlayerList_obj`, done => {
+    it(`should be able to validate footballPlayerList with wrong team`, done => {
+
+        const footballPlayerList_obj_wrong_team = {
+            "4": {
+                id: 4,
+                name: "name1",
+                team: "",
+                roleClassic: "P",
+                roleMantra: ["Por"],
+                actualPrice: 25,
+                initialPrice: 26
+            }
+        }
+        
+        for (const [footballPlayerId, footballPlayer_obj] of Object.entries(footballPlayerList_obj_wrong_team)) {
+            assert.strictEqual(containsCorrectData(footballPlayer_obj), false)
+        }
+        done()
+    })
+
+    it(`should be able to validate footballPlayerList with wrong roleClassic`, done => {
+
+        const footballPlayerList_obj_wrong_roleClassic = {
+            "4": {
+                id: 4,
+                name: "name1",
+                team: "team1",
+                roleClassic: "Portiere",
+                roleMantra: ["Por"],
+                actualPrice: 25,
+                initialPrice: 26
+            }
+        }
+
+        for (const [footballPlayerId, footballPlayer_obj] of Object.entries(footballPlayerList_obj_wrong_roleClassic)) {
+            assert.strictEqual(containsCorrectData(footballPlayer_obj), false)
+        }
+        done()
+    })
     
-    for (const [footballPlayerId, footballPlayer_obj] of Object.entries(footballPlayerList_obj)) {
-      assert.strictEqual(containsCorrectData(footballPlayer_obj), true)
-    }
-    done();
-  });
+    it(`should be able to validate footballPlayerList with wrong roleMantra`, done => {
 
-  // Drop users collection
-  after(done => {
-    try {
-      FootballPlayer.delete();
-    } catch (error) {
-      console.error(error);
-    }
-    done();
-  });
+        const footballPlayerList_obj_wrong_roleMantra = {
+            "4": {
+                id: 4,
+                name: "name1",
+                team: "team1",
+                roleClassic: "P",
+                roleMantra: ["Portiere"],
+                actualPrice: 25,
+                initialPrice: 26
+            }
+        }
 
-  // Close connection
-  after(done => {
-    mongoose.connection.close();
-    done();
-  });
-}); // end Database
+        for (const [footballPlayerId, footballPlayer_obj] of Object.entries(footballPlayerList_obj_wrong_roleMantra)) {
+            assert.strictEqual(containsCorrectData(footballPlayer_obj), false)
+        }
+        done()
+    })
+
+    it(`should be able to validate footballPlayerList with wrong actualPrice`, done => {
+
+        const footballPlayerList_obj_wrong_actualPrice = {
+            "4": {
+                id: 4,
+                name: "name1",
+                team: "team1",
+                roleClassic: "P",
+                roleMantra: ["Por"],
+                actualPrice: -25,
+                initialPrice: 26
+            }
+        }
+
+        for (const [footballPlayerId, footballPlayer_obj] of Object.entries(footballPlayerList_obj_wrong_actualPrice)) {
+            assert.strictEqual(containsCorrectData(footballPlayer_obj), false)
+        }
+        done()
+    })
+
+    it(`should be able to validate footballPlayerList with wrong initialPrice`, done => {
+
+        const footballPlayerList_obj_wrong_initialPrice = {
+            "4": {
+                id: 4,
+                name: "name1",
+                team: "team1",
+                roleClassic: "P",
+                roleMantra: ["Por"],
+                actualPrice: 25,
+                initialPrice: -26
+            }
+        }
+
+        for (const [footballPlayerId, footballPlayer_obj] of Object.entries(footballPlayerList_obj_wrong_initialPrice)) {
+            assert.strictEqual(containsCorrectData(footballPlayer_obj), false)
+        }
+        done()
+    })
+})

@@ -4,7 +4,7 @@ import { Read } from "../utils";
 
 
 const printCorruptedPlayer = (footballPlayer_obj, reason) => {
-    console.error(`===== corrupted footballPlayer. Reason: ${reason}. ${JSON.stringify(footballPlayer_obj, null, 2)}`)
+    console.error(`corrupted footballPlayer. Reason: ${reason}. ${JSON.stringify(footballPlayer_obj, null, 2)}`)
 }
 
 const containsCorrectData = (footballPlayer_obj) => {
@@ -62,12 +62,10 @@ const containsCorrectData = (footballPlayer_obj) => {
     }
 
     const mantraRolesAllowed = ["Por", "Dd", "Ds", "Dc", "E", "M", "C", "W", "T", "A", "Pc"]
-    for (var i = 0; i < roleMantra.length; i++) {
-        if (!mantraRolesAllowed.includes(roleMantra[i])) {
-            let reason = "'roleMantra' value not allowed"
-            printCorruptedPlayer(footballPlayer_obj, reason)
-            return false;
-        }
+    if (!roleMantra.every(roleMantra => mantraRolesAllowed.includes(roleMantra))) {
+        let reason = "'roleMantra' value not allowed"
+        printCorruptedPlayer(footballPlayer_obj, reason)
+        return false;
     }
 
     // Check "actualPrice"
