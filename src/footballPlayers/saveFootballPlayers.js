@@ -181,7 +181,7 @@ const saveFootballPlayers = async (excelFilenameClassic, excelFilenameMantra) =>
                         if (error) {
                             console.error(error);
                         }
-                        //console.log(`FootballPlayer deleteStatus: ${JSON.stringify(deleteStatus, null, 2)}`);          
+                        //console.log(`FootballPlayer deleteStatus: ${JSON.stringify(deleteStatus, null, 2)}`);
                         // save new version of FootballPlayer collection
                         saveFootballPlayerWithVersion(footballPlayerList_obj, new Date().getTime())
                     });
@@ -204,4 +204,4 @@ const saveFootballPlayers = async (excelFilenameClassic, excelFilenameMantra) =>
     }
 }
 
-export { saveFootballPlayers, containsCorrectData };
+export { saveFootballPlayers, containsCorrectData, mergeRoles, getPlayersFromExcelContent };
