@@ -2,14 +2,14 @@
 import { League } from '../../../database'
 import { Constants, LeagueUtils, Response } from '../../../utils'
 import { Socket } from '../../../socket'
-import * as Token from '../../../token'
+import { tokenUtils } from '../../../utils'
 
 export const join = async ( req, res, next ) =>
 {
     let body = req.body || {}
     const { id='', name='', password='', team='' } = body
 
-    const token = Token.Get( req )
+    const token = tokenUtils.Get( req )
     
     if ( token && (id || name && password && team) )
     {
@@ -39,7 +39,7 @@ export const join = async ( req, res, next ) =>
             
             let auction = await AuctionConfig.findById( league.auction.id )
             
-            let tok = await Token.read( body.token, req )
+            let tok = await tokenUtils.Get( body.token, req )
 
             let user = await User.findById( tok.id )
                 

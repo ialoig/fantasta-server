@@ -3,6 +3,8 @@
 import mongoose, { connect, connection } from 'mongoose'
 import config from 'config'
 
+import { default as populate } from './populate'
+
 // use ES6 Promise instead of mongoose.Promise
 mongoose.Promise = Promise
 
@@ -52,3 +54,4 @@ const mongoConnectionParams = {
 connect( mongodbConnection, mongoConnectionParams )
 
 export { League, FootballPlayer, Team, User } from './models'
+export { populate }

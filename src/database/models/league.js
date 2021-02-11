@@ -1,85 +1,114 @@
 
 import { Schema, model } from 'mongoose'
+import _ from 'lodash'
 
 const leagueSchema = new Schema(
     {
         name: {
-            type: String,
-            required: true
+            type: Schema.Types.String,
+            required: true,
+            unique: true,
+            validate: {
+                validator: (v) => {
+                    return _.isString(v) && v.length<=40
+                },
+                message: props => `${props.value} is not a valid league name!`
+            }
         },
         password: {
-            type: String,
-            required: true
+            type: Schema.Types.String,
+            required: true,
+            validate: {
+                validator: (v) => {
+                    return _.isString(v) && v.length<=40
+                },
+                message: props => `${props.value} is not a valid password!`
+            }
         },
         admin: {
             type: Schema.Types.ObjectId,
             ref: "User",
             required: true
         },
-        numParticipants: {
-            type: Number,
-            required: true
-        },
-        type: {
-            type: String,
-            enum: [ "alphabetic", "call", "random" ],
-            required: true
-        },
-        numGoalkeeper: {
-            type: Number,
+        partecipants: {
+            type: Schema.Types.Number,
             required: true,
+            min: 2,
             validate: {
                 validator: Number.isInteger,
-                message: "{VALUE} is not an integer value for numGoalkeeper"
+                message: "{VALUE} is not an integer value for partecipants"
             }
         },
-        numDefenders: {
-            type: Number,
+        goalkeepers: {
+            type: Schema.Types.Number,
             required: true,
+            min: 1,
             validate: {
                 validator: Number.isInteger,
-                message: "{VALUE} is not an integer value for numDefenders"
+                message: "{VALUE} is not an integer value for goalkeeper"
             }
         },
-        numMidfielders: {
-            type: Number,
+        defenders: {
+            type: Schema.Types.Number,
             required: true,
+            min: 4,
             validate: {
                 validator: Number.isInteger,
-                message: "{VALUE} is not an integer value for numMidfielders"
+                message: "{VALUE} is not an integer value for defenders"
             }
         },
-        numStrikers: {
-            type: Number,
+        midfielders: {
+            type: Schema.Types.Number,
             required: true,
+            min: 4,
             validate: {
                 validator: Number.isInteger,
-                message: "{VALUE} is not an integer value for numStrikers"
+                message: "{VALUE} is not an integer value for midfielders"
             }
         },
-        teamBudget: {
-            type: Number,
+        strikers: {
+            type: Schema.Types.Number,
             required: true,
+            min: 2,
             validate: {
                 validator: Number.isInteger,
-                message: "{VALUE} is not an integer value for teamBudget"
+                message: "{VALUE} is not an integer value for strikers"
             }
         },
-        auctionCountdownSeconds: {
-            type: Number,
+        players: {
+            type: Schema.Types.Number,
             required: true,
+            min: 10,
             validate: {
                 validator: Number.isInteger,
-                message: "{VALUE} is not an integer value for auctionCountdownSeconds"
+                message: "{VALUE} is not an integer value for players"
+            }
+        },
+        budget: {
+            type: Schema.Types.Number,
+            required: true,
+            min: 11,
+            validate: {
+                validator: Number.isInteger,
+                message: "{VALUE} is not an integer value for budget"
+            }
+        },
+        countdown: {
+            type: Schema.Types.Number,
+            required: true,
+            min: 3,
+            validate: {
+                validator: Number.isInteger,
+                message: "{VALUE} is not an integer value for countdown"
             }
         },
         auctionType: {
-            type: String,
+            type: Schema.Types.String,
             enum: [ "alphabetic", "call", "random" ],
             required: true
         },
-        auctionStartPrice: {
-            type: String,
+        startPrice: {
+            type: Schema.Types.String,
             enum: [ "zero", "listPrice" ],
             required: true
         },

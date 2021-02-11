@@ -4,25 +4,24 @@ import { Schema, model } from 'mongoose'
 const teamSchema = new Schema(
     {
         name: {
-            type: String,
+            type: Schema.Types.String,
             required: true
         },
         footballPlayers: [{
-            type: Number,
+            type: Schema.Types.Number,
             required: false
         }],
         budget: {
-            type: Number,
+            type: Schema.Types.Number,
             required: true,
             validate: {
                 validator: Number.isInteger,
                 message: "{VALUE} is not an integer value for budget"
             }
         },
-        league: {
+        user: {
             type: Schema.Types.ObjectId,
-            ref: "League",
-            required: true
+            ref: "User"
         }
     },
     {

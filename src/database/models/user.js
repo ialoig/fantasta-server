@@ -4,22 +4,21 @@ import { Schema, model } from 'mongoose'
 const userSchema = new Schema(
     {
         email: {
-            type: String,
+            type: Schema.Types.String,
             required: true,
             unique: true
         },
         password: {
-            type: String,
+            type: Schema.Types.String,
             required: true
         },
         name: {
-            type: String,
+            type: Schema.Types.String,
             required: false
         },
         leagues: [{
             type: Schema.Types.ObjectId,
-            ref: "League",
-            required: false
+            ref: "League"
         }]
     },
     {

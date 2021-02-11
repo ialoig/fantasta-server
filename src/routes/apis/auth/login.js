@@ -2,8 +2,7 @@
 import config from 'config'
 
 import { User } from '../../../database'
-import { Constants, Response } from '../../../utils'
-import { Create } from '../../../token'
+import { Constants, Response, userUtils, tokenUtils } from '../../../utils'
 
 const login = async ( req, res, next ) =>
 {
@@ -27,15 +26,13 @@ const login = async ( req, res, next ) =>
                 delete user.password
                 delete user.uuid
                 
-                let data = {
-                    user: {
-                        leagues: user.leagues,
-                        id: user._id,
-                        email: user.email
-                    },
-                    token: Create( config.token.kid, email, password )
+                let usr = await userUtils.getUser( user )
+                let response = {
+                    user: usr,
+                    token: tokenUtils.Create( config.token.kid, email, password )
                 }
-                res.json( Response.resolve( Constants.OK, data ) )
+
+                res.json( Response.resolve( Constants.OK, response ) )
             }
             else
             {

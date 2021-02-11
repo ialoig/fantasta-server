@@ -76,4 +76,8 @@ const Get = ( req ) =>
     return auth[0]=='Bearer' ? auth[1] : auth[0]
 }
 
-export { Create, Verify, Get }
+export default {
+    Create,
+    Verify,
+    Get
+}

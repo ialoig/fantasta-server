@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { FootballPlayer } from "../database";
-import { Read } from "../utils";
+import { xlsxUtils } from "../utils";
 
 
 const printCorruptedPlayer = (footballPlayer_obj, reason) => {
@@ -150,8 +150,8 @@ const saveFootballPlayers = async (excelFilenameClassic, excelFilenameMantra) =>
     let start = process.hrtime()
 
     // Excel file to Json object
-    let excelContentClassic_obj = Read(excelFilenameClassic, 1);
-    let excelContentMantra_obj = Read(excelFilenameMantra, 1);
+    let excelContentClassic_obj = xlsxUtils.read(excelFilenameClassic, 1);
+    let excelContentMantra_obj = xlsxUtils.read(excelFilenameMantra, 1);
 
     if (excelContentClassic_obj.length > 0 && excelContentMantra_obj.length > 0) {
 

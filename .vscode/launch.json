@@ -20,13 +20,29 @@
         //     "runtimeExecutable": "/usr/bin/node",
         //     "cwd": "${workspaceFolder}"
         // },
+        // {
+        //     "type": "node",
+        //     "request": "launch",
+        //     "name": "Launch Program",
+        //     "program": "${workspaceFolder}/fantasta.js",
+        //     "runtimeExecutable": "node",
+        //     "cwd": "${workspaceFolder}",
+        //     "sourceMaps": true,
+        //     "runtimeArgs": ["npm run debug"]
+        // },
         {
-            "type": "node",
+            "name": "Launch via NPM",
             "request": "launch",
-            "name": "Launch Program",
-            "program": "${workspaceFolder}/fantasta.js",
-            "runtimeExecutable": "C:/Program Files/nodejs/node.exe",
-            "cwd": "${workspaceFolder}"
+            "runtimeArgs": [
+                "run-script",
+                "debug"
+            ],
+            "runtimeExecutable": "npm",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "pwa-node",
+            "env": { "NODE_ENV": "dev" }
         }
     ]
 }

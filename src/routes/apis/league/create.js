@@ -1,61 +1,54 @@
 
-import { AuctionConfig, Commons, League } from '../../../database'
-import { Constants, LeagueUtils, Response } from '../../../utils'
+import { League, Team, populate } from '../../../database'
+import { Constants, Response, leagueUtils, userUtils } from '../../../utils'
+
 import { Socket } from '../../../socket'
 
 export const create = async ( req, res, next ) =>
 {
     //todo: send metric (League.create api call)
 
-    let leagueData = req.body && req.body.league || {}
-    let settings = req.body && req.body.settings || {}
+    let leagueData = req.body || {}
 
-    var leagueValid = LeagueUtils.validateleague(leagueData, true)
-    var settingsValid = LeagueUtils.validateSettings(settings)
+    let auth = await userUtils.userFromToken( req )
+    let league = leagueUtils.validateleague( leagueData )
 
-    if ( leagueValid.valid && settingsValid.valid )
+    if ( auth && league.valid )
     {
-        let user = null
         try
         {
-            user = await verifyToken( params.token )
-        }
-        catch (error)
-        {
-            console.error(error)
-            res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, error ) )
-        }
+            let user = auth.user
 
-        var newAuct = AuctionConfig({ user, leagueData, settings })
-        var newLeag = League({ leagueData, user, newAuct })
+            let newTeam = await Team.create({
+                name: leagueData.teamname,
+                budget: leagueData.budget,
+                user: user._id
+            })
 
-        var leag = {
-            leagueId: newLeag.id,
-            leagueName: newLeag.name,
-            username: leagueData.username,
-            admin: true,
-        }
-        var newvalues = { $push: {'leagues': leag} }
+            let settings = league.settings
+            settings.admin = user._id
+            settings.teams = [ newTeam._id ]
 
-        try
-        {
-            await Commons.update( user, newvalues )
-            let newLeague = await Commons.save( newLeag )
-            await Commons.save( newAuct )
+            let newLeague = await League.create(settings)
 
-            let user = await user.findById( user.id )
-            
-            var attendees = LeagueUtils.getleagueObj(newLeague).attendees
-            var resp = {
-                league: newLeague.id,
-                full: false,
-                attendees: attendees
+            user.leagues.push( newLeague )
+            await user.save()
+
+            // Socket.addAttendee( req, newLeag.name, '' )
+            // Socket.leagueCreate( req, newLeag.name, '' )
+
+            let usr1 = await populate.user( user )
+            let lg1 = await populate.league( newLeague )
+            let tm1 = await populate.team( newTeam )
+
+            let response = {
+                user: userUtils.parseUser( usr1 ),
+                league: leagueUtils.parseLeague( lg1 ),
+                team: leagueUtils.parseTeam( tm1 ),
             }
 
-            Socket.addAttendee( req, newLeag.name, '' )
-            Socket.leagueCreate( req, newLeag.name, '' )
+            res.json( Response.resolve(Constants.OK, response) )
 
-            res.json( Response.resolve(Constants.OK, resp) )
         }
         catch (error)
         {
@@ -65,7 +58,7 @@ export const create = async ( req, res, next ) =>
     }
     else
     {
-        res.status(400).send( Response.reject( Constants.BAD_REQUEST, !leagueValid.valid ? leagueValid.error : settingsValid.error ) )
+        res.status(400).send( Response.reject( Constants.BAD_REQUEST, league.error ) )
     }
 
 }

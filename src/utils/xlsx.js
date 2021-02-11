@@ -1,7 +1,7 @@
 
-import { readFile, utils } from 'xlsx'
+import { utils } from 'xlsx'
 
-const Read = (fileName, skipRows) =>
+const read = (fileName, skipRows) =>
 {
     console.log(`Reading file: ${fileName}. Skipping ${skipRows} rows`)
 
@@ -9,7 +9,7 @@ const Read = (fileName, skipRows) =>
 
     try
     {
-        file = readFile( './' + fileName )
+        // file = readFile( './' + fileName )
     }
     catch (error)
     {
@@ -39,5 +39,7 @@ const Read = (fileName, skipRows) =>
     return excelContent_obj
 }
 
-export { Read }
+export default {
+    read
+}
 

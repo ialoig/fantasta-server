@@ -3,8 +3,7 @@ import Validator from 'validator'
 import config from 'config'
 
 import { User } from '../../../database'
-import { Constants, PASSWORD_OPT, Response } from '../../../utils'
-import { Create } from '../../../token'
+import { Constants, PASSWORD_OPT, Response, tokenUtils } from '../../../utils'
 
 const register = async ( req, res, next ) =>
 {
@@ -15,21 +14,17 @@ const register = async ( req, res, next ) =>
 
     if ( email && password && Validator.isEmail(email) && Validator.isStrongPassword( password, PASSWORD_OPT ) )
     {
-        let newUser = User({ email, password })
-
         try
         {
-            let user = await newUser.save()
-
-            let data = {
-                user: {
-                    leagues: user.leagues,
-                    id: user._id,
-                    email: user.email
-                },
-                token: Create( config.token.kid, email, password )
+            let user = await User.create({ email, password })
+            
+            let usr = await userUtils.getUser( user )
+            let response = {
+                user: usr,
+                token: tokenUtils.Create( config.token.kid, email, password )
             }
-            res.json( Response.resolve( Constants.OK, data) )
+
+            res.json( Response.resolve( Constants.OK, response) )
         }
         catch (error)
         {
