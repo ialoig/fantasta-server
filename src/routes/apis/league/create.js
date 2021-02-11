@@ -34,9 +34,6 @@ export const create = async ( req, res, next ) =>
             user.leagues.push( newLeague )
             await user.save()
 
-            // Socket.addAttendee( req, newLeag.name, '' )
-            // Socket.leagueCreate( req, newLeag.name, '' )
-
             let usr1 = await populate.user( user )
             let lg1 = await populate.league( newLeague )
             let tm1 = await populate.team( newTeam )
@@ -46,6 +43,11 @@ export const create = async ( req, res, next ) =>
                 league: leagueUtils.parseLeague( lg1 ),
                 team: leagueUtils.parseTeam( tm1 ),
             }
+
+            //TODO: preparare socket per eventi
+
+            // Socket.addAttendee( req, newLeag.name, '' )
+            // Socket.leagueCreate( req, newLeag.name, '' )
 
             res.json( Response.resolve(Constants.OK, response) )
 
