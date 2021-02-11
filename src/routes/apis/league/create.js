@@ -45,12 +45,10 @@ export const create = async ( req, res, next ) =>
             }
 
             //TODO: preparare socket per eventi
-
             // Socket.addAttendee( req, newLeag.name, '' )
             // Socket.leagueCreate( req, newLeag.name, '' )
 
             res.json( Response.resolve(Constants.OK, response) )
-
         }
         catch (error)
         {
@@ -62,5 +60,4 @@ export const create = async ( req, res, next ) =>
     {
         res.status(400).send( Response.reject( Constants.BAD_REQUEST, league.error ) )
     }
-
 }
