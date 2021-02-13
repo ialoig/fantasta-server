@@ -12,7 +12,7 @@ describe("FootballPlayer validation", function () {
                 id: 1,
                 name: "PIPPOTTO",
                 team: "Milan",
-                roleClassic: "P",
+                roleClassic: "A",
                 roleMantra: ["Pc"],
                 actualPrice: 25,
                 initialPrice: 26

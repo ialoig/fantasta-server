@@ -6,7 +6,7 @@
   "scripts": {
     "build": "babel src --out-dir ./dist --source-maps",
     "serve": "pm2 start dist/index.js",
-    "test": "nyc mocha test/integration/*.test.js --exit",
+    "test": "nyc mocha test/unit-test/*.test.js --exit",
     "start": "npm run build && nodemon --exec babel-node ./fantasta.js",
     "debug": "npm run build && nodemon --exec babel-node --legacy-watch --watch src --inspect=0.0.0.0:9222 --nolazy ./fantasta.js",
     "docker-debug": "docker-compose -f ./docker-compose.yml -f ./docker-compose.debug.yml up --build",
