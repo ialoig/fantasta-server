@@ -6,10 +6,10 @@ import { userUtils } from '../../../utils'
 const token = async ( req, res, next ) =>
 {
     //todo: send metric (token api call)
-    
-    let auth = await userUtils.userFromToken( req )
-    if ( auth.user && auth.token )
+    try
     {
+        let auth = await userUtils.userFromToken( req )
+        
         let usr = await userUtils.getUser( auth.user )
         let response = {
             user: usr,
@@ -18,10 +18,11 @@ const token = async ( req, res, next ) =>
 
         res.json( Response.resolve( Constants.OK, response) )
     }
-    else
+    catch (error)
     {
-        res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, null ) )
+        console.error('Token: ', error)
+        res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, null ) )   
     }
-};
+}
 
 export default token

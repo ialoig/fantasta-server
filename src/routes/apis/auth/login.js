@@ -19,6 +19,7 @@ const login = async ( req, res, next ) =>
 
             if ( !user )
             {
+                console.error('Login: ', Constants.NOT_FOUND)
                 res.status(404).send( Response.reject( Constants.NOT_FOUND, Constants.USER_NOT_FOUND, null ) )
             }
             else if ( user && user.password && user.password==password )
@@ -36,19 +37,21 @@ const login = async ( req, res, next ) =>
             }
             else
             {
+                console.error('Login: ', Constants.BAD_REQUEST)
                 res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.WRONG_PASSWORD, null ) )
             }
         }
         catch (error)
         {
-            console.error(error)
+            console.error('Login: ', error)
             res.status(404).send( Response.reject( Constants.NOT_FOUND, Constants.USER_NOT_FOUND, error ) )
         }
     }
     else
     {
+        console.error('Register: PARAMS_ERROR')
         res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, null ) )
     }
-};
+}
 
 export default login

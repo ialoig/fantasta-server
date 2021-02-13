@@ -6,31 +6,31 @@ import { default as Token } from './token'
 
 const userFromToken = async ( req ) =>
 {
-    let data = null
-    
-    const token = Token.Get( req )
-    if ( token )
+    try
     {
-        try
+        const token = Token.Get( req )
+        if ( token )
         {
             let auth = Token.Verify( token, config.token.kid )
             let user = await User.findOne({ email: auth.email })
 
             if ( user && auth && user.password && user.password==auth.password )
             {
-                data = {
+                let data = {
                     user,
                     token: auth.token
                 }
+                return Promise.resolve( data )
             }
         }
-        catch (error)
-        {
-            console.error(error)
-        }
+        return Promise.reject('UserFromToken -> EMPTY_TOKEN')
     }
+    catch (error)
+    {
+        console.error('UserFromToken: ', error)
 
-    return Promise.resolve( data )
+        return Promise.reject(error)
+    }
 }
 
 const getUser = async ( user ) =>
@@ -62,7 +62,6 @@ const parseUser = ( user ) =>
         usr.leagues.push({
             _id: league._id.toString(),
             name: league.name,
-            password: league.password,
             createdAt: league.createdAt.toISOString(),
             updatedAt: league.updatedAt.toISOString(),
             team: {

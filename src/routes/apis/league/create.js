@@ -8,56 +8,52 @@ export const create = async ( req, res, next ) =>
 {
     //todo: send metric (League.create api call)
 
-    let leagueData = req.body || {}
-
-    let auth = await userUtils.userFromToken( req )
-    let league = leagueUtils.validateleague( leagueData )
-
-    if ( auth && league.valid )
+    try
     {
-        try
-        {
-            let user = auth.user
+        let leagueData = req.body || {}
+        let leagueSettings = leagueUtils.validateleague( leagueData )
+        const teamName = leagueData.teamname
 
-            let newTeam = await Team.create({
-                name: leagueData.teamname,
-                budget: leagueData.budget,
-                user: user._id
-            })
+        const auth = await userUtils.userFromToken( req )
+        let user = auth.user
+        const userId = user._id
 
-            let settings = league.settings
-            settings.admin = user._id
-            settings.teams = [ newTeam._id ]
+        let newTeam = await Team.create({
+            name: teamName,
+            budget: leagueSettings.budget,
+            user: userId
+        })
+        
+        leagueSettings.admin = userId
+        leagueSettings.teams = [ newTeam._id ]
 
-            let newLeague = await League.create(settings)
+        let newLeague = await League.create(leagueSettings)
 
-            user.leagues.push( newLeague )
-            await user.save()
+        newTeam.league = newLeague._id
+        await newTeam.save()
 
-            let usr1 = await populate.user( user )
-            let lg1 = await populate.league( newLeague )
-            let tm1 = await populate.team( newTeam )
+        user.leagues.push( newLeague._id )
+        await user.save()
 
-            let response = {
-                user: userUtils.parseUser( usr1 ),
-                league: leagueUtils.parseLeague( lg1 ),
-                team: leagueUtils.parseTeam( tm1 ),
-            }
+        let usr1 = await populate.user( user )
+        let lg1 = await populate.league( newLeague )
+        let tm1 = await populate.team( newTeam )
 
-            //TODO: preparare socket per eventi
-            // Socket.addAttendee( req, newLeag.name, '' )
-            // Socket.leagueCreate( req, newLeag.name, '' )
-
-            res.json( Response.resolve(Constants.OK, response) )
+        let response = {
+            user: userUtils.parseUser( usr1 ),
+            league: leagueUtils.parseLeague( lg1 ),
+            team: leagueUtils.parseTeam( tm1 ),
         }
-        catch (error)
-        {
-            console.error(error)
-            res.status(500).send( Response.reject( Constants.INT_SERV_ERR, Constants.INT_SERV_ERR, error ) )
-        }
+
+        //TODO: preparare socket per eventi
+        // Socket.addAttendee( req, newLeag.name, '' )
+        // Socket.leagueCreate( req, newLeag.name, '' )
+
+        res.json( Response.resolve(Constants.OK, response) )
     }
-    else
+    catch (error)
     {
-        res.status(400).send( Response.reject( Constants.BAD_REQUEST, league.error ) )
+        console.error('League Create: ',error)
+        res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, error ) )
     }
 }

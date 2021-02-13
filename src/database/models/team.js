@@ -22,6 +22,10 @@ const teamSchema = new Schema(
         user: {
             type: Schema.Types.ObjectId,
             ref: "User"
+        },
+        league: {
+            type: Schema.Types.ObjectId,
+            ref: "League"
         }
     },
     {

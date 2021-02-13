@@ -3,7 +3,7 @@ import Validator from 'validator'
 import config from 'config'
 
 import { User } from '../../../database'
-import { Constants, PASSWORD_OPT, Response, tokenUtils } from '../../../utils'
+import { Constants, PASSWORD_OPT, Response, tokenUtils, userUtils } from '../../../utils'
 
 const register = async ( req, res, next ) =>
 {
@@ -28,12 +28,13 @@ const register = async ( req, res, next ) =>
         }
         catch (error)
         {
-            console.error(error)
+            console.error('Register: ', error)
             res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.USER_PRESENT, error ) )
         }
     }
     else
     {
+        console.error('Register: PARAMS_ERROR')
         res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, null ) )
     }
 }

@@ -8,6 +8,7 @@ const leagueSchema = new Schema(
             type: Schema.Types.String,
             required: true,
             unique: true,
+            index: true,
             validate: {
                 validator: (v) => {
                     return _.isString(v) && v.length<=40
@@ -30,13 +31,13 @@ const leagueSchema = new Schema(
             ref: "User",
             required: true
         },
-        partecipants: {
+        participants: {
             type: Schema.Types.Number,
             required: true,
             min: 2,
             validate: {
                 validator: Number.isInteger,
-                message: "{VALUE} is not an integer value for partecipants"
+                message: "{VALUE} is not an integer value for participants"
             }
         },
         goalkeepers: {

@@ -17,7 +17,7 @@ const user = ( user ) =>
 const league = ( league ) =>
 {
     return new Promise((resolve, reject) => {
-        league.populate({ path: 'admin teams', populate: { path: 'user' } })
+        league.populate({ path: 'admin teams', populate: { path: 'user league' } })
         .execPopulate(
             (err, leg) => {
                 if ( err ) {
@@ -32,7 +32,7 @@ const league = ( league ) =>
 const team = ( team ) =>
 {
     return new Promise((resolve, reject) => {
-        team.populate('user')
+        team.populate('user league')
         .execPopulate(
             (err, tm) => {
                 if ( err ) {

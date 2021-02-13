@@ -15,82 +15,78 @@ const errors = {
 
 const validateleague = ( leagueData ) =>
 {
-    var ret = {
-        valid: false,
-        settings: {},
-        error: ''
-    }
+    let error = ''
 
     if ( !leagueData.name )
     {
-        ret.error = errors.LEAGUE_NAME_ERROR
+        error = errors.LEAGUE_NAME_ERROR
     }
     else if ( !leagueData.password )
     {
-        ret.error = errors.LEAGUE_PASSWORD_ERROR
+        error = errors.LEAGUE_PASSWORD_ERROR
     }
     else if ( !leagueData.teamname )
     {
-        ret.error = errors.TEAM_ERROR
+        error = errors.TEAM_ERROR
     }
     else if ( ![ "alphabetic", "call", "random" ].includes(leagueData.auctionType) )
     {
-        ret.error = errors.AUCTION_TYPE_ERROR
+        error = errors.AUCTION_TYPE_ERROR
     }
     else if ( ![ "zero", "listPrice" ].includes(leagueData.startPrice) )
     {
-        ret.error = errors.START_PRICE_ERROR
+        error = errors.START_PRICE_ERROR
     }
-    else if ( parseInt(leagueData.partecipants)<2 )
+    else if ( parseInt(leagueData.participants)<2 )
     {
-        ret.error = errors.ATTENDEES_ERROR
+        error = errors.ATTENDEES_ERROR
     }
     else if ( parseInt(leagueData.goalkeepers)<1 )
     {
-        ret.error = errors.PLAYERS_NUMBER_ERROR
+        error = errors.PLAYERS_NUMBER_ERROR
     }
     else if ( parseInt(leagueData.defenders)<4 )
     {
-        ret.error = errors.PLAYERS_NUMBER_ERROR
+        error = errors.PLAYERS_NUMBER_ERROR
     }
     else if ( parseInt(leagueData.midfielders)<4 )
     {
-        ret.error = errors.PLAYERS_NUMBER_ERROR
+        error = errors.PLAYERS_NUMBER_ERROR
     }
     else if ( parseInt(leagueData.strikers)<2 )
     {
-        ret.error = errors.PLAYERS_NUMBER_ERROR
+        error = errors.PLAYERS_NUMBER_ERROR
     }
     else if ( parseInt(leagueData.players)<10 )
     {
-        ret.error = errors.PLAYERS_NUMBER_ERROR
+        error = errors.PLAYERS_NUMBER_ERROR
     }
     else if ( parseInt(leagueData.budget)<11 )
     {
-        ret.error = errors.BUDGET_ERROR
+        error = errors.BUDGET_ERROR
     }
     else if ( parseInt(leagueData.countdown)<3 )
     {
-        ret.error = errors.COUNTDOWN_ERROR
+        error = errors.COUNTDOWN_ERROR
     }
     else
     {
-        ret.valid = true
-
-        ret.settings.name = _.toString(leagueData.name)
-        ret.settings.password = _.toString(leagueData.password)
-        ret.settings.auctionType = leagueData.auctionType
-        ret.settings.startPrice = leagueData.startPrice
-        ret.settings.partecipants = parseInt(leagueData.partecipants)
-        ret.settings.goalkeepers = parseInt(leagueData.goalkeepers)
-        ret.settings.defenders = parseInt(leagueData.defenders)
-        ret.settings.midfielders = parseInt(leagueData.midfielders)
-        ret.settings.strikers = parseInt(leagueData.strikers)
-        ret.settings.players = parseInt(leagueData.players)
-        ret.settings.budget = parseInt(leagueData.budget)
-        ret.settings.countdown = parseInt(leagueData.countdown)
+        return {
+            name: _.toString(leagueData.name),
+            password: _.toString(leagueData.password),
+            auctionType: leagueData.auctionType,
+            startPrice: leagueData.startPrice,
+            participants: parseInt(leagueData.participants),
+            goalkeepers: parseInt(leagueData.goalkeepers),
+            defenders: parseInt(leagueData.defenders),
+            midfielders: parseInt(leagueData.midfielders),
+            strikers: parseInt(leagueData.strikers),
+            players: parseInt(leagueData.players),
+            budget: parseInt(leagueData.budget),
+            countdown: parseInt(leagueData.countdown)
+        }
     }
-    return ret
+    throw error
 }
 
 const parseLeague = ( league ) =>
@@ -111,7 +107,7 @@ const parseLeague = ( league ) =>
         goalkeepers: league.goalkeepers,
         midfielders: league.midfielders,
         name: league.name,
-        partecipants: league.partecipants,
+        participants: league.participants,
         password: league.password,
         players: league.players,
         startPrice: league.startPrice,
