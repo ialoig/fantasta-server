@@ -17,11 +17,10 @@ services:
 
   fantasta_server:
     container_name: fantasta_server
-    image: fantasta_server:latest # use this image if already present in the local machine, build it otherwise
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile
-    build: .
+    image: fantasta_server:latest
+    build:
+       context: .
+       dockerfile: Dockerfile
     restart: always
     # deploy:
     #   replicas: 1
@@ -35,6 +34,43 @@ services:
       - fantastacore_mongo
     #command: overwritten in the docker-compose.[environment].yml
 
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:v2.24.1
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prometheus_data:/prometheus
+    deploy:
+      replicas: 1
+    ports:
+      - "9090:9090"
+    networks: 
+      -  default
+    links:
+      - fantasta_server
+    logging:
+      driver: none
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:7.3.7
+    volumes:
+      - ./grafana/datasources:/etc/grafana/provisioning/datasources
+      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - grafana_data:/var/lib/grafana
+    deploy:
+      replicas: 1
+    ports:
+      - "3001:3000"
+    networks: 
+      -  default
+    links:
+      - prometheus
+    logging:
+      driver: none
+
 volumes:
   mongodata:
     driver: local
+  prometheus_data: {}
+  grafana_data: {}

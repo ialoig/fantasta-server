@@ -1,22 +1,11 @@
 
-import { utils } from 'xlsx'
-
+import { readFile, utils } from 'xlsx'
 const read = (fileName, skipRows) =>
 {
     console.log(`Reading file: ${fileName}. Skipping ${skipRows} rows`)
 
-    let file = {}
-
-    try
-    {
-        // file = readFile( './' + fileName )
-    }
-    catch (error)
-    {
-        console.error(`Error reading file: ${fileName}. ${error}`)
-        // todo: send metric (Error reading file)
-    }
-
+    let file = readFile( './' + fileName )
+    
     let excelContent_obj = []
 
     if ( file && file.Sheets )

@@ -20,4 +20,7 @@ routing.route("/league/join").put(apis.league.join)
 //----- PLAYERS APIS -----//
 routing.route("/footballPlayers").get(apis.footballPlayers.get)
 
+//----- METRICS APIS -----//
+routing.route("/metrics").get(apis.metrics.get)
+
 export default routing;

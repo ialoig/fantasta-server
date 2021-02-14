@@ -10,6 +10,7 @@
     "start": "npm run build && nodemon --exec babel-node ./fantasta.js",
     "debug": "npm run build && nodemon --exec babel-node --legacy-watch --watch src --inspect=0.0.0.0:9222 --nolazy ./fantasta.js",
     "docker-debug": "docker-compose -f ./docker-compose.yml -f ./docker-compose.debug.yml up --build",
+    "docker-debug2": "docker-compose -f ./docker-compose.yml -f ./docker-compose.debug.yml up -d --build && docker-compose logs -f fantasta_server",
     "docker-test": "docker-compose -f ./docker-compose.yml -f ./docker-compose.test.yml up -d --build && docker exec -it fantasta_server npm run test && docker-compose down",
     "docker-prod": "docker-compose -f ./docker-compose.yml -f ./docker-compose.prod.yml up --build",
     "docker-build": "docker-compose build"
@@ -25,6 +26,7 @@
     "node-mandrill": "^1.0.1",
     "node-schedule": "1.3.2",
     "pm2": "^4.5.0",
+    "prom-client": "^13.1.0",
     "pug": "^3.0.0",
     "serve-favicon": "^2.5.0",
     "socket.io": "3.0.4",

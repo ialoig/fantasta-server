@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { FootballPlayer } from "../database";
 import { xlsxUtils } from "../utils";
-
+import { secondsFrom, load_footballPlayer_duration_seconds } from "../metrics"
 
 const printCorruptedPlayer = (footballPlayer_obj, reason) => {
     console.error(`corrupted footballPlayer. Reason: ${reason}. ${JSON.stringify(footballPlayer_obj, null, 2)}`)
@@ -147,11 +147,30 @@ const saveFootballPlayerWithVersion = async (footballPlayerList_obj, version) =>
 const saveFootballPlayers = async (excelFilenameClassic, excelFilenameMantra) => {
 
     // use to measure execution time
-    let start = process.hrtime()
+    let duration_start = process.hrtime()
 
     // Excel file to Json object
-    let excelContentClassic_obj = xlsxUtils.read(excelFilenameClassic, 1);
-    let excelContentMantra_obj = xlsxUtils.read(excelFilenameMantra, 1);
+    let excelContentClassic_obj = {}
+    let excelContentMantra_obj = {}
+    try
+    {
+        excelContentClassic_obj = xlsxUtils.read(excelFilenameClassic, 1);
+    }
+    catch (error)
+    {
+        console.error(`Error reading file: ${excelFilenameClassic}. ${error}`)
+        load_footballPlayer_duration_seconds.observe({ status: "error", msg: "readClassicExcelFile"}, secondsFrom(duration_start))
+    }
+
+    try
+    {
+        excelContentMantra_obj = xlsxUtils.read(excelFilenameMantra, 1);
+    }
+    catch (error)
+    {
+        console.error(`Error reading file: ${excelFilenameMantra}. ${error}`)
+        load_footballPlayer_duration_seconds.observe({ status: "error", msg: "readMantraExcelFile"}, secondsFrom(duration_start))
+    }
 
     if (excelContentClassic_obj.length > 0 && excelContentMantra_obj.length > 0) {
 
@@ -163,16 +182,15 @@ const saveFootballPlayers = async (excelFilenameClassic, excelFilenameMantra) =>
         let footballPlayerList_obj = mergeRoles(footballPlayerListClassic_obj, footballPlayerListMantra_obj)
 
         // Update FootballPlayer table
-        FootballPlayer.findOne((error, footballPlayerListOld_obj) => {
-            if (error) {
-                console.error(error);
-            }
+        try
+        {
+            let footballPlayerListOld_obj = await FootballPlayer.findOne()
+
             // There is an existing version of FootballPlayer collection in the DB
             if (footballPlayerListOld_obj && footballPlayerListOld_obj.footballPlayers) {
 
-                let versionOld = footballPlayerListOld_obj.version
-
                 // Check if an update is needed
+                let versionOld = footballPlayerListOld_obj.version
                 let equals = _.isEqual(footballPlayerListOld_obj.footballPlayers, footballPlayerList_obj);
                 if (!equals) {
                     console.log(`FootballPlayer collection has to be updated`);
@@ -197,10 +215,14 @@ const saveFootballPlayers = async (excelFilenameClassic, excelFilenameMantra) =>
                 saveFootballPlayerWithVersion(footballPlayerList_obj, new Date().getTime())
             }
 
-            let end = process.hrtime(start)
-            //todo: send metric (loading time)
-            console.info(`saveFootballPlayers() execution time: ${end[0]}s ${end[1] / 1000000}ms`)
-        });
+            console.info(`saveFootballPlayers() execution time: ${secondsFrom(duration_start)} seconds`)
+            load_footballPlayer_duration_seconds.observe({ status: "success", msg: ""}, secondsFrom(duration_start))
+        }
+        catch (error)
+        {
+            console.error(error)
+            load_footballPlayer_duration_seconds.observe({ status: "error", msg: error}, secondsFrom(duration_start))
+        }
     }
 }
 
