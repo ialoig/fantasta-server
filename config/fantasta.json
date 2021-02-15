@@ -5,7 +5,7 @@
         "hour": 3
     },
     "mongodb": {
-        "endpoint": "mongodb://fantastacore_mongo",
+        "endpoint": "mongodb://fantasta_mongo",
         "port": 27017,
         "database": "fantasta"
     }

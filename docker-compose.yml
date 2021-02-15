@@ -2,8 +2,8 @@ version: "3"
 
 services:
 
-  fantastacore_mongo:
-    container_name: fantastacore_mongo
+  fantasta_mongo:
+    container_name: fantasta_mongo
     image: mongo:4.4.2-bionic
     restart: always
     deploy:
@@ -29,9 +29,9 @@ services:
     networks: 
       -  default
     depends_on:
-      - fantastacore_mongo
+      - fantasta_mongo
     links:
-      - fantastacore_mongo
+      - fantasta_mongo
     #command: overwritten in the docker-compose.[environment].yml
 
   prometheus:

@@ -5,10 +5,9 @@ import { secondsFrom, api_duration_seconds } from "../../../metrics"
 
 export const get = async (req, res, next) => {
 
-    // use to measure execution time
+    // used to measure execution time
     let duration_start = process.hrtime()
 
-    //todo: send metric (footballPlayer.get api call)
     try
     {
         let footballPlayers = await FootballPlayer.findOne()
@@ -30,17 +29,12 @@ export const get = async (req, res, next) => {
             let dbVersion = footballPlayers.version ? parseInt(footballPlayers.version) : 0
             let mobileVersion = req.query.version ? parseInt(req.query.version) : 0
 
-            console.error(`dbVersion: ${dbVersion}`)
-            console.error(`mobileVersion: ${mobileVersion}`)
-            console.error(`footballPlayers: ${footballPlayers}`);
-            console.error(`footballPlayers (obj): ${JSON.stringify(footballPlayers, null, 2)}`);
-
             response = {
                 version: dbVersion,
                 footballPlayers: dbVersion === mobileVersion ? {} : footballPlayers.footballPlayers,
                 updated: mobileVersion !== dbVersion,
             }
-            api_duration_seconds.observe({ name: "footballPlayer.get", status: "success", msg: ""}, secondsFrom(duration_start))
+            api_duration_seconds.observe({ name: "footballPlayer.get", status: "success", msg: `${Buffer.byteLength(JSON.stringify(response), 'utf8')}`}, secondsFrom(duration_start))
             res.json( Response.resolve(Constants.OK, response) )
         }
     }

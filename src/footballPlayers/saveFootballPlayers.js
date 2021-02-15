@@ -146,7 +146,7 @@ const saveFootballPlayerWithVersion = async (footballPlayerList_obj, version) =>
 
 const saveFootballPlayers = async (excelFilenameClassic, excelFilenameMantra) => {
 
-    // use to measure execution time
+    // used to measure execution time
     let duration_start = process.hrtime()
 
     // Excel file to Json object

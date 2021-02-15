@@ -305,7 +305,7 @@
           "expr": "api_duration_seconds_sum{status=\"success\"}*1000",
           "hide": false,
           "interval": "",
-          "legendFormat": "{{name}} - {{status}}",
+          "legendFormat": "{{name}} - {{status}}: payload {{msg}} bytes",
           "refId": "A"
         }
       ],
@@ -471,5 +471,5 @@
   "timezone": "browser",
   "title": "Fantasta Server",
   "uid": "hghajaEMk",
-  "version": 1
+  "version": 3
 }
