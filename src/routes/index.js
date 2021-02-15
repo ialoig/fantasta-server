@@ -11,6 +11,7 @@ routing.route("/auction").get(apis.auction.get)
 routing.route("/auth/token").post(apis.auth.token)
 routing.route("/auth/login").put(apis.auth.login)
 routing.route("/auth/register").post(apis.auth.register)
+routing.route("/auth/update").post(apis.auth.update)
 
 //----- LEAGUE APIS -----//
 routing.route("/league").get(apis.league.present)
