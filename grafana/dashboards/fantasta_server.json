@@ -110,6 +110,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:147",
           "format": "dtdurations",
           "label": null,
           "logBase": 1,
@@ -118,6 +119,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:148",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -302,10 +304,10 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "api_duration_seconds_sum{status=\"success\"}*1000",
+          "expr": "(rate(api_duration_seconds_sum{status=\"success\"}[1m])/rate(api_duration_seconds_count{status=\"success\"}[1m]))*1000",
           "hide": false,
           "interval": "",
-          "legendFormat": "{{name}} - {{status}}: payload {{msg}} bytes",
+          "legendFormat": "{{name}} - {{status}} - payload {{msg}} bytes",
           "refId": "A"
         }
       ],
@@ -329,7 +331,8 @@
       },
       "yaxes": [
         {
-          "format": "dtdurationms",
+          "$$hashKey": "object:51",
+          "format": "short",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -337,6 +340,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:52",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -435,6 +439,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:149",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -443,6 +448,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:150",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -471,5 +477,5 @@
   "timezone": "browser",
   "title": "Fantasta Server",
   "uid": "hghajaEMk",
-  "version": 3
+  "version": 1
 }
