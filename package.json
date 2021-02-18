@@ -9,7 +9,7 @@
     "test": "nyc mocha test/unit-test/*.test.js --exit",
     "start": "npm run build && nodemon --exec babel-node ./fantasta.js",
     "debug": "npm run build && nodemon --exec babel-node --legacy-watch --watch src --inspect=0.0.0.0:9222 --nolazy ./fantasta.js",
-    "docker-debug": "docker-compose -f ./docker-compose.yml -f ./docker-compose.debug.yml up --build",
+    "docker-debug": "docker-compose -f ./docker-compose.yml -f ./docker-compose.debug.yml up --build --remove-orphans",
     "docker-test": "docker-compose -f ./docker-compose.yml -f ./docker-compose.test.yml up -d --build && docker exec -it fantasta_server npm run test && docker-compose down",
     "docker-prod": "docker-compose -f ./docker-compose.yml -f ./docker-compose.prod.yml up --build",
     "docker-build": "docker-compose build"
