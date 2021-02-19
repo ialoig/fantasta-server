@@ -4,9 +4,6 @@ import { default as apis } from "./apis"
 
 let routing = Router()
 
-//----- AUCTION APIS -----//
-routing.route("/auction").get(apis.auction.get)
-
 //----- AUTH APIS -----//
 routing.route("/auth/register").post(apis.auth.register)
 routing.route("/auth/login").put(apis.auth.login)

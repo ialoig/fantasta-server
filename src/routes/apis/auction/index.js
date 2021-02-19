@@ -1,2 +1,0 @@
-
-export { get } from './get'

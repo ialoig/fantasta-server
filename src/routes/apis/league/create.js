@@ -4,7 +4,7 @@ import { Constants, Response, leagueUtils, userUtils } from '../../../utils'
 
 import { Socket } from '../../../socket'
 
-export const create = async ( req, res, next ) =>
+const create = async ( req, res, next ) =>
 {
     //todo: send metric (League.create api call)
     let leagueData = req.body || {}
@@ -48,3 +48,5 @@ export const create = async ( req, res, next ) =>
         res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, error ) )
     }
 }
+
+export default create

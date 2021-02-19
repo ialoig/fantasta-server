@@ -4,7 +4,7 @@ import { Constants, Response, leagueUtils, userUtils } from '../../../utils'
 
 import { Socket } from '../../../socket'
 
-export const join = async ( req, res, next ) =>
+const join = async ( req, res, next ) =>
 {
     const { id='', name='', password='', teamname='' } = req.body
 
@@ -88,6 +88,8 @@ export const join = async ( req, res, next ) =>
         res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, null ) )
     }
 }
+
+export default join
 
 const getLeague = async ( user, id, name ) =>
 {
