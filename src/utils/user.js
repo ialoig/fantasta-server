@@ -3,8 +3,6 @@ import config from 'config'
 
 import { populate, User } from '../database'
 import { default as Token } from './token'
-import { Constants } from "./"
-
 
 const userFromToken = async ( req ) =>
 {

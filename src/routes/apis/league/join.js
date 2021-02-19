@@ -25,18 +25,32 @@ export const join = async ( req, res, next ) =>
                 throw Constants.LEAGUE_NOT_FOUND
             }
 
-            let team = await getTeam( userId, id, league, name, teamname )
+            let team = null
 
-            if ( !team || !team.$isValid() )
+            if ( id )
             {
-                throw Constants.TEAM_NOT_FOUND
-            }
+                team = await getTeam( userId, id, league )
 
-            if ( name )
+                if ( !team || !team.$isValid() )
+                {
+                    throw Constants.TEAM_NOT_FOUND
+                }
+            }
+            else if ( name )
             {
                 if ( league.participants && league.teams && league.teams.length>=league.participants )
                 {
                     throw Constants.FULL_LEAGUE
+                }
+
+                if ( league.teams.find( (t) => t.user._id.toString()==userId.toString() ) )
+                {
+                    throw Constants.USER_TEAM_PRESENT
+                }
+
+                if ( league.teams.find( (t) => t.name.toLowerCase()==name.toLowerCase() ) )
+                {
+                    throw Constants.TEAM_PRESENT
                 }
 
                 league.teams.push( team._id )
