@@ -8,6 +8,7 @@ const token = async ( req, res, next ) =>
     //todo: send metric (token api call)
     try
     {
+        
         let auth = await userUtils.userFromToken( req )
         
         let usr = await userUtils.getUser( auth.user )

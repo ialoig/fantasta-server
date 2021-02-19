@@ -70,9 +70,10 @@ const Verify = ( token, tokenPassword ) =>
 const Get = ( req ) =>
 {
     let authorization = req.header('Authorization') || req.header('authorization') ||  ''
+    console.log("[token get] - getting authorization ...")
     
     let auth = authorization && authorization.split && authorization.split(' ')
-    
+    console.log("[token get] - \tdone.")
     return auth[0]=='Bearer' ? auth[1] : auth[0]
 }
 

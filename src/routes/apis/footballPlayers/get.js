@@ -1,13 +1,16 @@
 
 import { FootballPlayer } from "../../../database"
 import { Constants, Response } from "../../../utils"
+import { secondsFrom, api_duration_seconds } from "../../../metrics"
 
 export const get = async (req, res, next) => {
 
-    //todo: send metric (footballPlayer.get api call)
+    // used to measure execution time
+    let duration_start = process.hrtime()
+
     try
     {
-        let footballPlayers = FootballPlayer.findOne()
+        let footballPlayers = await FootballPlayer.findOne()
 
         let response = {
             version: '',
@@ -17,9 +20,8 @@ export const get = async (req, res, next) => {
 
         if ( !footballPlayers )
         {
-            //TODO: send metric (footballPlayer API return empty object)
-
             console.error("FootballPlayer object is empty")
+            api_duration_seconds.observe({ name: "footballPlayer.get", status: "error", msg: "emptyObject"}, secondsFrom(duration_start))
             res.json(Response.resolve(Constants.OK, response))
         }
         else
@@ -32,13 +34,14 @@ export const get = async (req, res, next) => {
                 footballPlayers: dbVersion === mobileVersion ? {} : footballPlayers.footballPlayers,
                 updated: mobileVersion !== dbVersion,
             }
+            api_duration_seconds.observe({ name: "footballPlayer.get", status: "success", msg: `${Buffer.byteLength(JSON.stringify(response), 'utf8')}`}, secondsFrom(duration_start))
             res.json( Response.resolve(Constants.OK, response) )
         }
-
     }
     catch (error)
     {
         console.error(error)
+        api_duration_seconds.observe({ name: "footballPlayer.get", status: "error", msg: error}, secondsFrom(duration_start))
         res.status(400).send(Response.reject(Constants.BAD_REQUEST, Constants.BAD_REQUEST, error))
     }
 }

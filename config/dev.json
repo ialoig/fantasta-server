@@ -14,7 +14,7 @@
         "alg": "HS256"
     },
     "mongodb": {
-        "endpoint": "mongodb://fantastacore_mongo",
+        "endpoint": "mongodb://fantasta_mongo",
         "port": 27017,
         "database": "fantasta_debug"
     }

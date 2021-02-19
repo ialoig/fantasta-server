@@ -8,6 +8,7 @@ const userFromToken = async ( req ) =>
 {
     try
     {
+        
         const token = Token.Get( req )
         if ( token )
         {
@@ -74,28 +75,17 @@ const parseUser = ( user ) =>
     return usr
 }
 
-const findAndUpdateEmailUser = (id, email, done) => {
-    User.findOneAndUpdate({ _id: id }, {email: email}, {new: true, useFindAndModify: false}, (err, updatedUser) => {
-        if (err) {
-            return console.error('Error while findind user with id='+id+ ": " +err)
-        }
-        done(null, updatedUser)
-    })
+const findAndUpdateUser = async (id, newValues) => {
+    let updatedUser = await User.findByIdAndUpdate({_id: id}, newValues, {new: true, useFindAndModify: false});
+
+    //TODO : user da parsare? con parseUSer
+    return updatedUser;
 }
 
-const findAndUpdateNameUser = (id, username, done) => {
-    User.findOneAndUpdate({ _id: id }, {name: username}, {new: true, useFindAndModify: false}, (err, updatedUser) => {
-        if (err) {
-            return console.error('Error while findind user with id='+id+ ": " +err)
-        }
-        done(null, updatedUser)
-    })
-}
 
 export default {
     userFromToken,
     getUser,
     parseUser,
-    findAndUpdateEmailUser,
-    findAndUpdateNameUser
+    findAndUpdateUser
 }
