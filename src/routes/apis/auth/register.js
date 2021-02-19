@@ -29,13 +29,13 @@ const register = async ( req, res, next ) =>
         }
         catch (error)
         {
-            console.error('Register: ', error)
+            console.error('Auth Register: ', error)
             res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.USER_PRESENT, error ) )
         }
     }
     else
     {
-        console.error('Register: PARAMS_ERROR')
+        console.error('Auth Register: PARAMS_ERROR')
         res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, null ) )
     }
 }

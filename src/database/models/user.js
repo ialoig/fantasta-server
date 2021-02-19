@@ -13,7 +13,7 @@ const userSchema = new Schema(
             type: Schema.Types.String,
             required: true
         },
-        name: {
+        username: {
             type: Schema.Types.String,
             required: false
         },

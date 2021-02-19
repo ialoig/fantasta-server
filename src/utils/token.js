@@ -21,7 +21,6 @@ const Verify = ( token, tokenPassword ) =>
     try
     {
         let decoded = verify( token, tokenPassword, { algorithm: 'HS256' } )
-        
         /*
             decoded = {
                 email: 'ciao',
@@ -30,11 +29,8 @@ const Verify = ( token, tokenPassword ) =>
                 exp: 4212561780
             }
         */
-
         let newToken = Create( tokenPassword, decoded.email, decoded.password )
-
         decoded.token = newToken
-
         return decoded
     }
     catch (err)
@@ -59,21 +55,18 @@ const Verify = ( token, tokenPassword ) =>
                 date: 2018-10-04T16:10:44.000Z
             }
         */
-
         err.error = true
 
         return err
     }
-    
 }
 
 const Get = ( req ) =>
 {
     let authorization = req.header('Authorization') || req.header('authorization') ||  ''
-    console.log("[token get] - getting authorization ...")
     
     let auth = authorization && authorization.split && authorization.split(' ')
-    console.log("[token get] - \tdone.")
+
     return auth[0]=='Bearer' ? auth[1] : auth[0]
 }
 

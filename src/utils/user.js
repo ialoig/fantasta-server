@@ -46,7 +46,7 @@ const parseUser = ( user ) =>
     let usr = {
         _id: user._id.toString(),
         email: user.email,
-        name: user.name || '',
+        username: user.username || '',
         createdAt: user.createdAt.toISOString(),
         updatedAt: user.updatedAt.toISOString(),
         leagues: [],

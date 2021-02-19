@@ -1,6 +1,8 @@
 
 import _ from 'lodash'
 
+import { Team } from '../database'
+
 const errors = {
     LEAGUE_NAME_ERROR: 'LEAGUE_NAME_ERROR',
     TEAM_ERROR: 'TEAM_ERROR',
@@ -13,7 +15,7 @@ const errors = {
     COUNTDOWN_ERROR: 'COUNTDOWN_ERROR'
 }
 
-const validateleague = ( leagueData ) =>
+const validateleague = ( leagueData, userID ) =>
 {
     let error = ''
 
@@ -83,7 +85,8 @@ const validateleague = ( leagueData ) =>
             strikers: parseInt(leagueData.strikers),
             players: parseInt(leagueData.players),
             budget: parseInt(leagueData.budget),
-            countdown: parseInt(leagueData.countdown)
+            countdown: parseInt(leagueData.countdown),
+            admin: userID
         }
     }
     throw error
@@ -123,6 +126,24 @@ const parseLeague = ( league ) =>
     return leag
 }
 
+const createTeam = async ( teamName, budget, userId, leagueId ) =>
+{
+    try
+    {
+        let team = await Team.create({
+            name: teamName,
+            budget: budget,
+            user: userId,
+            league: leagueId
+        })
+
+        return Promise.resolve(team)
+    }
+    catch (error) {
+        return Promise.reject(error)
+    }
+}
+
 const parseTeam = ( team ) =>
 {
     let tm = {
@@ -146,5 +167,6 @@ const parseTeam = ( team ) =>
 export default {
     validateleague,
     parseLeague,
+    createTeam,
     parseTeam
 }
