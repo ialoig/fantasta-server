@@ -44,18 +44,7 @@ const inserFakeLeagues = async () => {
     }
     console.log("[seed] - insert leagues=" +leagues.length)
     let createdLeagues = await League.insertMany(leagues);
-
-    console.log("[seed] - updating users with leagues")
-    let allUsers = await User.find()
-    for (let i in allUsers) {
-        let randomLeagues = _.sampleSize(createdLeagues, Math.random() * createdLeagues.length)
-        allUsers[i].leagues = randomLeagues.map( league => {
-            return league._id
-        })
-        await allUsers[i].save();
-    }
     console.log("[seed] - \t... done")
-
 }
 
 
@@ -71,21 +60,17 @@ const inserFakeTeams = async () => {
         fakeTeams[i].user = userFound._id
         fakeTeams[i].league = leagueFound._id
         
+        let createdTeam = await Team.create(fakeTeams[i]);
+        leagueFound.teams.push(createdTeam._id);
+        await leagueFound.save();
+
+        userFound.leagues.push(leagueFound._id);
+        await userFound.save();
+
         teams.push(fakeTeams[i])
     }
     
     console.log("[seed] - insert teams=" +teams.length)
-    let createdTeams = await Team.insertMany(teams);
-
-    console.log("[seed] - updating leagues with team")
-    let allLeagues = await League.find()
-    for (let i in allLeagues) {
-        let randomTeams = _.sampleSize(createdTeams, Math.random() * createdTeams.length)
-        allLeagues[i].teams = randomTeams.map( team => {
-            return team._id
-        })
-        await allLeagues[i].save();
-    }
     console.log("[seed] - \t... done")
 }
 
