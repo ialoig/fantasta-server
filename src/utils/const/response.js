@@ -1,4 +1,8 @@
 
+import I18n from 'i18n-js'
+
+import { getLanguage } from '../../languages'
+
 const resolve = ( status, data, token ) =>
 {
     return {
@@ -9,15 +13,17 @@ const resolve = ( status, data, token ) =>
     }
 }
 
-const reject = ( status, info, error ) =>
+const reject = ( status, info, error, locale ) =>
 {
+    let lang = getLanguage(locale)
+
     return {
         'error': true,
         'code': HttpStatus[status].code,
         'status': HttpStatus[status].status,
         'info': {
-            title: ErrorMessages[info] ? ErrorMessages[info].title : '',
-            message: ErrorMessages[info] ? ErrorMessages[info].message : ''
+            title: I18n.t( ErrorMessages[info].title, {locale: lang} ),
+            message: I18n.t( ErrorMessages[info].message, {locale: lang} )
         },
         'data': error || {}
     }
@@ -38,11 +44,11 @@ const ErrorMessages = {
     },
     'USER_NOT_FOUND': {
         title: 'user_not_found',
-        message: 'try_change_username'
+        message: 'try_change_email'
     },
     'USER_PRESENT': {
         title: 'user_present',
-        message: 'try_change_username'
+        message: 'try_other_email'
     },
     'LEAGUE_NOT_FOUND' : {
         title: 'league_not_found',
@@ -70,7 +76,7 @@ const ErrorMessages = {
     },
     'LEAGUE_NAME_EMPTY' : {
         title: 'league_name_empty',
-        message: 'name_need_value'
+        message: 'leaguename_need_value'
     },
     'USERNAME_EMPTY': {
         title: 'username_empty',
@@ -91,14 +97,6 @@ const ErrorMessages = {
     'LEAGUE_ATTENDEES_NOT_CORRECT': {
         title: 'league_attendees_not_correct',
         message: 'min_attendees_2'
-    },
-    'PARAMS_MISSING': {
-        title: 'params_missing',
-        message: 'fill_fields_and_retry'
-    },
-    'CUSTOM_STARTINGPRICE_ERROR': {
-        title: 'custom_startingPrice_not_correct',
-        message: 'fill_starting_price'
     },
     'PLAYERS_NUMBER_ERROR': {
         title: 'players_number_not_correct',

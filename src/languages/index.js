@@ -11,4 +11,26 @@ I18n.locale = defaultLang
 
 I18n.translations = langs
 
+export const getLanguage = ( lang ) =>
+{
+    let langs = []
 
+    if ( lang && lang.includes('_') )
+    {
+        langs = lang.split('_')
+    }
+    else if ( lang && lang.includes('-') )
+    {
+        langs = lang.split('-')
+    }
+
+    if ( lang.length==2 )
+    {
+        return lang[0].toLowerCase()
+    }
+    else
+    {
+        return 'it'
+    }
+
+}

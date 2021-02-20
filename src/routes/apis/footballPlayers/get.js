@@ -20,8 +20,9 @@ const get = async (req, res, next) =>
 
         if ( !footballPlayers )
         {
-            console.error("FootballPlayer object is empty")
             api_duration_seconds.observe({ name: "footballPlayer.get", status: "error", msg: "emptyObject"}, secondsFrom(duration_start))
+            
+            console.error("FootballPlayer object is empty")
             res.json(Response.resolve(Constants.OK, response))
         }
         else
@@ -29,20 +30,22 @@ const get = async (req, res, next) =>
             let dbVersion = footballPlayers.version ? parseInt(footballPlayers.version) : 0
             let mobileVersion = req.query.version ? parseInt(req.query.version) : 0
 
+            api_duration_seconds.observe({ name: "footballPlayer.get", status: "success", msg: `${Buffer.byteLength(JSON.stringify(response), 'utf8')}`}, secondsFrom(duration_start))
+
             response = {
                 version: dbVersion,
                 footballPlayers: dbVersion === mobileVersion ? {} : footballPlayers.footballPlayers,
                 updated: mobileVersion !== dbVersion,
             }
-            api_duration_seconds.observe({ name: "footballPlayer.get", status: "success", msg: `${Buffer.byteLength(JSON.stringify(response), 'utf8')}`}, secondsFrom(duration_start))
             res.json( Response.resolve(Constants.OK, response) )
         }
     }
     catch (error)
     {
-        console.error(error)
         api_duration_seconds.observe({ name: "footballPlayer.get", status: "error", msg: error}, secondsFrom(duration_start))
-        res.status(400).send(Response.reject(Constants.BAD_REQUEST, Constants.BAD_REQUEST, error))
+
+        console.error('Get FootballPlayers: ', error)
+        res.status(400).send( Response.reject(Constants.BAD_REQUEST, Constants.BAD_REQUEST, error, req.headers.language ))
     }
 }
 
