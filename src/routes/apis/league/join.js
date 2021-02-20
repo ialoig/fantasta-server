@@ -45,6 +45,10 @@ const join = async ( req, res, next ) =>
                 {
                     throw Constants.TEAM_PRESENT
                 }
+                else if ( league.password!=password )
+                {
+                    throw Constants.WRONG_PASSWORD
+                }
 
                 team = await leagueUtils.createTeam( teamname, league.budget, userId, league._id )
 
