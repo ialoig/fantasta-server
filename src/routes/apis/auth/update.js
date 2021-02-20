@@ -28,10 +28,9 @@ const update = async ( req, res, next ) =>
             let updatedUser = await userUtils.findAndUpdateUser(userID, newValues)
             
             let usr = await userUtils.getUser( updatedUser )
-            
             let response = {
                 user: usr,
-                token: tokenUtils.Create( config.token.kid, updatedUser.email, updatedUser.password )
+                token: tokenUtils.Create( config.token.kid, updatedUser.email, updatedUser.password, updatedUser.username )
             }
             return res.json( Response.resolve( Constants.OK, response ) )
         }
@@ -44,7 +43,7 @@ const update = async ( req, res, next ) =>
     else
     {
         console.error('Auth Update: PARAMS_ERROR')
-        res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, null ) )
+        res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.PARAMS_ERROR, null ) )
     }
 }
 

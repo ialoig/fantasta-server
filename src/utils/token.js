@@ -1,12 +1,13 @@
 
 import { sign, verify } from 'jsonwebtoken'
 
-const Create = ( tokenPassword, email, password ) =>
+const Create = ( tokenPassword, email, password, username ) =>
 {
     return sign(
         {
             email,
-            password
+            password,
+            username
         },
         tokenPassword,
         {
@@ -25,11 +26,12 @@ const Verify = ( token, tokenPassword ) =>
             decoded = {
                 email: 'ciao',
                 password: 'ciao',
+                username: 'ciao',
                 iat: 1490347709,
                 exp: 4212561780
             }
         */
-        let newToken = Create( tokenPassword, decoded.email, decoded.password )
+        let newToken = Create( tokenPassword, decoded.email, decoded.password, decoded.username )
         decoded.token = newToken
         return decoded
     }
@@ -56,7 +58,6 @@ const Verify = ( token, tokenPassword ) =>
             }
         */
         err.error = true
-
         return err
     }
 }

@@ -24,7 +24,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.use( (req, res, next) => {
     res.header("Accept", "*")
     res.header("Access-Control-Allow-Origin", "http://localhost:19006")
-    res.header("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, Origin, X-Requested-With, Access-Control-Allow-Origin, access-control-allow-credentials, access-control-allow-headers, access-control-allow-methods, ")
+    res.header("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Language, language, Accept-Encoding, X-CSRF-Token, Authorization, Origin, X-Requested-With, Access-Control-Allow-Origin, access-control-allow-credentials, access-control-allow-headers, access-control-allow-methods, ")
     res.header("Access-Control-Allow-Methods", "POST, PUT, GET")
     res.header("Access-Control-Allow-Credentials", true)
     next()

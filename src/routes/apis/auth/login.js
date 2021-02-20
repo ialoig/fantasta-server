@@ -17,20 +17,17 @@ const login = async ( req, res, next ) =>
         {
             let user = await User.findOne({ email })
 
-            if ( !user )
+            if ( !user || !user.$isValid() || user.$isEmpty() )
             {
-                console.error('Login: ', Constants.NOT_FOUND)
+                console.error('Auth Login: ', Constants.NOT_FOUND)
                 res.status(404).send( Response.reject( Constants.NOT_FOUND, Constants.USER_NOT_FOUND, null ) )
             }
             else if ( user && user.password && user.password==password )
             {
-                delete user.password
-                delete user.uuid
-                
                 let usr = await userUtils.getUser( user )
                 let response = {
                     user: usr,
-                    token: tokenUtils.Create( config.token.kid, email, password )
+                    token: tokenUtils.Create( config.token.kid, email, password, user.username )
                 }
 
                 res.json( Response.resolve( Constants.OK, response ) )
@@ -50,7 +47,7 @@ const login = async ( req, res, next ) =>
     else
     {
         console.error('Auth Login: PARAMS_ERROR')
-        res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, null ) )
+        res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.PARAMS_ERROR, null ) )
     }
 }
 

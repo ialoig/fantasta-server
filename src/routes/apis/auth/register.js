@@ -16,13 +16,13 @@ const register = async ( req, res, next ) =>
     {
         try
         {
-            let name = email;
-            let user = await User.create({ email, password, name })
+            const username = email;
+            let user = await User.create({ email, password, username })
             
             let usr = await userUtils.getUser( user )
             let response = {
                 user: usr,
-                token: tokenUtils.Create( config.token.kid, email, password )
+                token: tokenUtils.Create( config.token.kid, email, password, username )
             }
 
             res.json( Response.resolve( Constants.OK, response) )
@@ -36,7 +36,7 @@ const register = async ( req, res, next ) =>
     else
     {
         console.error('Auth Register: PARAMS_ERROR')
-        res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, null ) )
+        res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.PARAMS_ERROR, null ) )
     }
 }
 

@@ -27,7 +27,7 @@ const present = async ( req, res, next ) =>
     else
     {
         console.error('League Valid: PARAMS_ERROR')
-        res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, null ) )
+        res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.PARAMS_ERROR, null ) )
     }
 
 }

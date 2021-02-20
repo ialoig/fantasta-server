@@ -6,7 +6,7 @@ const user = ( user ) =>
         .execPopulate(
             (err, usr) => {
                 if ( err ) {
-                    return reject()
+                    return reject(err)
                 }
                 return resolve(usr.toJSON())
             }
@@ -21,7 +21,7 @@ const league = ( league ) =>
         .execPopulate(
             (err, leg) => {
                 if ( err ) {
-                    return reject()
+                    return reject(err)
                 }
                 return resolve(leg.toJSON())
             }
@@ -36,7 +36,7 @@ const team = ( team ) =>
         .execPopulate(
             (err, tm) => {
                 if ( err ) {
-                    return reject()
+                    return reject(err)
                 }
                 return resolve(tm.toJSON())
             }

@@ -22,7 +22,7 @@ const join = async ( req, res, next ) =>
 
             if ( !league || !league.$isValid() )
             {
-                throw Constants.LEAGUE_NOT_FOUND
+                throw {error: Constants.LEAGUE_NOT_FOUND}
             }
 
             let team = null
@@ -35,19 +35,19 @@ const join = async ( req, res, next ) =>
             {
                 if ( league.participants && league.teams && league.teams.length>=league.participants )
                 {
-                    throw Constants.FULL_LEAGUE
+                    throw {error: Constants.FULL_LEAGUE}
                 }
                 else if ( league.teams.find( (t) => t.user._id.toString()==userId.toString() ) )
                 {
-                    throw Constants.USER_TEAM_PRESENT
+                    throw {error: Constants.USER_TEAM_PRESENT}
                 }
                 else if ( league.teams.find( (t) => t.name.toLowerCase()==name.toLowerCase() ) )
                 {
-                    throw Constants.TEAM_PRESENT
+                    throw {error: Constants.TEAM_PRESENT}
                 }
                 else if ( league.password!=password )
                 {
-                    throw Constants.WRONG_PASSWORD
+                    throw {error: Constants.WRONG_PASSWORD}
                 }
 
                 team = await leagueUtils.createTeam( teamname, league.budget, userId, league._id )
@@ -61,7 +61,7 @@ const join = async ( req, res, next ) =>
 
             if ( !team || !team.$isValid() )
             {
-                throw Constants.TEAM_NOT_FOUND
+                throw {error: Constants.TEAM_NOT_FOUND}
             }
 
             let usr = await populate.user( user )
@@ -89,7 +89,7 @@ const join = async ( req, res, next ) =>
     else
     {
         console.error('League Join: PARAMS_ERROR')
-        res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, null ) )
+        res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.PARAMS_ERROR, null ) )
     }
 }
 

@@ -3,6 +3,7 @@ import config from 'config'
 
 import { populate, User } from '../database'
 import { default as Token } from './token'
+import { Constants } from '../utils'
 
 const userFromToken = async ( req ) =>
 {
@@ -24,7 +25,7 @@ const userFromToken = async ( req ) =>
                 return Promise.resolve( data )
             }
         }
-        return Promise.reject('UserFromToken -> EMPTY_TOKEN')
+        return Promise.reject({ error: Constants.EMPTY_TOKEN })
     }
     catch (error)
     {

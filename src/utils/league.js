@@ -2,6 +2,7 @@
 import _ from 'lodash'
 
 import { Team } from '../database'
+import { Constants } from '../utils'
 
 const errors = {
     LEAGUE_NAME_ERROR: 'LEAGUE_NAME_ERROR',
@@ -89,7 +90,10 @@ const validateleague = ( leagueData, userID ) =>
             admin: userID
         }
     }
-    throw error
+    throw {
+        error: Constants.PARAMS_ERROR,
+        errorTtpe: error
+    }
 }
 
 const parseLeague = ( league ) =>

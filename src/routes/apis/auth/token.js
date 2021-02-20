@@ -21,7 +21,7 @@ const token = async ( req, res, next ) =>
     catch (error)
     {
         console.error('Auth Token: ', error)
-        res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, null ) )   
+        res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, error ) )   
     }
 }
 
