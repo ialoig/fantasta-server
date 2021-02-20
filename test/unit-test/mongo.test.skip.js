@@ -61,7 +61,7 @@ describe("Database", function() {
   // TEST 2: create User
   it(`should be able to create a User`, function(done) {
     const newUser = User({
-      name: "user_name",
+      username: "user_name",
       email: "user_email",
       password: "user_password",
       uuid: "user_uuid",

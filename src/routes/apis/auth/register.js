@@ -16,7 +16,7 @@ const register = async ( req, res, next ) =>
     {
         try
         {
-            const username = email;
+            const username = email
             let user = await User.create({ email, password, username })
             
             let usr = await userUtils.getUser( user )

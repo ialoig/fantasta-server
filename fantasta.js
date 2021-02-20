@@ -1,7 +1,6 @@
 
 let express = require('express')
 let path = require('path')
-let favicon = require('serve-favicon')
 let morgan = require('morgan')
 let cookieParser = require('cookie-parser')
 let config = require('config')
@@ -47,6 +46,10 @@ app.use( (err, req, res, next) => {
 let saveFootballPlayers = require('./src/footballPlayers').saveFootballPlayers
 saveFootballPlayers(config.schedule.excelFilenameClassic, config.schedule.excelFilenameMantra)
 
+// ------------------------------------------------------------
+// Seed database with fake data
+let seedDb = require("./src/database/seed").seed
+seedDb();
 
 // ------------------------------------------------------------
 // Setting HTTP routes
