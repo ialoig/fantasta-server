@@ -31,7 +31,7 @@
         //     "runtimeArgs": ["npm run debug"]
         // },
         {
-            "name": "Launch via NPM",
+            "name": "Launch via NPM inkubo",
             "request": "launch",
             "runtimeArgs": [
                 "run-script",
@@ -42,7 +42,7 @@
                 "<node_internals>/**"
             ],
             "type": "pwa-node",
-            "env": { "NODE_ENV": "dev" }
+            "env": { "NODE_ENV": "default" }
         }
     ]
 }
