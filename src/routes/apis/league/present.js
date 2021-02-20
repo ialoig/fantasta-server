@@ -10,9 +10,7 @@ const present = async ( req, res, next ) =>
     {
         try
         {
-            const auth = await userUtils.userFromToken( req )
-            let user = auth.user
-            const userId = user._id
+            await userUtils.userFromToken( req )
 
             let present = await League.findOne({ name: leaguename })
         
@@ -21,7 +19,7 @@ const present = async ( req, res, next ) =>
         catch (error)
         {
             console.error('League Valid: ', error)
-            res.status(500).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, error ) )
+            res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, error ) )
         }
     }
     else

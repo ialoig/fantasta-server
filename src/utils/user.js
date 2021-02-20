@@ -76,17 +76,8 @@ const parseUser = ( user ) =>
     return usr
 }
 
-const findAndUpdateUser = async (id, newValues) => {
-    let updatedUser = await User.findByIdAndUpdate({_id: id}, newValues, {new: true, useFindAndModify: false});
-
-    //TODO : user da parsare? con parseUSer
-    return updatedUser;
-}
-
-
 export default {
     userFromToken,
     getUser,
-    parseUser,
-    findAndUpdateUser
+    parseUser
 }

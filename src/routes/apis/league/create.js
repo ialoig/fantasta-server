@@ -18,7 +18,7 @@ const create = async ( req, res, next ) =>
         let leagueSettings = leagueUtils.validateleague( leagueData, userId )
         let newLeague = await League.create(leagueSettings)
 
-        let newTeam = leagueUtils.createTeam( leagueData.teamname, leagueSettings.budget, userId, newLeague._id )
+        let newTeam = await leagueUtils.createTeam( leagueData.teamname, leagueSettings.budget, userId, newLeague._id )
                
         newLeague.teams = [ newTeam._id ]
         await newLeague.save()
