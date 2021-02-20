@@ -9,7 +9,7 @@ routing.route("/auth/register").post(apis.auth.register)
 routing.route("/auth/login").put(apis.auth.login)
 routing.route("/auth/token").put(apis.auth.token)
 routing.route("/auth/update").put(apis.auth.update)
-routing.route("/auth/delete").delete(apis.auth.deleteAccount)
+routing.route("/auth/deleteAccount").delete(apis.auth.deleteAccount)
 
 //----- LEAGUE APIS -----//
 routing.route("/league/create").post(apis.league.create)
