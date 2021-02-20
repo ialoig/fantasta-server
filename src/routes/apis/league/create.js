@@ -45,7 +45,7 @@ const create = async ( req, res, next ) =>
     catch (error)
     {
         console.error('League Create: ', error)
-        res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, error ) )
+        res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, error, req.headers.language ) )
     }
 }
 

@@ -23,7 +23,7 @@ const join = async ( req, res, next ) =>
             if ( !league || !league.$isValid() || league.$isEmpty() )
             {
                 console.error('League Join: ', Constants.LEAGUE_NOT_FOUND )
-                res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.LEAGUE_NOT_FOUND, null ) )
+                res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.LEAGUE_NOT_FOUND, null, req.headers.language ) )
             }
 
             let team = null
@@ -37,22 +37,22 @@ const join = async ( req, res, next ) =>
                 if ( league.participants && league.teams && league.teams.length>=league.participants )
                 {
                     console.error('League Join: ', Constants.FULL_LEAGUE)
-                    res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.FULL_LEAGUE, null ) )
+                    res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.FULL_LEAGUE, null, req.headers.language ) )
                 }
                 else if ( league.teams.find( (t) => t.user._id.toString()==userId.toString() ) )
                 {
                     console.error('League Join: ', Constants.USER_TEAM_PRESENT)
-                    res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.USER_TEAM_PRESENT, null ) )
+                    res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.USER_TEAM_PRESENT, null, req.headers.language ) )
                 }
                 else if ( league.teams.find( (t) => t.name.toLowerCase()==name.toLowerCase() ) )
                 {
                     console.error('League Join: ', Constants.TEAM_PRESENT)
-                    res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.TEAM_PRESENT, null ) )
+                    res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.TEAM_PRESENT, null, req.headers.language ) )
                 }
                 else if ( league.password!=password )
                 {
                     console.error('League Join: ', Constants.WRONG_PASSWORD)
-                    res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.WRONG_PASSWORD, null ) )
+                    res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.WRONG_PASSWORD, null, req.headers.language ) )
                 }
 
                 team = await leagueUtils.createTeam( teamname, league.budget, userId, league._id )
@@ -67,7 +67,7 @@ const join = async ( req, res, next ) =>
             if ( !team || !team.$isValid() || team.$isEmpty() )
             {
                 console.error('League Join: ', Constants.TEAM_NOT_FOUND )
-                res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.TEAM_NOT_FOUND, null ) )
+                res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.TEAM_NOT_FOUND, null, req.headers.language ) )
             }
 
             let usr = await populate.user( user )
@@ -89,13 +89,13 @@ const join = async ( req, res, next ) =>
         catch (error)
         {
             console.error('League Join: ', error)
-            res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, error ) )
+            res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, error, req.headers.language ) )
         }
     }
     else
     {
         console.error('League Join: PARAMS_ERROR')
-        res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.PARAMS_ERROR, null ) )
+        res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.PARAMS_ERROR, null, req.headers.language ) )
     }
 }
 
