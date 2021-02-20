@@ -1,42 +1,42 @@
 export const fakeUsers = [
     {
-        name: "user01",
+        username: "user01",
         email: "user01@email.com",
         password: "user01"
     }, {
-        name: "user02",
+        username: "user02",
         email: "user02@email.com",
         password: "user02"
     }, {
-        name: "user03",
+        username: "user03",
         email: "user03@email.com",
         password: "user03"
     }, {
-        name: "user04",
+        username: "user04",
         email: "user04@email.com",
         password: "user04"
     }, {
-        name: "user05",
+        username: "user05",
         email: "user05@email.com",
         password: "user05"
     }, {
-        name: "user06",
+        username: "user06",
         email: "user06@email.com",
         password: "user06"
     }, {
-        name: "user07",
+        username: "user07",
         email: "user07@email.com",
         password: "user07"
     }, {
-        name: "user08",
+        username: "user08",
         email: "user08@email.com",
         password: "user08"
     }, {
-        name: "user09",
+        username: "user09",
         email: "user09@email.com",
         password: "user09"
     }, {
-        name: "user10",
+        username: "user10",
         email: "user10@email.com",
         password: "user10"
     }

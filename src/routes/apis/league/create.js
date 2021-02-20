@@ -1,37 +1,28 @@
 
-import { League, Team, populate } from '../../../database'
+import { League, populate } from '../../../database'
 import { Constants, Response, leagueUtils, userUtils } from '../../../utils'
 
 import { Socket } from '../../../socket'
 
-export const create = async ( req, res, next ) =>
+const create = async ( req, res, next ) =>
 {
     //todo: send metric (League.create api call)
-
+    let leagueData = req.body || {}
+    
     try
     {
-        let leagueData = req.body || {}
-        let leagueSettings = leagueUtils.validateleague( leagueData )
-        const teamName = leagueData.teamname
-
         const auth = await userUtils.userFromToken( req )
         let user = auth.user
         const userId = user._id
 
-        let newTeam = await Team.create({
-            name: teamName,
-            budget: leagueSettings.budget,
-            user: userId
-        })
-        
-        leagueSettings.admin = userId
-        leagueSettings.teams = [ newTeam._id ]
-
+        let leagueSettings = leagueUtils.validateleague( leagueData, userId )
         let newLeague = await League.create(leagueSettings)
 
-        newTeam.league = newLeague._id
-        await newTeam.save()
-
+        let newTeam = leagueUtils.createTeam( leagueData.teamname, leagueSettings.budget, userId, newLeague._id )
+               
+        newLeague.teams = [ newTeam._id ]
+        await newLeague.save()
+        
         user.leagues.push( newLeague._id )
         await user.save()
 
@@ -57,3 +48,5 @@ export const create = async ( req, res, next ) =>
         res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, error ) )
     }
 }
+
+export default create

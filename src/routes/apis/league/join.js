@@ -1,10 +1,10 @@
 
-import { League, Team, populate } from '../../../database'
+import { League, populate } from '../../../database'
 import { Constants, Response, leagueUtils, userUtils } from '../../../utils'
 
 import { Socket } from '../../../socket'
 
-export const join = async ( req, res, next ) =>
+const join = async ( req, res, next ) =>
 {
     const { id='', name='', password='', teamname='' } = req.body
 
@@ -25,25 +25,43 @@ export const join = async ( req, res, next ) =>
                 throw Constants.LEAGUE_NOT_FOUND
             }
 
-            let team = await getTeam( userId, id, league, name, teamname )
+            let team = null
 
-            if ( !team || !team.$isValid() )
+            if ( id )
             {
-                throw Constants.TEAM_NOT_FOUND
+                team = league.teams.find( (t) => t.user._id.toString()==userId.toString() ) || null
             }
-
-            if ( name )
+            else if ( name )
             {
                 if ( league.participants && league.teams && league.teams.length>=league.participants )
                 {
                     throw Constants.FULL_LEAGUE
                 }
+                else if ( league.teams.find( (t) => t.user._id.toString()==userId.toString() ) )
+                {
+                    throw Constants.USER_TEAM_PRESENT
+                }
+                else if ( league.teams.find( (t) => t.name.toLowerCase()==name.toLowerCase() ) )
+                {
+                    throw Constants.TEAM_PRESENT
+                }
+                else if ( league.password!=password )
+                {
+                    throw Constants.WRONG_PASSWORD
+                }
+
+                team = await leagueUtils.createTeam( teamname, league.budget, userId, league._id )
 
                 league.teams.push( team._id )
                 await league.save()
 
                 user.leagues.push( league._id )
                 await user.save()
+            }
+
+            if ( !team || !team.$isValid() )
+            {
+                throw Constants.TEAM_NOT_FOUND
             }
 
             let usr = await populate.user( user )
@@ -65,17 +83,17 @@ export const join = async ( req, res, next ) =>
         catch (error)
         {
             console.error('League Join: ', error)
-
             res.status(500).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, error ) )
         }
     }
     else
     {
         console.error('League Join: PARAMS_ERROR')
-        
         res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, null ) )
     }
 }
+
+export default join
 
 const getLeague = async ( user, id, name ) =>
 {
@@ -98,36 +116,6 @@ const getLeague = async ( user, id, name ) =>
     catch (error)
     {
         console.error('League Join -> getLeague: ', error)
-
-        return Promise.reject(error)
-    }
-}
-
-const getTeam = async ( userId, id, league, name, teamname, budget ) =>
-{
-    try
-    {
-        let team = null
-
-        if ( id && league.teams )
-        {
-            team = league.teams.find( (t) => t.user._id.toString()==userId.toString() ) || null
-        }
-        else if ( name )
-        {
-            team = await Team.create({
-                name: teamname,
-                budget: league.budget,
-                user: userId,
-                league: league._id
-            })
-        }
-
-        return team ? Promise.resolve(team) : Promise.reject(Constants.BAD_REQUEST)
-    }
-    catch (error)
-    {
-        console.error('League Join -> getTeam: ', error)
 
         return Promise.reject(error)
     }

@@ -3,8 +3,8 @@ import { FootballPlayer } from "../../../database"
 import { Constants, Response } from "../../../utils"
 import { secondsFrom, api_duration_seconds } from "../../../metrics"
 
-export const get = async (req, res, next) => {
-
+const get = async (req, res, next) =>
+{
     // used to measure execution time
     let duration_start = process.hrtime()
 
@@ -45,3 +45,5 @@ export const get = async (req, res, next) => {
         res.status(400).send(Response.reject(Constants.BAD_REQUEST, Constants.BAD_REQUEST, error))
     }
 }
+
+export default get

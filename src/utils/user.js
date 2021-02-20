@@ -4,7 +4,6 @@ import config from 'config'
 import { populate, User } from '../database'
 import { default as Token } from './token'
 
-
 const userFromToken = async ( req ) =>
 {
     try
@@ -47,7 +46,7 @@ const parseUser = ( user ) =>
     let usr = {
         _id: user._id.toString(),
         email: user.email,
-        name: user.name || '',
+        username: user.username || '',
         createdAt: user.createdAt.toISOString(),
         updatedAt: user.updatedAt.toISOString(),
         leagues: [],

@@ -8,7 +8,6 @@ const token = async ( req, res, next ) =>
     //todo: send metric (token api call)
     try
     {
-        
         let auth = await userUtils.userFromToken( req )
         
         let usr = await userUtils.getUser( auth.user )
@@ -21,7 +20,7 @@ const token = async ( req, res, next ) =>
     }
     catch (error)
     {
-        console.error('Token: ', error)
+        console.error('Auth Token: ', error)
         res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, null ) )   
     }
 }
