@@ -304,11 +304,18 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "(rate(api_duration_seconds_sum{status=\"success\"}[1m])/rate(api_duration_seconds_count{status=\"success\"}[1m]))*1000",
+          "expr": "(rate(api_duration_seconds_sum{name= \"footballPlayer.get\", status=\"success\"}[1m])/rate(api_duration_seconds_count{status=\"success\"}[1m]))*1000",
           "hide": false,
           "interval": "",
-          "legendFormat": "{{name}} - {{status}} - payload {{msg}} bytes",
+          "legendFormat": "{{name}} - {{status}} - {{msg}}",
           "refId": "A"
+        },
+        {
+          "expr": "(rate(api_duration_seconds_sum{name= \"league.join\", status=\"success\"}[1m])/rate(api_duration_seconds_count{status=\"success\"}[1m]))*1000",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{name}} - {{status}}",
+          "refId": "B"
         }
       ],
       "thresholds": [],
@@ -332,7 +339,7 @@
       "yaxes": [
         {
           "$$hashKey": "object:51",
-          "format": "short",
+          "format": "dtdurationms",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -408,7 +415,7 @@
           "expr": "api_duration_seconds_sum{status=\"error\"}",
           "hide": false,
           "interval": "",
-          "legendFormat": "{{name}} - {{status}} - {{msg}} (ms)",
+          "legendFormat": "{{name}} - {{status}} - {{msg}} (seconds)",
           "refId": "B"
         },
         {
@@ -470,7 +477,7 @@
     "list": []
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-30m",
     "to": "now"
   },
   "timepicker": {},

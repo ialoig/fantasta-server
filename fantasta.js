@@ -44,7 +44,8 @@ app.use( (err, req, res, next) => {
 // ------------------------------------------------------------
 // Scheduling processes
 let saveFootballPlayers = require('./src/footballPlayers').saveFootballPlayers
-saveFootballPlayers(config.schedule.excelFilenameClassic, config.schedule.excelFilenameMantra)
+// TODO: restore
+// saveFootballPlayers(config.schedule.excelFilenameClassic, config.schedule.excelFilenameMantra)
 
 // ------------------------------------------------------------
 // Seed database with fake data

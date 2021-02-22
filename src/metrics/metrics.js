@@ -8,6 +8,12 @@ prometheusClient.register.setDefaultLabels({
 // Enable the collection of default metrics
 prometheusClient.collectDefaultMetrics()
 
+// Possible status values for labeling a metric
+export const METRIC_STATUS = {
+    SUCCESS: "success",
+    ERROR: "error"
+}
+
 // Utility function to extract seconds
 export const secondsFrom = (start_time) => {
     let end = process.hrtime(start_time)
@@ -15,14 +21,14 @@ export const secondsFrom = (start_time) => {
 }
 
 // Histograms
-export const api_duration_seconds = new prometheusClient.Histogram({
-    name: 'api_duration_seconds',
-    help: 'seconds duration for api calls',
-    labelNames: ['name', 'status', 'msg'],
-});
-
 export const load_footballPlayer_duration_seconds = new prometheusClient.Histogram({
     name: 'load_footballPlayer_duration_seconds',
     help: 'seconds duration for loading footballPlayers',
     labelNames: ['status', 'msg'],
+});
+
+export const api_duration_seconds = new prometheusClient.Histogram({
+    name: 'api_duration_seconds',
+    help: 'seconds duration for api calls',
+    labelNames: ['name', 'status', 'msg'],
 });
