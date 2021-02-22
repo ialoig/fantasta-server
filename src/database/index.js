@@ -23,7 +23,7 @@ connection
     console.log("mongodb status: connection close")
 })
 .on( 'error', (error) => {
-    console.error("ERROR: ", error)
+    console.error("mongodb error: ", error)
 })
 
 connection

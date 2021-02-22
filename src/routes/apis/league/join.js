@@ -1,11 +1,15 @@
 
 import { League, populate } from '../../../database'
 import { Constants, Response, leagueUtils, userUtils } from '../../../utils'
+import { secondsFrom, METRIC_STATUS, api_duration_seconds } from "../../../metrics"
 
 import { Socket } from '../../../socket'
 
 const join = async ( req, res, next ) =>
 {
+    // used to measure execution time
+    let duration_start = process.hrtime()
+
     const { id='', name='', password='', teamname='' } = req.body
 
     if ( id || name && password && teamname )
@@ -22,8 +26,9 @@ const join = async ( req, res, next ) =>
 
             if ( !league || !league.$isValid() || league.$isEmpty() )
             {
+                api_duration_seconds.observe({ name: "league.join", status: METRIC_STATUS.ERROR, msg: "league_not_found"}, secondsFrom(duration_start))
                 console.error('League Join: ', Constants.LEAGUE_NOT_FOUND )
-                res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.LEAGUE_NOT_FOUND, null, req.headers.language ) )
+                return res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.LEAGUE_NOT_FOUND, null, req.headers.language ) )
             }
 
             let team = null
@@ -36,23 +41,27 @@ const join = async ( req, res, next ) =>
             {
                 if ( league.participants && league.teams && league.teams.length>=league.participants )
                 {
+                    api_duration_seconds.observe({ name: "league.join", status: METRIC_STATUS.ERROR, msg: Constants.FULL_LEAGUE}, secondsFrom(duration_start))
                     console.error('League Join: ', Constants.FULL_LEAGUE)
-                    res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.FULL_LEAGUE, null, req.headers.language ) )
+                    return res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.FULL_LEAGUE, null, req.headers.language ) )
                 }
                 else if ( league.teams.find( (t) => t.user._id.toString()==userId.toString() ) )
                 {
+                    api_duration_seconds.observe({ name: "league.join", status: METRIC_STATUS.ERROR, msg: Constants.USER_TEAM_PRESENT}, secondsFrom(duration_start))
                     console.error('League Join: ', Constants.USER_TEAM_PRESENT)
-                    res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.USER_TEAM_PRESENT, null, req.headers.language ) )
+                    return res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.USER_TEAM_PRESENT, null, req.headers.language ) )
                 }
                 else if ( league.teams.find( (t) => t.name.toLowerCase()==name.toLowerCase() ) )
                 {
+                    api_duration_seconds.observe({ name: "league.join", status: METRIC_STATUS.ERROR, msg: Constants.TEAM_PRESENT}, secondsFrom(duration_start))
                     console.error('League Join: ', Constants.TEAM_PRESENT)
-                    res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.TEAM_PRESENT, null, req.headers.language ) )
+                    return res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.TEAM_PRESENT, null, req.headers.language ) )
                 }
                 else if ( league.password!=password )
                 {
+                    api_duration_seconds.observe({ name: "league.join", status: METRIC_STATUS.ERROR, msg: Constants.WRONG_PASSWORD}, secondsFrom(duration_start))
                     console.error('League Join: ', Constants.WRONG_PASSWORD)
-                    res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.WRONG_PASSWORD, null, req.headers.language ) )
+                    return res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.WRONG_PASSWORD, null, req.headers.language ) )
                 }
 
                 team = await leagueUtils.createTeam( teamname, league.budget, userId, league._id )
@@ -62,12 +71,14 @@ const join = async ( req, res, next ) =>
 
                 user.leagues.push( league._id )
                 await user.save()
+                api_duration_seconds.observe({ name: "league.join", status: METRIC_STATUS.SUCCESS, msg: ""}, secondsFrom(duration_start))
             }
 
             if ( !team || !team.$isValid() || team.$isEmpty() )
             {
+                api_duration_seconds.observe({ name: "league.join", status: METRIC_STATUS.ERROR, msg: Constants.TEAM_NOT_FOUND}, secondsFrom(duration_start))
                 console.error('League Join: ', Constants.TEAM_NOT_FOUND )
-                res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.TEAM_NOT_FOUND, null, req.headers.language ) )
+                return res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.TEAM_NOT_FOUND, null, req.headers.language ) )
             }
 
             let usr = await populate.user( user )
@@ -84,18 +95,19 @@ const join = async ( req, res, next ) =>
             // Socket.addAttendee( req, newLeag.name, '' )
             // Socket.leagueCreate( req, newLeag.name, '' )
 
+            api_duration_seconds.observe({ name: "league.join", status: METRIC_STATUS.SUCCESS, msg: ""}, secondsFrom(duration_start))
             res.json( Response.resolve(Constants.OK, response) )
         }
         catch (error)
         {
             console.error('League Join: ', error)
-            res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, error, req.headers.language ) )
+            return res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, error, req.headers.language ) )
         }
     }
     else
     {
         console.error('League Join: PARAMS_ERROR')
-        res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.PARAMS_ERROR, null, req.headers.language ) )
+        return res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.PARAMS_ERROR, null, req.headers.language ) )
     }
 }
 

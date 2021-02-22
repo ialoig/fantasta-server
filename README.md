@@ -27,13 +27,13 @@ It spawns the *Mongo* and *Fantasta_server* docker. Then run tests on the docker
 
 #### Run with docker (DEBUG)
 
-It spawns the *Mongo* and *Fantasta_server* docker in debug mode. It mounts local folders in the server docker and run it with nodemon. All local changes will be immediately reflected in the running server.
+It spawns the *fantasta_mongo* and *fantasta_server* docker in **debug** mode. It mounts local folders in the server docker and run it with nodemon. All local changes will be immediately reflected in the running server.
 
 ```npm run docker-debug```
 
 #### Run with docker (PRODUCTION)
 
-It spawns the *Mongo* and *Fantasta_server* docker in debug mode. It mounts local folders in the server docker and run it with nodemon. All local changes will be immediately reflected in the running server.
+It spawns the *fantasta_mongo* and *Fantasta_server* docker in **production** mode. It mounts local folders in the server docker and run it with nodemon. All local changes will be immediately reflected in the running server.
 
 ```npm run docker-prod```
 
@@ -50,6 +50,10 @@ Run tests on the local machine (requires docker mongo to be running already)
 Run tests on the local machine (requires docker mongo to be running already)
 
 ```npm run debug```
+
+## Monitoring
+Grafana docker container exposes port 3001. Just go to http://localhost:3001 to see the dashboards
+
 
 ## Other
 
