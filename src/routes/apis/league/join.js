@@ -132,7 +132,7 @@ const getLeague = async ( user, id, name ) =>
             await populate.league( league )
         }
 
-        return (league && league.$isValid()) ? Promise.resolve(league) : Promise.resolve(null)
+        return league && league.$isValid() ? Promise.resolve(league) : Promise.resolve(null)
     }
     catch (error)
     {
