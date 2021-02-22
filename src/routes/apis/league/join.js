@@ -115,9 +115,12 @@ const getLeague = async ( user, id, name ) =>
             league = await League.findOne({ name: name })
         }
 
-        await populate.league( league )
+        if ( league && league.$isValid() )
+        {
+            await populate.league( league )
+        }
 
-        return league ? Promise.resolve(league) : Promise.reject(Constants.LEAGUE_NOT_FOUND)
+        return league && league.$isValid() ? Promise.resolve(league) : Promise.resolve(null)
     }
     catch (error)
     {
