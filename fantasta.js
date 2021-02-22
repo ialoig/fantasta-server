@@ -49,8 +49,8 @@ let saveFootballPlayers = require('./src/footballPlayers').saveFootballPlayers
 
 // ------------------------------------------------------------
 // Seed database with fake data
- let seedDb = require("./src/database/seed").seed
- seedDb();
+// let seedDb = require("./src/database/seed").seed
+// seedDb();
 
 // ------------------------------------------------------------
 // Setting HTTP routes
