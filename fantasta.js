@@ -48,8 +48,8 @@ saveFootballPlayers(config.schedule.excelFilenameClassic, config.schedule.excelF
 
 // ------------------------------------------------------------
 // Seed database with fake data
- let seedDb = require("./src/database/seed").seed
- seedDb();
+// let seedDb = require("./src/database/seed").seed
+// seedDb();
 
 // ------------------------------------------------------------
 // Setting HTTP routes
