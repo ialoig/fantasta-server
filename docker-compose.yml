@@ -14,6 +14,8 @@ services:
       - mongodata:/data/db
     networks: 
       -  default
+    logging:
+      driver: none
 
   fantasta_server:
     container_name: fantasta_server

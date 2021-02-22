@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { FootballPlayer } from "../database";
 import { xlsxUtils } from "../utils";
-import { secondsFrom, load_footballPlayer_duration_seconds } from "../metrics"
+import { secondsFrom, METRIC_STATUS, load_footballPlayer_duration_seconds } from "../metrics"
 
 const printCorruptedPlayer = (footballPlayer_obj, reason) => {
     console.error(`corrupted footballPlayer. Reason: ${reason}. ${JSON.stringify(footballPlayer_obj, null, 2)}`)
@@ -159,7 +159,7 @@ const saveFootballPlayers = async (excelFilenameClassic, excelFilenameMantra) =>
     catch (error)
     {
         console.error(`Error reading file: ${excelFilenameClassic}. ${error}`)
-        load_footballPlayer_duration_seconds.observe({ status: "error", msg: "readClassicExcelFile"}, secondsFrom(duration_start))
+        load_footballPlayer_duration_seconds.observe({ status: METRIC_STATUS.ERROR, msg: "readClassicExcelFile"}, secondsFrom(duration_start))
     }
 
     try
@@ -169,7 +169,7 @@ const saveFootballPlayers = async (excelFilenameClassic, excelFilenameMantra) =>
     catch (error)
     {
         console.error(`Error reading file: ${excelFilenameMantra}. ${error}`)
-        load_footballPlayer_duration_seconds.observe({ status: "error", msg: "readMantraExcelFile"}, secondsFrom(duration_start))
+        load_footballPlayer_duration_seconds.observe({ status: METRIC_STATUS.ERROR, msg: "readMantraExcelFile"}, secondsFrom(duration_start))
     }
 
     if (excelContentClassic_obj.length > 0 && excelContentMantra_obj.length > 0) {
@@ -216,12 +216,12 @@ const saveFootballPlayers = async (excelFilenameClassic, excelFilenameMantra) =>
             }
 
             console.info(`saveFootballPlayers() execution time: ${secondsFrom(duration_start)} seconds`)
-            load_footballPlayer_duration_seconds.observe({ status: "success", msg: ""}, secondsFrom(duration_start))
+            load_footballPlayer_duration_seconds.observe({ status: METRIC_STATUS.SUCCESS, msg: ""}, secondsFrom(duration_start))
         }
         catch (error)
         {
             console.error(error)
-            load_footballPlayer_duration_seconds.observe({ status: "error", msg: error}, secondsFrom(duration_start))
+            load_footballPlayer_duration_seconds.observe({ status: METRIC_STATUS.ERROR, msg: error}, secondsFrom(duration_start))
         }
     }
 }
