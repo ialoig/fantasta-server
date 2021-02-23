@@ -4,6 +4,7 @@ import I18n from 'i18n-js'
 import { langs } from './translations'
 
 const defaultLang = 'it'
+const availableLangs = [ 'it', 'en' ]
 
 I18n.fallbacks = true
 I18n.defaultLocale = defaultLang
@@ -11,26 +12,24 @@ I18n.locale = defaultLang
 
 I18n.translations = langs
 
-export const getLanguage = ( lang ) =>
+export const getLanguage = ( language ) =>
 {
     let langs = []
 
-    if ( lang && lang.includes('_') )
+    if ( language && language.includes('_') )
     {
-        langs = lang.split('_')
+        langs = language.split('_')
     }
-    else if ( lang && lang.includes('-') )
+    else if ( language && language.includes('-') )
     {
-        langs = lang.split('-')
-    }
-
-    if ( lang.length==2 )
-    {
-        return lang[0].toLowerCase()
-    }
-    else
-    {
-        return 'it'
+        langs = language.split('-')
     }
 
+    let lang = ''
+    if ( langs.length )
+    {
+        lang = langs[0].toLowerCase()
+    }
+    
+    return availableLangs.includes(lang) ? lang : 'it'
 }
