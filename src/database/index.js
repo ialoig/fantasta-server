@@ -11,24 +11,24 @@ mongoose.Promise = Promise
 // register callback on events
 connection
 .on( 'connecting', () => {
-    console.log("mongodb status: connecting")
+    console.log("[mongodb] status: connecting")
 })
 .on( 'disconnecting', () => {
-    console.log("mongodb status: disconnecting")
+    console.log("[mongodb] status: disconnecting")
 })
 .on( 'disconnected', () => {
-    console.log("mongodb status: disconnected")
+    console.log("[mongodb] status: disconnected")
 })
 .on( 'close', () => {
-    console.log("mongodb status: connection close")
+    console.log("[mongodb] status: connection close")
 })
 .on( 'error', (error) => {
-    console.error("mongodb error: ", error)
+    console.error("[mongodb] error: ", error)
 })
 
 connection
 .once( 'connected', () => {
-    console.log("mongodb status: connected")
+    console.log("[mongodb] status: connected")
 })
 
 process.on( 'SIGINT', () => {
@@ -39,7 +39,7 @@ process.on( 'SIGINT', () => {
 })
 
 const mongodbConnection = `${config.mongodb.endpoint}:${config.mongodb.port}/${config.mongodb.database}`
-console.log( `mongodb endpoint: ${mongodbConnection}`)
+console.log( `[mongodb] endpoint: ${mongodbConnection}`)
 
 const mongoConnectionParams = {
     useNewUrlParser: true, // MongoDB driver has deprecated their current connection string parser
