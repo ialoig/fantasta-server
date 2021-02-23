@@ -1,6 +1,6 @@
 
 const _ = require("lodash");
-const { User, League, Team } = require("../models");
+const { User, League, Team } = require("../../src/database/models");
 
 import { fakeUsers, fakeLeagues, fakeTeams } from "./fakeData"
 

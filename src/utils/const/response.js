@@ -159,7 +159,7 @@ const HttpStatus =
         status: 'User Not Valid'
     },
     'FULL_LEAGUE': {
-        code: 601,
+        code: 602,
         status: 'Full league'
     },
     '11000' : {
