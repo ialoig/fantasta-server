@@ -1,12 +1,14 @@
 
 import { League, populate } from '../../../database'
 import { Constants, Response, leagueUtils, userUtils } from '../../../utils'
+import { secondsFrom, METRIC_STATUS, api_duration_seconds } from "../../../metrics"
 
 import { Socket } from '../../../socket'
 
 const create = async ( req, res, next ) =>
 {
-    //todo: send metric (League.create api call)
+    const duration_start = process.hrtime()
+
     let leagueData = req.body || {}
     
     try
@@ -40,12 +42,16 @@ const create = async ( req, res, next ) =>
         // Socket.addAttendee( req, newLeag.name, '' )
         // Socket.leagueCreate( req, newLeag.name, '' )
 
+        api_duration_seconds.observe({ name: "league.create", status: METRIC_STATUS.SUCCESS, msg: ""}, secondsFrom(duration_start))
+
         res.json( Response.resolve(Constants.OK, response) )
     }
     catch (error)
     {
+        api_duration_seconds.observe({ name: "league.create", status: METRIC_STATUS.ERROR, msg: Constants[error] || Constants.BAD_REQUEST}, secondsFrom(duration_start))
+
         console.error('League Create: ', error)
-        res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, error, req.headers.language ) )
+        res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants[error] || Constants.BAD_REQUEST, error, req.headers.language ) )
     }
 }
 

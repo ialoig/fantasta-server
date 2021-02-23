@@ -90,10 +90,7 @@ const validateleague = ( leagueData, userID ) =>
             admin: userID
         }
     }
-    throw {
-        error: Constants.PARAMS_ERROR,
-        errorTtpe: error
-    }
+    throw Constants.PARAMS_ERROR
 }
 
 const parseLeague = ( league ) =>

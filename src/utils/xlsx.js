@@ -11,7 +11,7 @@ const read = (fileName, skipRows) =>
     if ( file && file.Sheets )
     {
         // Read single sheet
-        let worksheet = file.Sheets && file.Sheets["Tutti"] || {}
+        let worksheet = file.Sheets["Tutti"] || {}
 
         // Skip rows
         if ( skipRows > 0 && worksheet['!ref'] )

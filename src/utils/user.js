@@ -10,13 +10,22 @@ const userFromToken = async ( req ) =>
     try
     {
         
-        const token = Token.Get( req )
-        if ( token )
+        const token = Token.Get( req ) || ''
+        let auth = Token.Verify( token, config.token.kid )
+        
+        if ( auth.error )
         {
-            let auth = Token.Verify( token, config.token.kid )
+            throw Constants.TOKEN_NOT_VALID
+        }
+        else
+        {
             let user = await User.findOne({ email: auth.email })
 
-            if ( user && auth && user.password && user.password==auth.password )
+            if ( !user || user.$isEmpty() || !user.$isValid() )
+            {
+                throw Constants.USER_NOT_FOUND
+            }
+            else if ( user.password && user.password==auth.password )
             {
                 let data = {
                     user,
@@ -24,8 +33,11 @@ const userFromToken = async ( req ) =>
                 }
                 return Promise.resolve( data )
             }
+            else
+            {
+                throw Constants.WRONG_USER
+            }
         }
-        return Promise.reject({ error: Constants.EMPTY_TOKEN })
     }
     catch (error)
     {

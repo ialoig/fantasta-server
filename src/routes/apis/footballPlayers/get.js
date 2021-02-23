@@ -5,8 +5,7 @@ import { secondsFrom, METRIC_STATUS, api_duration_seconds } from "../../../metri
 
 const get = async (req, res, next) =>
 {
-    // used to measure execution time
-    let duration_start = process.hrtime()
+    const duration_start = process.hrtime()
 
     try
     {
