@@ -45,7 +45,7 @@ const join = async ( req, res, next ) =>
                 {
                     throw Constants.USER_TEAM_PRESENT
                 }
-                else if ( league.teams.find( (t) => t.name.toLowerCase()==name.toLowerCase() ) )
+                else if ( league.teams.find( (t) => t.name.toLowerCase()==teamname.toLowerCase() ) )
                 {
                     throw Constants.TEAM_PRESENT
                 }

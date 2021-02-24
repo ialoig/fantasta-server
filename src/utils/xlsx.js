@@ -2,7 +2,7 @@
 import { readFile, utils } from 'xlsx'
 const read = (fileName, skipRows) =>
 {
-    console.log(`Reading file: ${fileName}. Skipping ${skipRows} rows`)
+    console.log(`[xlsx] reading file ${fileName} (skipping ${skipRows} rows)`)
 
     let file = readFile( './' + fileName )
     
