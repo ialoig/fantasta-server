@@ -1,9 +1,10 @@
-
-let express = require('express')
-let path = require('path')
-let morgan = require('morgan')
-let cookieParser = require('cookie-parser')
-let config = require('config')
+import express from 'express'
+import path from 'path'
+import morgan from 'morgan'
+import cookieParser from 'cookie-parser'
+import config from 'config'
+import { initMongoConnection } from './src/database'
+import { seed } from "./test/seed" // for development only
 
 let app = express()
 
@@ -14,7 +15,6 @@ app.use(morgan('dev')) //'combined'
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use(cookieParser())
-
 app.use(express.static(path.join(__dirname, 'public')))
 
 
@@ -42,33 +42,44 @@ app.use( (err, req, res, next) => {
 })
 
 // ------------------------------------------------------------
-// Scheduling processes
-let saveFootballPlayers = require('./src/footballPlayers').saveFootballPlayers
-saveFootballPlayers(config.schedule.excelFilenameClassic, config.schedule.excelFilenameMantra)
-
-// ------------------------------------------------------------
-// Seed database with fake data
-// let seedDb = require("./src/database/seed").seed
-// seedDb();
-
-// ------------------------------------------------------------
 // Setting HTTP routes
 let routes = require('./src/routes').default
 app.use('/fantasta', routes)
 
 
 // ------------------------------------------------------------
-// Create socket
-const SocketInit = require('./src/socket').init
-const server = SocketInit( app )
+// Start Server
+const startServer = () => {
 
-server.listen( config.port, () => {
-    console.log(`************************************`)
-    console.log(`Environment: ${process.env.NODE_ENV}`)
-    console.log(`Config: ${JSON.stringify(config, null, 2)}`)
-    console.log(`************************************`)
-    console.log(`Fantasta Server running on port ${config.port}`)
-    console.log(`************************************`)
-})
+    // Create socket
+    const SocketInit = require('./src/socket').init
+    const server = SocketInit( app )
+
+    server.listen( config.port, () => {
+        console.log(`************************************`)
+        console.log(`Environment: ${process.env.NODE_ENV}`)
+        console.log(`Config: ${JSON.stringify(config, null, 2)}`)
+        console.log(`************************************`)
+        console.log(`Fantasta Server running on port ${config.port}`)
+        console.log(`************************************`)
+    })
+}
+
+const startServices = () => {
+
+    startServer()
+
+    // populate db with football players
+    saveFootballPlayers(config.schedule.excelFilenameClassic, config.schedule.excelFilenameMantra)
+
+    // Seed database with fake data
+    // seed()
+}
+
+initMongoConnection(startServices)
+
+// ------------------------------------------------------------
+// Scheduling processes
+let saveFootballPlayers = require('./src/footballPlayers').saveFootballPlayers
 
 module.exports = app

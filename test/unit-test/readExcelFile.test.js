@@ -1,6 +1,6 @@
 import "regenerator-runtime/runtime.js"
 import _ from "lodash";
-import { Read } from "../../src/utils";
+import { xlsxUtils } from "../../src/utils";
 import { mergeRoles, getPlayersFromExcelContent } from "../../src/footballPlayers/saveFootballPlayers"
 
 const assert = require("assert")
@@ -57,8 +57,8 @@ describe("parse Excel file", function () {
                 initialPrice: 46
             }
         }
-        let excelContentClassic_obj = Read("test/unit-test/footballPlayerListClassic_test.xls", 1);
-        let excelContentMantra_obj = Read("test/unit-test/footballPlayerListMantra_test.xls", 1);
+        let excelContentClassic_obj = xlsxUtils.read("test/unit-test/footballPlayerListClassic_test.xls", 1);
+        let excelContentMantra_obj = xlsxUtils.read("test/unit-test/footballPlayerListMantra_test.xls", 1);
 
         // Extract footballPlayer from Json object
         let footballPlayerListClassic_obj = getPlayersFromExcelContent(excelContentClassic_obj, false);
