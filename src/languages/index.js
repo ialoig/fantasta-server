@@ -12,6 +12,10 @@ I18n.locale = defaultLang
 
 I18n.translations = langs
 
+I18n.missingTranslation = (key) => {
+    return key
+}
+
 export const getLanguage = ( language ) =>
 {
     let langs = []
