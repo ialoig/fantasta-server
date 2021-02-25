@@ -21,8 +21,8 @@ const reject = ( status, info, error, locale ) =>
         'codeStatus': HttpStatus[status].code_status,
         'status': HttpStatus[status].status,
         'info': {
-            title: ErrorMessages[info].title,
-            message: ErrorMessages[info].message
+            title: I18n.t( ErrorMessages[info].title, {locale: lang} ),
+            message: I18n.t( ErrorMessages[info].message, {locale: lang} )
         },
         'data': error || {}
     }
