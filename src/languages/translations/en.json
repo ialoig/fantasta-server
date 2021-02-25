@@ -33,5 +33,9 @@
     "league_attendees_not_correct": "Numero partecipanti errato",
     "min_attendees_2": "La lega deve avere almeno due partecipanti",
     "players_number_not_correct": "Numero di giocatori errato",
-    "modify_number_players_and_retry": "Modifica il numero di giocatori e riprova"
+    "modify_number_players_and_retry": "Modifica il numero di giocatori e riprova",
+    "user_joined_league": "Lega già presente",
+    "join_league_from_home": "Hai già fatto accesso a questa lega, accedi a questa lega dall'elenco delle tue leghe nella home",
+    "team_present_in_league": "Team esistente",
+    "try_change_teamname": "Un team con lo stesso nome è già presente nella lega, cambia nome dee team e prova ancora"
 }

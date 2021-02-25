@@ -21,8 +21,8 @@ const reject = ( status, info, error, locale ) =>
         'codeStatus': HttpStatus[status].code_status,
         'status': HttpStatus[status].status,
         'info': {
-            title: ErrorMessages[info].title,
-            message: ErrorMessages[info].message
+            title: I18n.t( ErrorMessages[info].title, {locale: lang} ),
+            message: I18n.t( ErrorMessages[info].message, {locale: lang} )
         },
         'data': error || {}
     }
@@ -102,12 +102,12 @@ const ErrorMessages = {
         message: 'modify_number_players_and_retry'
     },
     'USER_TEAM_PRESENT': {
-        title: 'user_already_joined_the_league',
-        message: 'change_user_or_try_to_join_a_different_league'
+        title: 'user_joined_league',
+        message: 'join_league_from_home'
     },
     'TEAM_PRESENT': {
-        title: 'team_already_present_in_the_league',
-        message: 'try_to_change_team_name'
+        title: 'team_present_in_league',
+        message: 'try_change_teamname'
     },
     '11000' : {
         title: 'item_used',
