@@ -18,6 +18,8 @@ const login = async ( req, res, next ) =>
 
             if ( !user || !user.$isValid() || user.$isEmpty() )
             {
+                errorMetric( "auth.login", Constants.NOT_FOUND, duration_start )
+                
                 console.error('Auth Login: ', Constants.NOT_FOUND)
                 res.status(404).send( Response.reject( Constants.NOT_FOUND, Constants.USER_NOT_FOUND, null, req.headers.language ) )
             }

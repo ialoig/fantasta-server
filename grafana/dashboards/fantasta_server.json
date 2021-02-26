@@ -183,18 +183,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "load_footballPlayer_duration_seconds_sum{status=\"error\"}",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "load_footballPlayers - {{status}}: {{msg}} (ms)",
-          "refId": "A"
-        },
-        {
           "expr": "load_footballPlayer_duration_seconds_count{status=\"error\"}",
           "hide": false,
           "interval": "",
-          "legendFormat": "load_footballPlayers - {{status}}: {{msg}} (counter)",
-          "refId": "B"
+          "legendFormat": "load_footballPlayers - {{status}}: {{msg}}",
+          "refId": "A"
         }
       ],
       "thresholds": [],
@@ -249,7 +242,7 @@
       },
       "id": 10,
       "panels": [],
-      "title": "API",
+      "title": "APIs",
       "type": "row"
     },
     {
@@ -274,7 +267,7 @@
         "y": 10
       },
       "hiddenSeries": false,
-      "id": 2,
+      "id": 12,
       "legend": {
         "alignAsTable": true,
         "avg": false,
@@ -304,25 +297,18 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "(rate(api_duration_seconds_sum{name= \"footballPlayer.get\", status=\"success\"}[1m])/rate(api_duration_seconds_count{status=\"success\"}[1m]))*1000",
+          "expr": "(rate(api_duration_seconds_sum{name=\"footballPlayer.get\", status=\"success\"}[1m])/rate(api_duration_seconds_count{name=\"footballPlayer.get\", status=\"success\"}[1m]))*1000",
           "hide": false,
           "interval": "",
           "legendFormat": "{{name}} - {{status}} - {{msg}}",
           "refId": "A"
-        },
-        {
-          "expr": "(rate(api_duration_seconds_sum{name= \"league.join\", status=\"success\"}[1m])/rate(api_duration_seconds_count{status=\"success\"}[1m]))*1000",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "{{name}} - {{status}}",
-          "refId": "B"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "API",
+      "title": "FootballPlayer",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -383,6 +369,216 @@
         "y": 10
       },
       "hiddenSeries": false,
+      "id": 13,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "max": true,
+        "min": false,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null as zero",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.7",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "api_duration_seconds_count{name=\"footballPlayer.get\", status=\"error\"}",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{name}} - {{status}} - {{msg}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "FootballPlayer - Errors",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:149",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:150",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 18
+      },
+      "hiddenSeries": false,
+      "id": 2,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "hideEmpty": false,
+        "max": true,
+        "min": false,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null as zero",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.7",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "(rate(api_duration_seconds_sum{name=\"auth.login\", status=\"success\"}[1m])/rate(api_duration_seconds_count{name=\"auth.login\", status=\"success\"}[1m]))*1000",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{name}} - {{status}} - {{msg}}",
+          "refId": "A"
+        },
+        {
+          "expr": "(rate(api_duration_seconds_sum{name=\"auth.token\", status=\"success\"}[1m])/rate(api_duration_seconds_count{name=\"auth.token\", status=\"success\"}[1m]))*1000",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{name}} - {{status}} - {{msg}}",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Auth",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:51",
+          "format": "dtdurationms",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:52",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 18
+      },
+      "hiddenSeries": false,
       "id": 3,
       "legend": {
         "alignAsTable": true,
@@ -412,25 +608,242 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "api_duration_seconds_sum{status=\"error\"}",
+          "expr": "api_duration_seconds_count{name=\"auth.login\", status=\"error\"}",
           "hide": false,
           "interval": "",
-          "legendFormat": "{{name}} - {{status}} - {{msg}} (seconds)",
-          "refId": "B"
+          "legendFormat": "{{name}} - {{status}} - {{msg}}",
+          "refId": "A"
         },
         {
-          "expr": "api_duration_seconds_count{status=\"error\"}",
+          "expr": "api_duration_seconds_count{name=\"auth.token\", status=\"error\"}",
           "hide": false,
           "interval": "",
-          "legendFormat": "{{name}} - {{status}} - {{msg}} (counter)",
-          "refId": "A"
+          "legendFormat": "{{name}} - {{status}} - {{msg}}",
+          "refId": "B"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "API - Errors",
+      "title": "Auth - Errors",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:149",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:150",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 26
+      },
+      "hiddenSeries": false,
+      "id": 14,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "hideEmpty": false,
+        "max": true,
+        "min": false,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null as zero",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.7",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "(rate(api_duration_seconds_sum{name=\"league.create\", status=\"success\"}[1m])/rate(api_duration_seconds_count{name=\"league.create\", status=\"success\"}[1m]))*1000",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{name}} - {{status}} - {{msg}}",
+          "refId": "A"
+        },
+        {
+          "expr": "(rate(api_duration_seconds_sum{name=\"league.join\", status=\"success\"}[1m])/rate(api_duration_seconds_count{name=\"league.join\", status=\"success\"}[1m]))*1000",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{name}} - {{status}} - {{msg}}",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "League",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:51",
+          "format": "dtdurationms",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:52",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 26
+      },
+      "hiddenSeries": false,
+      "id": 15,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "max": true,
+        "min": false,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null as zero",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.7",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "api_duration_seconds_count{name=\"league.create\", status=\"error\"}",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{name}} - {{status}} - {{msg}}",
+          "refId": "A"
+        },
+        {
+          "expr": "api_duration_seconds_count{name=\"league.join\", status=\"error\"}",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{name}} - {{status}} - {{msg}}",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "League - Errors",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -484,5 +897,5 @@
   "timezone": "browser",
   "title": "Fantasta Server",
   "uid": "hghajaEMk",
-  "version": 1
+  "version": 3
 }
