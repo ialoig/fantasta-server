@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser'
 import config from 'config'
 import { initMongoConnection } from './src/database'
 import { JobSchedule, savePlayers } from './src/footballPlayers'
+import routing  from './src/routes'
 import { seed } from "./test/seed" // for development only
 
 let app = express()
@@ -44,8 +45,7 @@ app.use( (err, req, res, next) => {
 
 // ------------------------------------------------------------
 // Setting HTTP routes
-let routes = require('./src/routes').default
-app.use('/fantasta', routes)
+app.use('/fantasta', routing)
 
 
 // ------------------------------------------------------------
