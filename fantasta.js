@@ -4,8 +4,8 @@ import morgan from 'morgan'
 import cookieParser from 'cookie-parser'
 import config from 'config'
 import { initMongoConnection } from './src/database'
-import { seed } from "./test/seed" // for development only
 import { JobSchedule, savePlayers } from './src/footballPlayers'
+import { seed } from "./test/seed" // for development only
 
 let app = express()
 
@@ -47,6 +47,7 @@ app.use( (err, req, res, next) => {
 let routes = require('./src/routes').default
 app.use('/fantasta', routes)
 
+
 // ------------------------------------------------------------
 // Start Server
 const startServer = () => {
@@ -65,8 +66,6 @@ const startServer = () => {
     })
 }
 
-console.log(`aaaaaaaaaaa`)
-
 const startServicesCallback = () => {
 
     startServer()
@@ -80,8 +79,6 @@ const startServicesCallback = () => {
     // Seed database with fake data
     // seed()
 }
-
-console.log(`bbbbbbbbb`)
 
 initMongoConnection(startServicesCallback)
 
