@@ -5,9 +5,7 @@ import cookieParser from 'cookie-parser'
 import config from 'config'
 import { initMongoConnection } from './src/database'
 import { seed } from "./test/seed" // for development only
-
-let footballPlayers = require('./src/footballPlayers')
-let seed = require('./test')
+import { JobSchedule, savePlayers } from './src/footballPlayers'
 
 let app = express()
 
@@ -67,21 +65,24 @@ const startServer = () => {
     })
 }
 
-const startServices = () => {
+console.log(`aaaaaaaaaaa`)
+
+const startServicesCallback = () => {
 
     startServer()
 
     // populate db with football players
-    saveFootballPlayers(config.schedule.excelFilenameClassic, config.schedule.excelFilenameMantra)
+    savePlayers()
+
+    // Scheduling processes
+    JobSchedule()
 
     // Seed database with fake data
     // seed()
 }
 
-initMongoConnection(startServices)
+console.log(`bbbbbbbbb`)
 
-// ------------------------------------------------------------
-// Scheduling processes
-let saveFootballPlayers = require('./src/footballPlayers').saveFootballPlayers
+initMongoConnection(startServicesCallback)
 
 module.exports = app

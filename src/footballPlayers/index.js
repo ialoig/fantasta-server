@@ -17,5 +17,4 @@ const savePlayers = () =>
     saveFootballPlayers(config.schedule.excelFilenameClassic, config.schedule.excelFilenameMantra)
 }
 
-JobSchedule()
-savePlayers()
+export { JobSchedule, savePlayers }
