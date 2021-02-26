@@ -3,7 +3,7 @@ import I18n from 'i18n-js'
 
 import { getLanguage } from '../languages'
 
-const resolve = ( status, data, token ) =>
+const resolve = ( status, data ) =>
 {
     return {
         'code': HttpStatus[status].code,
