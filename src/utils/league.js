@@ -1,8 +1,8 @@
 
 import _ from 'lodash'
 
-import { Team } from '../database'
-import { Constants } from '../utils'
+import { populate, Team } from '../database'
+import { Constants, userUtils } from '../utils'
 
 const errors = {
     LEAGUE_NAME_ERROR: 'LEAGUE_NAME_ERROR',
@@ -165,9 +165,25 @@ const parseTeam = ( team ) =>
     return tm
 }
 
+const createLeagueResponse = async ( user, league, team ) =>
+{
+    let usr1 = await populate.user( user )
+    let lg1 = await populate.league( league )
+    let tm1 = await populate.team( team )
+
+    let response = {
+        user: userUtils.parseUser( usr1 ),
+        league: parseLeague( lg1 ),
+        team: parseTeam( tm1 ),
+    }
+
+    return Promise.resolve(response)
+}
+
 export default {
     validateleague,
     parseLeague,
     createTeam,
-    parseTeam
+    parseTeam,
+    createLeagueResponse
 }

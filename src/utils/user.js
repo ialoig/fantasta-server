@@ -3,7 +3,7 @@ import config from 'config'
 
 import { populate, User } from '../database'
 import { default as Token } from './token'
-import { Constants } from '../utils'
+import { Constants, tokenUtils } from '../utils'
 
 const userFromToken = async ( req ) =>
 {
@@ -88,8 +88,21 @@ const parseUser = ( user ) =>
     return usr
 }
 
+const createAuthResponse = async ( user, password ) =>
+{
+    let usr = await getUser( user )
+    
+    let response = {
+        user: usr,
+        token: tokenUtils.Create( config.token.kid, usr.email, password, usr.username )
+    }
+
+    return Promise.resolve(response)
+}
+
 export default {
     userFromToken,
     getUser,
-    parseUser
+    parseUser,
+    createAuthResponse
 }

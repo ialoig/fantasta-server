@@ -5,6 +5,9 @@ let morgan = require('morgan')
 let cookieParser = require('cookie-parser')
 let config = require('config')
 
+let footballPlayers = require('./src/footballPlayers')
+let seed = require('./test')
+
 let app = express()
 
 app.set('views', path.join(__dirname, 'views'))
@@ -42,20 +45,9 @@ app.use( (err, req, res, next) => {
 })
 
 // ------------------------------------------------------------
-// Scheduling processes
-let saveFootballPlayers = require('./src/footballPlayers').saveFootballPlayers
-saveFootballPlayers(config.schedule.excelFilenameClassic, config.schedule.excelFilenameMantra)
-
-// ------------------------------------------------------------
-// Seed database with fake data
-// let seedDb = require("./src/database/seed").seed
-// seedDb();
-
-// ------------------------------------------------------------
 // Setting HTTP routes
 let routes = require('./src/routes').default
 app.use('/fantasta', routes)
-
 
 // ------------------------------------------------------------
 // Create socket

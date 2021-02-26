@@ -1,9 +1,8 @@
 import Validator from 'validator'
-import config from 'config'
 
 import { User } from '../../../database'
-import { secondsFrom, METRIC_STATUS, api_duration_seconds } from "../../../metrics"
-import { Constants, Response, userUtils, tokenUtils } from '../../../utils'
+import { errorMetric, saveMetric } from "../../../metrics"
+import { Constants, Response, userUtils } from '../../../utils'
 
 const update = async ( req, res, next ) =>
 {
@@ -29,19 +28,15 @@ const update = async ( req, res, next ) =>
     
             let updatedUser = await User.findByIdAndUpdate({_id: userID}, newValues, {new: true, useFindAndModify: false});
             
-            let usr = await userUtils.getUser( updatedUser )
-            let response = {
-                user: usr,
-                token: tokenUtils.Create( config.token.kid, updatedUser.email, updatedUser.password, updatedUser.username )
-            }
+            let response = await userUtils.createAuthResponse( updatedUser, updatedUser.password )
 
-            api_duration_seconds.observe({ name: "auth.update", status: METRIC_STATUS.SUCCESS, msg: ""}, secondsFrom(duration_start))
+            saveMetric( "auth.update", '', duration_start )
             
             return res.json( Response.resolve( Constants.OK, response ) )
         }
         catch ( error )
         {
-            api_duration_seconds.observe({ name: "auth.update", status: METRIC_STATUS.ERROR, msg: Constants[error] || Constants.BAD_REQUEST}, secondsFrom(duration_start))
+            errorMetric( "auth.update", Constants[error] || Constants.BAD_REQUEST, duration_start )
             
             console.error('Auth Update: ', error)
             res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants[error] || Constants.BAD_REQUEST, error, req.headers.language ) )
@@ -49,7 +44,7 @@ const update = async ( req, res, next ) =>
     }
     else
     {
-        api_duration_seconds.observe({ name: "auth.update", status: METRIC_STATUS.ERROR, msg: Constants.PARAMS_ERROR}, secondsFrom(duration_start))
+        errorMetric( "auth.update", Constants.PARAMS_ERROR, duration_start )
 
         console.error('Auth Update: PARAMS_ERROR')
         res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.PARAMS_ERROR, null, req.headers.language ) )
