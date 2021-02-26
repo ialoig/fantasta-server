@@ -6,6 +6,9 @@ import config from 'config'
 import { initMongoConnection } from './src/database'
 import { seed } from "./test/seed" // for development only
 
+let footballPlayers = require('./src/footballPlayers')
+let seed = require('./test')
+
 let app = express()
 
 app.set('views', path.join(__dirname, 'views'))
@@ -45,7 +48,6 @@ app.use( (err, req, res, next) => {
 // Setting HTTP routes
 let routes = require('./src/routes').default
 app.use('/fantasta', routes)
-
 
 // ------------------------------------------------------------
 // Start Server

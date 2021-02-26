@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { FootballPlayer } from "../database";
 import { xlsxUtils } from "../utils";
-import { secondsFrom, METRIC_STATUS, load_footballPlayer_duration_seconds } from "../metrics"
+import { errorPlayersMetric, loadPlayersMetric, secondsFrom } from "../metrics"
 
 const printCorruptedPlayer = (footballPlayer_obj, reason) => {
     console.error(`[saveFootballPlayers] corrupted footballPlayer. Reason: ${reason}. ${JSON.stringify(footballPlayer_obj, null, 2)}`)
@@ -147,7 +147,7 @@ const saveFootballPlayerWithVersion = async (footballPlayerList_obj, version) =>
 const saveFootballPlayers = async (excelFilenameClassic, excelFilenameMantra) => {
 
     // used to measure execution time
-    let duration_start = process.hrtime()
+    const duration_start = process.hrtime()
 
     // Excel file to Json object
     let excelContentClassic_obj = {}
@@ -159,7 +159,7 @@ const saveFootballPlayers = async (excelFilenameClassic, excelFilenameMantra) =>
     catch (error)
     {
         console.error(`[saveFootballPlayers] error reading file ${excelFilenameClassic}. ${error}`)
-        load_footballPlayer_duration_seconds.observe({ status: METRIC_STATUS.ERROR, msg: "readClassicExcelFile"}, secondsFrom(duration_start))
+        errorPlayersMetric( "readClassicExcelFile", duration_start )
     }
 
     try
@@ -169,7 +169,7 @@ const saveFootballPlayers = async (excelFilenameClassic, excelFilenameMantra) =>
     catch (error)
     {
         console.error(`[saveFootballPlayers] error reading file ${excelFilenameMantra}. ${error}`)
-        load_footballPlayer_duration_seconds.observe({ status: METRIC_STATUS.ERROR, msg: "readMantraExcelFile"}, secondsFrom(duration_start))
+        errorPlayersMetric( "readMantraExcelFile", duration_start )
     }
 
     if (excelContentClassic_obj.length > 0 && excelContentMantra_obj.length > 0) {
@@ -215,12 +215,13 @@ const saveFootballPlayers = async (excelFilenameClassic, excelFilenameMantra) =>
             }
 
             console.info(`[saveFootballPlayers] execution time: ${secondsFrom(duration_start)} seconds`)
-            load_footballPlayer_duration_seconds.observe({ status: METRIC_STATUS.SUCCESS, msg: ""}, secondsFrom(duration_start))
+            loadPlayersMetric( duration_start )
         }
         catch (error)
         {
             console.error(`[saveFootballPlayers] error updating FootballPlayer. ${error}`);
-            load_footballPlayer_duration_seconds.observe({ status: METRIC_STATUS.ERROR, msg: error}, secondsFrom(duration_start))
+            errorPlayersMetric( error, duration_start )
+            
         }
     }
 }

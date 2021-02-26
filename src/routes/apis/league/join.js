@@ -1,7 +1,7 @@
 
 import { League, populate } from '../../../database'
 import { Constants, Response, leagueUtils, userUtils } from '../../../utils'
-import { secondsFrom, METRIC_STATUS, api_duration_seconds } from "../../../metrics"
+import { errorMetric, saveMetric } from "../../../metrics"
 
 import { Socket } from '../../../socket'
 
@@ -68,27 +68,19 @@ const join = async ( req, res, next ) =>
                 throw Constants.TEAM_NOT_FOUND
             }
 
-            let usr = await populate.user( user )
-            let lg = await populate.league( league )
-            let tm = await populate.team( team )
-
-            let response = {
-                user: userUtils.parseUser( usr ),
-                league: leagueUtils.parseLeague( lg ),
-                team: leagueUtils.parseTeam( tm ),
-            }
+            let response = await leagueUtils.createLeagueResponse( user, league, team )
 
             //TODO: preparare socket per eventi
             // Socket.addAttendee( req, newLeag.name, '' )
             // Socket.leagueCreate( req, newLeag.name, '' )
 
-            api_duration_seconds.observe({ name: "league.join", status: METRIC_STATUS.SUCCESS, msg: ""}, secondsFrom(duration_start))
+            saveMetric( "league.join", '', duration_start )
             
             res.json( Response.resolve(Constants.OK, response) )
         }
         catch (error)
         {
-            api_duration_seconds.observe({ name: "league.join", status: METRIC_STATUS.ERROR, msg: Constants[error] || Constants.BAD_REQUEST}, secondsFrom(duration_start))
+            errorMetric( "league.join", Constants[error] || Constants.BAD_REQUEST, duration_start )
 
             console.error('League Join: ', error)
             return res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants[error] || Constants.BAD_REQUEST, error, req.headers.language ) )
@@ -96,7 +88,7 @@ const join = async ( req, res, next ) =>
     }
     else
     {
-        api_duration_seconds.observe({ name: "league.join", status: METRIC_STATUS.ERROR, msg: Constants.PARAMS_ERROR}, secondsFrom(duration_start))
+        errorMetric( "league.join", Constants.PARAMS_ERROR, duration_start )
 
         console.error('League Join: PARAMS_ERROR')
         return res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.PARAMS_ERROR, null, req.headers.language ) )
