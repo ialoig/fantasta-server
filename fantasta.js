@@ -20,8 +20,7 @@ app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
 
-// ------------------------------
-// ???
+// Headers da accettare per le chiamate esterne
 app.use( (req, res, next) => {
     res.header("Accept", "*")
     res.header("Access-Control-Allow-Origin", "http://localhost:19006")
@@ -31,7 +30,6 @@ app.use( (req, res, next) => {
     next()
 })
 
-// ------------------------------------------------------------
 // Error Handling
 app.use( (err, req, res, next) => {
     console.error("!!!!!!!!!!!!!!!!!");
@@ -43,12 +41,9 @@ app.use( (err, req, res, next) => {
     res.render('error')
 })
 
-// ------------------------------------------------------------
 // Setting HTTP routes
 app.use('/fantasta', routing)
 
-
-// ------------------------------------------------------------
 // Start Server
 const startServer = () => {
 

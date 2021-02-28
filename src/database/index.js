@@ -2,6 +2,7 @@
 
 import mongoose from 'mongoose'
 import config from 'config'
+//import { savePlayers } from '../footballPlayers'
 import { default as populate } from './populate'
 import { mongodb_connection_status_counter } from '../metrics'
 
@@ -13,8 +14,8 @@ const mongodbConnection = `${config.mongodb.endpoint}:${config.mongodb.port}/${c
 const mongoConnectionParams = {
     useNewUrlParser: true,    // MongoDB driver has deprecated their current connection string parser
     useUnifiedTopology: true,
-    poolSize: 5,              // Set the maximum poolSize for each individual server or proxy connection (default 5)
-    autoIndex: false,         // disabled in production since index creation can cause a significant performance impact (default: true?)
+    useCreateIndex: true,
+    autoIndex: true         // disabled in production since index creation can cause a significant performance impact (default: true?)
 }
 
 /**
@@ -69,6 +70,7 @@ const initMongoConnection = async (startServicesCallback) => {
         console.log("[mongodb] status: open")
         mongodb_connection_status_counter.inc({ status: "open" });
         startServicesCallback()
+        //savePlayers()
     })
 }
 

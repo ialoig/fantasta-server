@@ -1,25 +1,21 @@
 import "regenerator-runtime/runtime.js"
-
-import { expect, request, should, use } from 'chai'
+import { expect, should, use } from 'chai'
 import chaiHttp from 'chai-http'
-import config from 'config'
-
-import { User, initMongoConnection } from '../../src/database'
-
-const serverUrl = config.serverUrl || "http://localhost:3000";
+import { User } from '../../src/database'
+import { requester } from './index'
 
 use(chaiHttp);
 should();
 
-describe( "LOGIN", function() {
+// describe( "LOGIN", () =>
+describe( "LOGIN", function()
+{
     this.timeout(0) // disable test environment timeout
-    initMongoConnection(function emptyFunction(){})
-    const requester = request(serverUrl)
-    
+
     beforeEach((done) => {
         User.deleteMany({}, (err) => {
            done();           
-        });        
+        });
     });
 
     after(() => {
@@ -28,7 +24,6 @@ describe( "LOGIN", function() {
 
     describe("PUT ->", () =>
     {
-        /*
         it("Body is undefined", (done) =>
         {
             requester.put('/fantasta/auth/login')
@@ -146,9 +141,7 @@ describe( "LOGIN", function() {
                 done();
             });
         });
-        */
 
-        /*
         it("USER IS PRESENT --> Email is CORRECT and password is INCORRECT", (done) =>
         {
             User.create({ email: 'test@test.com', password: '123456' }, () => {
@@ -167,7 +160,6 @@ describe( "LOGIN", function() {
                 });
             });
         });
-        */
 
         it("USER IS PRESENT 200 --> Email and password are CORRECT", (done) =>
         {

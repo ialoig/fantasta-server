@@ -2,14 +2,14 @@ import Validator from 'validator'
 
 import { User } from '../../../database'
 import { errorMetric, saveMetric } from "../../../metrics"
-import { Constants, Response, userUtils } from '../../../utils'
+import { Constants, PASSWORD_OPT, Response, userUtils } from '../../../utils'
 
 const update = async ( req, res, next ) =>
 {
     const duration_start = process.hrtime()
 
-    const { email='', username='' } = req.body
-    if ( username || email && Validator.isEmail(email) )
+    const { email='', username='', password='' } = req.body
+    if ( username || email && Validator.isEmail(email) || password && Validator.isStrongPassword( password, PASSWORD_OPT ) )
     {
         try
         {
@@ -18,12 +18,16 @@ const update = async ( req, res, next ) =>
             const userID = user._id
     
             let newValues = {}
-            if ( email ) {
-                newValues.email = email
-            }
-            else if ( username )
+            if ( username )
             {
                 newValues.username = username
+            }
+            if ( email && Validator.isEmail(email) ) {
+                newValues.email = email
+            }
+            if ( password && Validator.isStrongPassword( password, PASSWORD_OPT ) )
+            {
+                newValues.password = password
             }
     
             let updatedUser = await User.findByIdAndUpdate({_id: userID}, newValues, {new: true, useFindAndModify: false});
