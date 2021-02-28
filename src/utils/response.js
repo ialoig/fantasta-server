@@ -41,6 +41,10 @@ const ErrorMessages = {
         title: 'not_found',
         message: 'item_not_found'
     },
+    'TOKEN_NOT_VALID': {
+        title: 'user_not_found',
+        message: 'user_not_found'
+    },
     'USER_NOT_FOUND': {
         title: 'user_not_found',
         message: 'try_change_email'

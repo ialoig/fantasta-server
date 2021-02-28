@@ -3,8 +3,9 @@ import path from 'path'
 import morgan from 'morgan'
 import cookieParser from 'cookie-parser'
 import config from 'config'
-import { initMongoConnection } from './src/database'
-import { JobSchedule, savePlayers } from './src/footballPlayers'
+
+import DB from './src/database'
+import { JobSchedule } from './src/footballPlayers'
 import routing  from './src/routes'
 import { seed } from "./test/seed" // for development only
 
@@ -20,8 +21,7 @@ app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
 
-// ------------------------------
-// ???
+// Headers da accettare per le chiamate esterne
 app.use( (req, res, next) => {
     res.header("Accept", "*")
     res.header("Access-Control-Allow-Origin", "http://localhost:19006")
@@ -31,7 +31,6 @@ app.use( (req, res, next) => {
     next()
 })
 
-// ------------------------------------------------------------
 // Error Handling
 app.use( (err, req, res, next) => {
     console.error("!!!!!!!!!!!!!!!!!");
@@ -43,12 +42,9 @@ app.use( (err, req, res, next) => {
     res.render('error')
 })
 
-// ------------------------------------------------------------
 // Setting HTTP routes
 app.use('/fantasta', routing)
 
-
-// ------------------------------------------------------------
 // Start Server
 const startServer = () => {
 
@@ -71,7 +67,7 @@ const startServicesCallback = () => {
     startServer()
 
     // populate db with football players
-    savePlayers()
+    // savePlayers()
 
     // Scheduling processes
     JobSchedule()
@@ -80,6 +76,6 @@ const startServicesCallback = () => {
     // seed()
 }
 
-initMongoConnection(startServicesCallback)
+startServicesCallback()
 
 module.exports = app

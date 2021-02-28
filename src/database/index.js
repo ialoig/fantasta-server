@@ -3,6 +3,7 @@
 import mongoose from 'mongoose'
 import config from 'config'
 
+import { savePlayers } from '../footballPlayers'
 import { default as populate } from './populate'
 
 // use ES6 Promise instead of mongoose.Promise
@@ -21,7 +22,7 @@ const mongoConnectionParams = {
  * 
  * @param {*} startServer callback function to execute once mongo connection is established
  */
-const initMongoConnection = async (startServicesCallback) => {
+const initMongoConnection = () => {
 
     console.log( `[mongodb] endpoint: ${mongodbConnection}`)
     
@@ -45,7 +46,7 @@ const initMongoConnection = async (startServicesCallback) => {
 
     connection.on('open', () => {
         console.log("[mongodb] status: open")
-        startServicesCallback()
+        savePlayers()
     })
 }
 
@@ -56,5 +57,7 @@ process.on( 'SIGINT', () => {
     })
 })
 
+initMongoConnection()
+
 export { League, FootballPlayer, Team, User } from './models'
-export { initMongoConnection, populate }
+export { populate }

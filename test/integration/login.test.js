@@ -1,23 +1,20 @@
 
-import { expect, request, should, use } from 'chai'
+import "regenerator-runtime/runtime.js"
+import { expect, should, use } from 'chai'
 import chaiHttp from 'chai-http'
-import config from 'config'
 
 import { User } from '../../src/database'
-
-const serverUrl = config.serverUrl || "http://localhost:3000";
+import { requester } from './index'
 
 use(chaiHttp);
 should();
 
 describe( "LOGIN", () =>
 {
-    const requester = request(serverUrl)
-    
     beforeEach((done) => {
         User.deleteMany({}, (err) => {
            done();           
-        });        
+        });
     });
 
     after(() => {
