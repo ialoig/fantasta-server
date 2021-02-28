@@ -11,11 +11,8 @@ import { requester } from './index'
 use(chaiHttp);
 should();
 
-// describe( "TOKEN", () =>
-describe( "TOKEN", function()
+describe( "TOKEN", () =>
 {
-    this.timeout(0) // disable test environment timeout
-
     beforeEach((done) => {
         User.deleteMany({}, (err) => {
            done();           

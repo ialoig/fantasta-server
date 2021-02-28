@@ -6,7 +6,7 @@ import { mergeRoles, getPlayersFromExcelContent } from "../../src/footballPlayer
 const assert = require("assert")
 
 describe("parse Excel file", function () {
-    this.timeout(0) // disable test environment timeout
+    //this.timeout(0) // disable test environment timeout
 
     it(`should be able to parse Classic and Mantra excel files`, done => {
 

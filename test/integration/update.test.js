@@ -11,11 +11,8 @@ import { requester } from './index'
 use(chaiHttp);
 should();
 
-// describe( "UPDATE", () =>
-describe( "UPDATE", function()
+describe( "UPDATE", () =>
 {
-    this.timeout(0) // disable test environment timeout
-
     before((done) => {
         User.deleteMany({}, (err) => {
             User.create({ email: 'test@test.com', password: '123456', username: 'username' }, (err) => {

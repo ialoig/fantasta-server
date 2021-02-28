@@ -7,11 +7,8 @@ import { requester } from './index'
 use(chaiHttp);
 should();
 
-// describe( "LOGIN", () =>
-describe( "LOGIN", function()
+describe( "LOGIN", () =>
 {
-    this.timeout(0) // disable test environment timeout
-
     beforeEach((done) => {
         User.deleteMany({}, (err) => {
            done();           
