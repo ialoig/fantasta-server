@@ -36,7 +36,7 @@ const update = async ( req, res, next ) =>
 
             saveMetric( "auth.update", '', duration_start )
             
-            return res.json( Response.resolve( Constants.OK, response ) )
+            res.json( Response.resolve( Constants.OK, response ) )
         }
         catch ( error )
         {

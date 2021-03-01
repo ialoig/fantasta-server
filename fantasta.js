@@ -3,10 +3,9 @@ import path from 'path'
 import morgan from 'morgan'
 import cookieParser from 'cookie-parser'
 import config from 'config'
+
 import { initMongoConnection } from './src/database'
-import { JobSchedule, savePlayers } from './src/footballPlayers'
 import routing  from './src/routes'
-import { seed } from "./test/seed" // for development only
 
 let app = express()
 
@@ -44,41 +43,18 @@ app.use( (err, req, res, next) => {
 // Setting HTTP routes
 app.use('/fantasta', routing)
 
-// Create socket
+// Start Server
 const SocketInit = require('./src/socket').init
 const server = SocketInit( app )
+server.listen( config.port, () => {
+    console.log(`************************************`)
+    console.log(`Environment: ${process.env.NODE_ENV}`)
+    console.log(`Config: ${JSON.stringify(config, null, 2)}`)
+    console.log(`************************************`)
+    console.log(`Fantasta Server running on port ${config.port}`)
+    console.log(`************************************`)
+})
 
-// Connect to Mongo and start Server
-const startServer = () => {
-    server.listen( config.port, () => {
-        console.log(`************************************`)
-        console.log(`Environment: ${process.env.NODE_ENV}`)
-        console.log(`Config: ${JSON.stringify(config, null, 2)}`)
-        console.log(`************************************`)
-        console.log(`Fantasta Server running on port ${config.port}`)
-        console.log(`************************************`)
-    })
-}
-
-const startServicesCallback = () => {
-
-    // Due to a mongo restart this callback is called again. If the server was already running an "ERR_SERVER_ALREADY_LISTEN" error will be fired
-    if(!server.listening){
-        startServer()
-        
-        // populate db with football players
-        savePlayers()
-
-        // Scheduling processes
-        JobSchedule()
-
-        // Seed database with fake data
-        if(process.env.NODE_ENV == "dev"){
-            seed()
-        }
-    }
-}
-
-initMongoConnection(startServicesCallback)
+initMongoConnection()
 
 module.exports = app

@@ -3,8 +3,8 @@
     "port": 3000,
     "schedule": {
         "hour": 3,
-        "excelFilenameClassic" : "./test/footballPlayerListClassic.xls",
-        "excelFilenameMantra" : "./test/footballPlayerListMantra.xls"
+        "excelFilenameClassic" : "./src/xls/footballPlayerListClassic.xls",
+        "excelFilenameMantra" : "./src/xls/footballPlayerListMantra.xls"
     },
     "token": {
         "kty": "oct",

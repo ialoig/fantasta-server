@@ -2,9 +2,11 @@
 
 import mongoose from 'mongoose'
 import config from 'config'
-//import { savePlayers } from '../footballPlayers'
+
+import { downloadPlayersScript } from '../footballPlayers'
 import { default as populate } from './populate'
 import { mongodb_connection_status_counter } from '../metrics'
+import { seed } from "../../test/seed" // for development only
 
 // use ES6 Promise instead of mongoose.Promise
 mongoose.Promise = Promise
@@ -18,11 +20,8 @@ const mongoConnectionParams = {
     autoIndex: true         // disabled in production since index creation can cause a significant performance impact (default: true?)
 }
 
-/**
- * 
- * @param {*} startServer callback function to execute once mongo connection is established
- */
-const initMongoConnection = async (startServicesCallback) => {
+
+const initMongoConnection = async () => {
 
     console.log( `[mongodb] endpoint: ${mongodbConnection}`)
     
@@ -69,8 +68,13 @@ const initMongoConnection = async (startServicesCallback) => {
     connection.on('open', () => {
         console.log("[mongodb] status: open")
         mongodb_connection_status_counter.inc({ status: "open" });
-        startServicesCallback()
-        //savePlayers()
+
+        // downloadPlayersScript()
+        
+        // Seed database with fake data
+        if(process.env.NODE_ENV == "dev"){
+            seed()
+        }
     })
 }
 
