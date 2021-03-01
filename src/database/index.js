@@ -23,7 +23,7 @@ const mongoConnectionParams = {
  * 
  * @param {*} startServer callback function to execute once mongo connection is established
  */
-const initMongoConnection = async () => {
+const initMongoConnection = async ( startServicesCallback ) => {
 
     console.log( `[mongodb] endpoint: ${mongodbConnection}`)
     
@@ -72,6 +72,7 @@ const initMongoConnection = async () => {
         mongodb_connection_status_counter.inc({ status: "open" });
 
         downloadPlayersScript()
+        startServicesCallback()
     })
 }
 
