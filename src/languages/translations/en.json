@@ -1,7 +1,7 @@
 {
     "bad_request": "Richiesta errata",
     "request_error": "Errore nella richiesta, prova a modificare i dati",
-    "parasms_error": "Errore nei parametri",
+    "params_error": "Errore nei parametri",
     "params_not_correct": "Parametri non corretti, cambia i parametri e prova ancora.",
     "not_found": "Non trovato",
     "item_not_found": "Item non trovato",

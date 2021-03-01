@@ -9,6 +9,6 @@ const serverUrl = config.serverUrl || "http://localhost:3000";
 
 use(chaiHttp);
 
-initMongoConnection(function emptyFunction(){})
+initMongoConnection()
 
 export const requester = request(serverUrl)

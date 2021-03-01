@@ -38,7 +38,7 @@ const ErrorMessages = {
         message: 'request_error'
     },
     'PARAMS_ERROR': {
-        title: 'parasms_error',
+        title: 'params_error',
         message: 'params_not_correct'
     },
     'NOT_FOUND': {
