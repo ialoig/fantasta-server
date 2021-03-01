@@ -4,8 +4,7 @@ import morgan from 'morgan'
 import cookieParser from 'cookie-parser'
 import config from 'config'
 
-import DB from './src/database'
-import { JobSchedule } from './src/footballPlayers'
+import { initMongoConnection } from './src/database'
 import routing  from './src/routes'
 import { seed } from "./test/seed" // for development only
 
@@ -66,16 +65,10 @@ const startServicesCallback = () => {
 
     startServer()
 
-    // populate db with football players
-    // savePlayers()
-
-    // Scheduling processes
-    JobSchedule()
-
     // Seed database with fake data
     // seed()
 }
 
-startServicesCallback()
+initMongoConnection(startServicesCallback)
 
 module.exports = app

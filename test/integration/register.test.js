@@ -1,8 +1,6 @@
-
 import "regenerator-runtime/runtime.js"
 import { expect, should, use } from 'chai'
 import chaiHttp from 'chai-http'
-
 import { User } from '../../src/database'
 import { requester } from './index'
 
@@ -123,21 +121,20 @@ describe( "REGISTER", () =>
         });
     });
 
-    xit("Email and password are CORRECT but USER IS PRESENT", (done) =>
+    it("Email and password are CORRECT but USER IS PRESENT", (done) =>
     {
         requester.post('/fantasta/auth/register')
         .send({ email: 'test@test.com', password: '123456' })
         .end( (err, res) =>
         {
-
             requester.post('/fantasta/auth/register')
             .send({ email: 'test@test.com', password: '123456' })
             .end( (err, res) =>
             {
-                expect(res).to.have.status(500);
+                expect(res).to.have.status(400);
                 expect(res.body).to.be.a('object');
-                expect(res.body.code).to.equal(500);
-                expect(res.body.status).to.equal('Internal Server Error');
+                expect(res.body.code).to.equal(400);
+                expect(res.body.status).to.equal('Bad Request');
                 expect(res.body.info).to.be.a('object');
                 expect(res.body.info.title).to.be.a('string');
                 expect(res.body.info.message).to.be.a('string');

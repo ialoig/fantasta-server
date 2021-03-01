@@ -1,8 +1,6 @@
-
 import "regenerator-runtime/runtime.js"
 import { expect, should, use } from 'chai'
 import chaiHttp from 'chai-http'
-
 import { User } from '../../src/database'
 import { requester } from './index'
 
@@ -162,7 +160,7 @@ describe( "LOGIN", () =>
 
         it("USER IS PRESENT 200 --> Email and password are CORRECT", (done) =>
         {
-            User.create({ email: 'test@test.com', password: '123456', username: 'username' }, () =>{
+            User.create({ email: 'test@test.com', password: '123456', username: 'username' }, () => {
                 requester.put('/fantasta/auth/login')
                 .send({ email: 'test@test.com', password: '123456' })
                 .end( (err, res) =>

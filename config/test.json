@@ -3,8 +3,8 @@
     "port": 3000,
     "schedule": {
         "hour": 3,
-        "excelFilenameClassic" : "./src/xls/footballPlayerListClassic.xls",
-        "excelFilenameMantra" : "./src/xls/footballPlayerListMantra.xls"
+        "excelFilenameClassic" : "./test/footballPlayerListClassic.xls",
+        "excelFilenameMantra" : "./test/footballPlayerListMantra.xls"
     },
     "token": {
         "kty": "oct",
@@ -14,8 +14,8 @@
         "alg": "HS256"
     },
     "mongodb": {
-        "endpoint": "mongodb://admin:admin@fantasta_mongo",
+        "endpoint": "mongodb://fantasta_mongo",
         "port": 27017,
-        "database": "fantasta"
+        "database": "fantasta_test"
     }
 }

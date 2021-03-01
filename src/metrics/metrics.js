@@ -25,14 +25,21 @@ export const secondsFrom = (start_time) => {
 const load_footballPlayer_duration_seconds = new prometheusClient.Histogram({
     name: 'load_footballPlayer_duration_seconds',
     help: 'seconds duration for loading footballPlayers',
-    labelNames: ['status', 'msg'],
+    labelNames: ['status', 'msg']
 });
 
 const api_duration_seconds = new prometheusClient.Histogram({
     name: 'api_duration_seconds',
     help: 'seconds duration for api calls',
-    labelNames: ['name', 'status', 'msg'],
-});
+    labelNames: ['name', 'status', 'msg']
+})
+
+// Counters
+export const mongodb_connection_status_counter = new prometheusClient.Counter({
+    name: 'mongodb_connection_status_counter',
+    help: 'counter for mongodb connection statuses',
+    labelNames: ['status']
+})
 
 export const saveMetric = ( name, msg, start ) =>
 {

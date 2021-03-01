@@ -37,4 +37,6 @@ const downloadPlayersScript = () =>
     });
 }
 
-export { JobSchedule, downloadPlayersScript }
+JobSchedule()
+
+export { downloadPlayersScript }
