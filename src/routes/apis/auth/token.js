@@ -24,7 +24,7 @@ const token = async ( req, res, next ) =>
         errorMetric( "auth.token", Constants[error] || Constants.BAD_REQUEST, duration_start )
 
         console.error('Auth Token: ', error)
-        res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, error, req.headers.language ) )   
+        res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants[error] || Constants.BAD_REQUEST, error, req.headers.language ) )   
     }
 }
 

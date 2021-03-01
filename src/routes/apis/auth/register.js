@@ -25,10 +25,12 @@ const register = async ( req, res, next ) =>
         }
         catch (error)
         {
-            errorMetric( "auth.register", Constants[error] || Constants.BAD_REQUEST, duration_start )
+            let code = error.code && Constants[error.code] ? Constants[error.code] : Constants[error] || Constants.BAD_REQUEST
+
+            errorMetric( "auth.register", code, duration_start )
 
             console.error('Auth Register: ', error)
-            res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.USER_PRESENT, error, req.headers.language ) )
+            res.status(400).send( Response.reject( code, code, error, req.headers.language ) )
         }
     }
     else

@@ -83,15 +83,13 @@ describe( "TOKEN", () =>
         .end( (err, res) => {
 
             requester.put('/fantasta/auth/token')
-            .set('Authorization', res.body.data.token)
+            .set('Authorization', res.body.token)
             .end( (err, res) =>
             {
                 expect(res).to.have.status(200);
-                expect(res.body).to.be.a('object');
-                expect(res.body.code).to.equal(200);
-                expect(res.body.data).to.be.a('object').that.is.not.empty;
-                expect(res.body.data.user).to.be.a('object').that.is.not.empty;
-                expect(res.body.data.token).to.be.a('string');
+                expect(res.body).to.be.a('object').that.is.not.empty;
+                expect(res.body.user).to.be.a('object').that.is.not.empty;
+                expect(res.body.token).to.be.a('string');
                 done();
             });         
         });

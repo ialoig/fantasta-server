@@ -5,11 +5,13 @@ import { getLanguage } from '../languages'
 
 const resolve = ( status, data ) =>
 {
-    return {
-        'code': HttpStatus[status].code,
-        'status': HttpStatus[status].status,
-        'data': data || {}
-    }
+    // return {
+    //     'code': HttpStatus[status].code,
+    //     'status': HttpStatus[status].status,
+    //     'data': data || {}
+    // }
+
+    return data || {}
 }
 
 const reject = ( status, info, error, locale ) =>
@@ -21,6 +23,8 @@ const reject = ( status, info, error, locale ) =>
         'codeStatus': HttpStatus[status].code_status,
         'status': HttpStatus[status].status,
         'info': {
+            code: ErrorMessages[info].code || '',
+            status: ErrorMessages[info].status || '',
             title: I18n.t( ErrorMessages[info].title, {locale: lang} ),
             message: I18n.t( ErrorMessages[info].message, {locale: lang} )
         },

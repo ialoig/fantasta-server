@@ -133,8 +133,8 @@ describe( "REGISTER", () =>
             {
                 expect(res).to.have.status(400);
                 expect(res.body).to.be.a('object');
-                expect(res.body.code).to.equal(400);
-                expect(res.body.status).to.equal('Bad Request');
+                expect(res.body.code).to.equal(602);
+                expect(res.body.status).to.equal('User present');
                 expect(res.body.info).to.be.a('object');
                 expect(res.body.info.title).to.be.a('string');
                 expect(res.body.info.message).to.be.a('string');
@@ -150,12 +150,9 @@ describe( "REGISTER", () =>
         .end( (err, res) =>
         {
             expect(res).to.have.status(200);
-            expect(res.body).to.be.a('object');
-            expect(res.body.code).to.equal(200);
-            expect(res.body.status).to.equal('OK');
-            expect(res.body.data).to.be.a('object').that.is.not.empty;
-            expect(res.body.data.user).to.be.a('object').that.is.not.empty;
-            expect(res.body.data.token).to.be.a('string');
+            expect(res.body).to.be.a('object').that.is.not.empty;
+            expect(res.body.user).to.be.a('object').that.is.not.empty;
+            expect(res.body.token).to.be.a('string');
             done();
         });
     });

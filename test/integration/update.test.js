@@ -104,10 +104,9 @@ describe( "UPDATE", () =>
         {
             expect(res).to.have.status(200);
             expect(res.body).to.be.a('object');
-            expect(res.body.code).to.equal(200);
-            expect(res.body.status).to.equal('OK');
-            expect(res.body.data).to.be.a('object');
-            expect(res.body.data.user.email).to.equal('test@test.it')
+            expect(res.body.user).to.be.a('object').that.is.not.empty;
+            expect(res.body.user.email).to.equal('test@test.it')
+            expect(res.body.token).to.be.a('string');
             done();
         });
     });
@@ -157,10 +156,9 @@ describe( "UPDATE", () =>
         {
             expect(res).to.have.status(200);
             expect(res.body).to.be.a('object');
-            expect(res.body.code).to.equal(200);
-            expect(res.body.status).to.equal('OK');
-            expect(res.body.data).to.be.a('object');
-            expect(res.body.data.user.email).to.equal('test@test.it')
+            expect(res.body.user).to.be.a('object').that.is.not.empty;
+            expect(res.body.user.email).to.equal('test@test.it')
+            expect(res.body.token).to.be.a('string');
             done();
         });
     });
@@ -210,10 +208,9 @@ describe( "UPDATE", () =>
         {
             expect(res).to.have.status(200);
             expect(res.body).to.be.a('object');
-            expect(res.body.code).to.equal(200);
-            expect(res.body.status).to.equal('OK');
-            expect(res.body.data).to.be.a('object');
-            expect(res.body.data.user.username).to.equal('user')
+            expect(res.body.user).to.be.a('object').that.is.not.empty;
+            expect(res.body.user.username).to.equal('user')
+            expect(res.body.token).to.be.a('string');
             done();
         });
     });

@@ -106,10 +106,7 @@ describe( "DELETE", () =>
         .end( (err, res) =>
         {
             expect(res).to.have.status(200);
-            expect(res.body).to.be.a('object');
-            expect(res.body.code).to.equal(200);
-            expect(res.body.status).to.equal('OK');
-            expect(res.body.data).to.equal(true);
+            expect(res.body).to.equal(true);
             done();
         });
     });

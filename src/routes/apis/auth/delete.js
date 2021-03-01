@@ -38,7 +38,7 @@ const deleteAccount = async (req, res, next) =>
             errorMetric( "auth.delete", Constants[error] || Constants.BAD_REQUEST, duration_start )
 
             console.log("Auth Delete: ", error)
-            res.status(404).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, error, req.headers.language ) )
+            res.status(404).send( Response.reject( Constants.BAD_REQUEST, Constants[error] || Constants.BAD_REQUEST, error, req.headers.language ) )
         }
     }
     else
