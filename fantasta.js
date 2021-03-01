@@ -44,13 +44,12 @@ app.use( (err, req, res, next) => {
 // Setting HTTP routes
 app.use('/fantasta', routing)
 
-// Start Server
+// Create socket
+const SocketInit = require('./src/socket').init
+const server = SocketInit( app )
+
+// Connect to Mongo and start Server
 const startServer = () => {
-
-    // Create socket
-    const SocketInit = require('./src/socket').init
-    const server = SocketInit( app )
-
     server.listen( config.port, () => {
         console.log(`************************************`)
         console.log(`Environment: ${process.env.NODE_ENV}`)
@@ -63,16 +62,21 @@ const startServer = () => {
 
 const startServicesCallback = () => {
 
-    startServer()
+    // Due to a mongo restart this callback is called again. If the server was already running an "ERR_SERVER_ALREADY_LISTEN" error will be fired
+    if(!server.listening){
+        startServer()
+        
+        // populate db with football players
+        savePlayers()
 
-    // populate db with football players
-    savePlayers()
+        // Scheduling processes
+        JobSchedule()
 
-    // Scheduling processes
-    JobSchedule()
-
-    // Seed database with fake data
-    // seed()
+        // Seed database with fake data
+        if(process.env.NODE_ENV == "dev"){
+            seed()
+        }
+    }
 }
 
 initMongoConnection(startServicesCallback)
