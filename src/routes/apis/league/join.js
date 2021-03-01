@@ -83,7 +83,7 @@ const join = async ( req, res, next ) =>
             errorMetric( "league.join", Constants[error] || Constants.BAD_REQUEST, duration_start )
 
             console.error('League Join: ', error)
-            return res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants[error] || Constants.BAD_REQUEST, error, req.headers.language ) )
+            res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants[error] || Constants.BAD_REQUEST, error, req.headers.language ) )
         }
     }
     else
@@ -91,7 +91,7 @@ const join = async ( req, res, next ) =>
         errorMetric( "league.join", Constants.PARAMS_ERROR, duration_start )
 
         console.error('League Join: PARAMS_ERROR')
-        return res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.PARAMS_ERROR, null, req.headers.language ) )
+        res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.PARAMS_ERROR, null, req.headers.language ) )
     }
 }
 

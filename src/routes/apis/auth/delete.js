@@ -22,13 +22,15 @@ const deleteAccount = async (req, res, next) =>
                 errorMetric( "auth.delete", Constants.WRONG_PASSWORD, duration_start )
 
                 console.error("Auth Delete: ", Constants.WRONG_PASSWORD)
-                res.status(404).send( Response.reject( Constants.BAD_REQUEST, Constants.WRONG_PASSWORD, null, req.headers.language ) )
+                res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.WRONG_PASSWORD, null, req.headers.language ) )
             } 
             else
             {
                 saveMetric( "auth.delete", '', duration_start )
 
                 //user.remove();
+
+                res.json( Response.resolve( Constants.OK, true ) )
             }
         }
         catch (error)
@@ -36,7 +38,7 @@ const deleteAccount = async (req, res, next) =>
             errorMetric( "auth.delete", Constants[error] || Constants.BAD_REQUEST, duration_start )
 
             console.log("Auth Delete: ", error)
-            res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, error, req.headers.language ) )
+            res.status(404).send( Response.reject( Constants.BAD_REQUEST, Constants.BAD_REQUEST, error, req.headers.language ) )
         }
     }
     else
