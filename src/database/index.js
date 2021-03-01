@@ -3,7 +3,7 @@
 import mongoose from 'mongoose'
 import config from 'config'
 
-import { savePlayers } from '../footballPlayers'
+import { downloadPlayersScript } from '../footballPlayers'
 import { default as populate } from './populate'
 
 // use ES6 Promise instead of mongoose.Promise
@@ -46,7 +46,7 @@ const initMongoConnection = () => {
 
     connection.on('open', () => {
         console.log("[mongodb] status: open")
-        savePlayers()
+        downloadPlayersScript()
     })
 }
 

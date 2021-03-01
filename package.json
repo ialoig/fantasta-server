@@ -30,6 +30,7 @@
     "pm2": "^4.5.0",
     "prom-client": "^13.1.0",
     "pug": "^3.0.0",
+    "python-shell": "2.0.3",
     "serve-favicon": "^2.5.0",
     "socket.io": "3.0.4",
     "validator": "^13.5.2",
