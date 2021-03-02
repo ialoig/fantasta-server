@@ -4,7 +4,9 @@
     "schedule": {
         "hour": 3,
         "excelFilenameClassic" : "./test/footballPlayerListClassic.xls",
-        "excelFilenameMantra" : "./test/footballPlayerListMantra.xls"
+        "excelFilenameMantra" : "./test/footballPlayerListMantra.xls",
+        "classicUrl": "http://www.fantacalcio.it//Servizi/Excel.ashx?type=0&r=1&t=",
+        "mantraUrl": "http://www.fantacalcio.it//Servizi/Excel.ashx?type=0&r=3&t="
     },
     "token": {
         "kty": "oct",

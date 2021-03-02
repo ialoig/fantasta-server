@@ -3,7 +3,7 @@
 import mongoose from 'mongoose'
 import config from 'config'
 
-import { downloadPlayersScript } from '../footballPlayers'
+import { downloadPlayers } from '../footballPlayers'
 import { default as populate } from './populate'
 import { mongodb_connection_status_counter } from '../metrics'
 import { seed } from "../../test/seed" // for development only
@@ -69,7 +69,7 @@ const initMongoConnection = async () => {
         console.log("[mongodb] status: open")
         mongodb_connection_status_counter.inc({ status: "open" });
 
-        // downloadPlayersScript()
+        downloadPlayers()
         
         // Seed database with fake data
         if(process.env.NODE_ENV == "dev"){

@@ -1,6 +1,8 @@
-import _ from "lodash";
-import { FootballPlayer } from "../database";
-import { xlsxUtils } from "../utils";
+
+import _ from "lodash"
+
+import { FootballPlayer } from "../database"
+import { xlsxUtils } from "../utils"
 import { errorPlayersMetric, loadPlayersMetric, secondsFrom } from "../metrics"
 
 const classicRolesAllowed = ["P", "D", "C", "A"]
@@ -118,39 +120,20 @@ const saveFootballPlayerWithVersion = async (footballPlayerList_obj, version) =>
     }
 }
 
-const saveFootballPlayers = async (excelFilenameClassic, excelFilenameMantra) => {
+const saveFootballPlayers = async ( classicFile, mantraFile ) => {
 
     // used to measure execution time
     const duration_start = process.hrtime()
 
     // Excel file to Json object
-    let excelContentClassic_obj = {}
-    let excelContentMantra_obj = {}
-    try
+    let excelContentClassic = xlsxUtils.readFile( classicFile, 1 )
+    let excelContentMantra = xlsxUtils.readFile( mantraFile, 1 )
+    
+    if ( excelContentClassic.length && excelContentMantra.length )
     {
-        excelContentClassic_obj = xlsxUtils.read(excelFilenameClassic, 1);
-    }
-    catch (error)
-    {
-        console.error(`[saveFootballPlayers] error reading file ${excelFilenameClassic}. ${error}`)
-        errorPlayersMetric( "readClassicExcelFile", duration_start )
-    }
-
-    try
-    {
-        excelContentMantra_obj = xlsxUtils.read(excelFilenameMantra, 1);
-    }
-    catch (error)
-    {
-        console.error(`[saveFootballPlayers] error reading file ${excelFilenameMantra}. ${error}`)
-        errorPlayersMetric( "readMantraExcelFile", duration_start )
-    }
-
-    if (excelContentClassic_obj.length > 0 && excelContentMantra_obj.length > 0) {
-
         // Extract footballPlayer from Json object
-        let footballPlayerListClassic_obj = getPlayersFromExcelContent(excelContentClassic_obj, false);
-        let footballPlayerListMantra_obj = getPlayersFromExcelContent(excelContentMantra_obj, true);
+        let footballPlayerListClassic_obj = getPlayersFromExcelContent(excelContentClassic, false);
+        let footballPlayerListMantra_obj = getPlayersFromExcelContent(excelContentMantra, true);
 
         // Merge Classic and Mantra roles
         let footballPlayerList_obj = mergeRoles(footballPlayerListClassic_obj, footballPlayerListMantra_obj)

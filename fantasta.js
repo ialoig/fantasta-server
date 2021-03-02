@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser'
 import config from 'config'
 
 import { initMongoConnection } from './src/database'
+import { init } from './src/socket'
 import routing  from './src/routes'
 
 let app = express()
@@ -17,7 +18,6 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
-
 
 // Headers da accettare per le chiamate esterne
 app.use( (req, res, next) => {
@@ -43,9 +43,11 @@ app.use( (err, req, res, next) => {
 // Setting HTTP routes
 app.use('/fantasta', routing)
 
+// Start MongoDB service
+initMongoConnection()
+
 // Start Server
-const SocketInit = require('./src/socket').init
-const server = SocketInit( app )
+const server = init( app )
 server.listen( config.port, () => {
     console.log(`************************************`)
     console.log(`Environment: ${process.env.NODE_ENV}`)
@@ -54,7 +56,5 @@ server.listen( config.port, () => {
     console.log(`Fantasta Server running on port ${config.port}`)
     console.log(`************************************`)
 })
-
-initMongoConnection()
 
 module.exports = app
