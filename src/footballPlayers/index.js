@@ -54,7 +54,7 @@ const extractQuotesTimestamp = (str) => {
     const regex_spaces_and_newlines = /(\r\n|\n|\r|\s)/gm
     let clean_str = str.replace(regex_spaces_and_newlines, "")
 
-    let url_str = clean_str.substring( clean_str.indexOf("href=\"")+6, clean_str.lastIndexOf("\"") )
+    let url_str = clean_str.substring( clean_str.indexOf("href=\"")+6, clean_str.lastIndexOf("\"})") )
 
     // extract url
     // const regex_location_href = /.*location.href="\/\/([^\n\r]*)"\}\);/m
@@ -82,7 +82,7 @@ const extractStatisticsTimestamp = (str) =>
     let url_str = clean_str.substring( clean_str.indexOf("href=\"")+6, clean_str.indexOf("\"})") )
 
     const regex_timestamp = /t=([\ds=\-&]*)/m
-    
+
     return url_str.match(regex_timestamp) && url_str.match(regex_timestamp)[1] || ''
 }
 
