@@ -199,13 +199,25 @@ const saveFootballPlayers = async ( classicFile, mantraFile, statisticsFile ) =>
                     console.log(`[saveFootballPlayers] FootballPlayers collection has to be updated`)
                     players = footballPlayersObj
                 }
+                else{
+                    console.log(`[saveFootballPlayers] FootballPlayers collection already up to date`)
+                }
+
                 if ( !_.isEqual(statistics, statisticsObj) )
                 {
                     console.log(`[saveFootballPlayers] Statistics collection has to be updated`)
                     statistics = statisticsObj
                 }
+                else{
+                    console.log(`[saveFootballPlayers] Statistics collection already up to date`)
+                }
 
                 saveFootballPlayerWithVersion( players, statistics, new Date().getTime() )
+            }
+            else
+            {
+                console.log(`[saveFootballPlayers] FootballPlayers collection already up to date`)
+                console.log(`[saveFootballPlayers] Statistics collection already up to date`)
             }
 
             console.info(`[saveFootballPlayers] execution time: ${secondsFrom(duration_start)} seconds`)

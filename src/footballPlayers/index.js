@@ -17,73 +17,45 @@ const JobSchedule = () =>
 
 const downloadPlayers = async () =>
 {
-    console.log("downloadPlayers()")
-
-    const timestamp = await getQuotesTimestamp()
-    console.log(`timestamp = ${timestamp}`)
-
+    const regex_timestamp_quotation = /&t=([\d]*)/m
+    const timestamp = await getTimestamp("https://www.fantacalcio.it/quotazioni-fantacalcio", regex_timestamp_quotation)
+    
     const classicUrl = config.schedule.classicUrl + timestamp
-    let classicFile = await downloadList( classicUrl )
+    console.log(`[downloadPlayers] classicUrl: ${classicUrl}`)
+    const classicFile = await downloadList( classicUrl )
 
     const mantraUrl = config.schedule.mantraUrl + timestamp
-    let mantraFile = await downloadList( mantraUrl )
+    console.log(`[downloadPlayers] mantraUrl: ${mantraUrl}`)
+    const mantraFile = await downloadList( mantraUrl )
 
-    const statisticTimestamp = await getStatisticsTimestamp()
+    const regex_timestamp_statistics = /&t=([\ds=\-&]*)/m
+    const statisticTimestamp = await getTimestamp("https://www.fantacalcio.it/statistiche-serie-a", regex_timestamp_statistics)
     const statisticsUrl = config.schedule.statistiche + statisticTimestamp
-    let statisticFile = await downloadList( statisticsUrl )
+    console.log(`[downloadPlayers] statisticsUrl: ${statisticsUrl}`)
+    const statisticFile = await downloadList( statisticsUrl )
 
     saveFootballPlayers( classicFile, mantraFile, statisticFile )
 }
 
-JobSchedule()
-
-export { downloadPlayers }
-
-const getQuotesTimestamp = async () =>
+const getTimestamp = async (url, regex_timestamp) =>
 {
-    let data = await getDataFromHtml( "https://www.fantacalcio.it/quotazioni-fantacalcio" )
-    
-    const timestamp = data ? extractQuotesTimestamp(data) : ''
-
+    let data = await getDataFromHtml(url)
+    const timestamp = data ? extractTimestamp(data, regex_timestamp) : ''
     return Promise.resolve(timestamp)
 }
 
-const extractQuotesTimestamp = (str) => {
+const extractTimestamp = (str, regex_timestamp) => {
 
     // remove spaces and new lines
     const regex_spaces_and_newlines = /(\r\n|\n|\r|\s)/gm
-    let clean_str = str.replace(regex_spaces_and_newlines, "")
-
-    let url_str = clean_str.substring( clean_str.indexOf("href=\"")+6, clean_str.lastIndexOf("\"})") )
+    const clean_str = str.replace(regex_spaces_and_newlines, "")
 
     // extract url
-    // const regex_location_href = /.*location.href="\/\/([^\n\r]*)"\}\);/m
-    // const regex_timestamp = /.*location.href=".*\=([^\n\r]*)"\}\);/m
-    // const regex_timestamp = /t=([^\n\r]*)/m
-    const regex_digt = /t=([\d]*)/m
+    const regex_url = /(www.*?)(?=")/m // from 'www' up to first occurrence of '"' not included
+    const url = clean_str.match(regex_url) && clean_str.match(regex_url)[0] || ''
 
-    return url_str.match(regex_digt) && url_str.match(regex_digt)[1] || ''
-}
-
-const getStatisticsTimestamp = async () =>
-{
-    let data = await getDataFromHtml( "https://www.fantacalcio.it/statistiche-serie-a" )
-        
-    const timestamp = data ? extractStatisticsTimestamp(data) : ''
-
-    return Promise.resolve(timestamp)
-}
-
-const extractStatisticsTimestamp = (str) =>
-{
-    const regex_spaces_and_newlines = /(\r\n|\n|\r|\s)/gm
-    let clean_str = str.replace(regex_spaces_and_newlines, "")
-
-    let url_str = clean_str.substring( clean_str.indexOf("href=\"")+6, clean_str.indexOf("\"})") )
-
-    const regex_timestamp = /t=([\ds=\-&]*)/m
-
-    return url_str.match(regex_timestamp) && url_str.match(regex_timestamp)[1] || ''
+    // extract timestamp
+    return url.match(regex_timestamp) && url.match(regex_timestamp)[1] || ''
 }
 
 const getDataFromHtml = async ( url ) =>
@@ -141,3 +113,7 @@ const downloadList = async ( url ) =>
     }
     return Promise.resolve(null)
 }
+
+JobSchedule()
+
+export { downloadPlayers }
