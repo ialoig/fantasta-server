@@ -5,7 +5,7 @@ import axios from 'axios'
 import { read } from 'xlsx'
 import moment from 'moment'
 import fs from 'fs'
-const cheerio = require('cheerio');
+import { load } from 'cheerio'
 
 import { saveFootballPlayers } from './saveFootballPlayers'
 
@@ -17,66 +17,77 @@ const JobSchedule = () =>
     scheduleJob( rule, downloadPlayers )
 }
 
-const extractUrl = (str) => {
+const extractTimestamp = (str) => {
 
     // remove spaces and new lines
     const regex_spaces_and_newlines = /(\r\n|\n|\r|\s)/gm
     let clean_str = str.replace(regex_spaces_and_newlines, "")
 
+    let sub_str = clean_str.substring( clean_str.indexOf("location.href"), clean_str.lastIndexOf("\"")+1 )
+
     // extract url
     // const regex_location_href = /.*location.href="\/\/([^\n\r]*)"\}\);/m
-    const regex_timestamp = /.*location.href=".*\=([^\n\r]*)"\}\);/m
-    const url = clean_str.match(regex_timestamp)[1]
+    // const regex_timestamp = /.*location.href=".*\=([^\n\r]*)"\}\);/m
+    const regex_timestamp = /.*location.href=".*\=([^\n\r]*)"/m
+    const timestamp = sub_str.match(regex_timestamp) && sub_str.match(regex_timestamp)[1] || ''
 
-    return url
+    return timestamp
 }
 
-const extract_timestamp = async () => {
+const getTimestamp = async () => {
     try
     {
         let html = await axios.get("https://www.fantacalcio.it/quotazioni-fantacalcio")
-        console.log("=========")
+        
         // console.log(html)
-        console.log("=========")
-        const parsedHTML = cheerio.load(html.data);
+        
+        const script_name = "script"
+        const parsedHTML = load(html.data)(script_name);
 
         // let class_name = ".role"
         // console.log(parsedHTML(class_name).length);
         // console.log(parsedHTML(class_name));
         // console.log("===================")
 
-        let script_name = "script"
+        
         // console.log(parsedHTML(script_name).length);
         // console.log(parsedHTML(script_name));
         // console.log("===================")
 
-        const script = parsedHTML(script_name).get()[31].children[0].data
+        const parsedNodes = parsedHTML && parsedHTML.get && parsedHTML.get()
 
-        return Promise.resolve(extractUrl(script))
+        let parsedNode = null
+        if ( parsedNodes && parsedNodes.length ) 
+        {
+            parsedNode = parsedNodes.find( (node) => node.children && node.children.find( (child) => child.data && child.data.toLowerCase().indexOf('servizi/excel')>-1 ) )
+        }
 
+        let element = parsedNode && parsedNode.children.find( (child) => child.data.toLowerCase().indexOf('servizi/excel')>-1 )
+        
+        const timestamp = element && element.data ? extractTimestamp(element.data) : ''
+
+        return Promise.resolve(timestamp)
     }
     catch (error)
     {
         console.error(error)
     }
-    return Promise.resolve(null)
+    return Promise.resolve('')
 }
 
 const downloadPlayers = async () =>
 {
     console.log("downloadPlayers()")
 
-    const timestamp = await extract_timestamp()
+    const timestamp = await getTimestamp()
     console.log(`timestamp = ${timestamp}`)
 
     const classicUrl = config.schedule.classicUrl + timestamp
-    console.log(`classicUrl = ${classicUrl}`)
     const classicFilename = config.schedule.excelFilenameClassic
 
     let classicFile = await downloadList( classicUrl, classicFilename )
 
     const mantraUrl = config.schedule.mantraUrl + timestamp
-    console.log(`mantraUrl = ${mantraUrl}`)
     const mantraFilename = config.schedule.excelFilenameMantra
 
     let mantraFile = await downloadList( mantraUrl, mantraFilename )
