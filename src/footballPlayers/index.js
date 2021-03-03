@@ -3,8 +3,6 @@ import { RecurrenceRule, scheduleJob } from 'node-schedule'
 import config from 'config'
 import axios from 'axios'
 import { read } from 'xlsx'
-import moment from 'moment'
-import fs from 'fs'
 import { load } from 'cheerio'
 
 import { saveFootballPlayers } from './saveFootballPlayers'
@@ -16,6 +14,55 @@ const JobSchedule = () =>
 
     scheduleJob( rule, downloadPlayers )
 }
+
+const downloadPlayers = async () =>
+{
+    console.log("downloadPlayers()")
+
+    const timestamp = await getTimestamp()
+    console.log(`timestamp = ${timestamp}`)
+
+    const classicUrl = config.schedule.classicUrl + timestamp
+    let classicFile = await downloadList( classicUrl )
+
+    const mantraUrl = config.schedule.mantraUrl + timestamp
+    let mantraFile = await downloadList( mantraUrl )
+
+    const statisticTimestamp = await getStatistics()
+    const statisticsUrl = config.schedule.statistiche + statisticTimestamp
+    let statisticFile = await downloadList( statisticsUrl )
+
+    saveFootballPlayers( classicFile, mantraFile, statisticFile )
+}
+
+const downloadList = async ( url ) =>
+{
+    try
+    {
+        let response = await axios.get(url, {
+            responseType: 'arraybuffer',
+            headers: {
+              'Accept': 'application/xls'
+            }
+        })
+
+        let buffer = Buffer.from(response.data);
+
+        const workbook = read(buffer)
+
+        return Promise.resolve(workbook)
+    }
+    catch (error)
+    {
+        console.error(error)
+    }
+    return Promise.resolve(null)
+}
+
+JobSchedule()
+
+export { downloadPlayers }
+
 
 const extractTimestamp = (str) => {
 
@@ -75,78 +122,51 @@ const getTimestamp = async () => {
     return Promise.resolve('')
 }
 
-const downloadPlayers = async () =>
-{
-    console.log("downloadPlayers()")
+const extractStatistics = (str) => {
 
-    const timestamp = await getTimestamp()
-    console.log(`timestamp = ${timestamp}`)
+    // remove spaces and new lines
+    const regex_spaces_and_newlines = /(\r\n|\n|\r|\s)/gm
+    let clean_str = str.replace(regex_spaces_and_newlines, "")
 
-    const classicUrl = config.schedule.classicUrl + timestamp
-    const classicFilename = config.schedule.excelFilenameClassic
+    let sub_str = clean_str.substring( clean_str.indexOf("location.href"), clean_str.lastIndexOf("\"")+1 )
 
-    let classicFile = await downloadList( classicUrl, classicFilename )
+    // extract url
+    // const regex_location_href = /.*location.href="\/\/([^\n\r]*)"\}\);/m
+    // const regex_timestamp = /.*location.href=".*\=([^\n\r]*)"\}\);/m
+    const regex_timestamp = /([^\n\r]*)"/m
 
-    const mantraUrl = config.schedule.mantraUrl + timestamp
-    const mantraFilename = config.schedule.excelFilenameMantra
+    let sub = sub_str.split('location.href="//').filter((elem) => elem.length ).map(elem => elem.match(regex_timestamp))
 
-    let mantraFile = await downloadList( mantraUrl, mantraFilename )
+    const timestamp = sub[0][1].split('t=') && sub[0][1].split('t=')[1] || ''
 
-    saveFootballPlayers( classicFile, mantraFile )
+    return timestamp
 }
 
-const downloadList = async ( url, filename ) =>
-{
+const getStatistics = async () => {
     try
     {
-        let response = await axios.get(url, {
-            responseType: 'arraybuffer',
-            headers: {
-              'Accept': 'application/xls'
-            }
-        })
+        let html = await axios.get("https://www.fantacalcio.it/statistiche-serie-a")
+        
+        const script_name = "script"
+        const parsedHTML = load(html.data)(script_name);
 
-        let buffer = Buffer.from(response.data);
+        const parsedNodes = parsedHTML && parsedHTML.get && parsedHTML.get() || null
 
-        const workbook = read(buffer)
+        let parsedNode = null
+        if ( parsedNodes && parsedNodes.length ) 
+        {
+            parsedNode = parsedNodes.find( (node) => node.children && node.children.find( (child) => child.data && child.data.toLowerCase().indexOf('servizi/excel')>-1 ) )
+        }
 
-        return Promise.resolve(workbook)
+        let element = parsedNode && parsedNode.children.find( (child) => child.data.toLowerCase().indexOf('servizi/excel')>-1 )
+        
+        const timestamp = element && element.data ? extractStatistics(element.data) : ''
+
+        return Promise.resolve(timestamp)
     }
     catch (error)
     {
         console.error(error)
     }
-    return Promise.resolve(null)
+    return Promise.resolve('')
 }
-
-
-
-JobSchedule()
-
-export { downloadPlayers }
-
-/*
-const downloadPlayersScript = () =>
-{
-    const excelFilenameClassic = config.schedule.excelFilenameClassic
-    const excelFilenameMantra = config.schedule.excelFilenameMantra
-
-    var options = {
-        mode: 'text',
-        // pythonPath: 'path/to/python',
-        pythonOptions: ['-u'],
-        scriptPath: './src/footballPlayers',
-        args: [ excelFilenameClassic, excelFilenameMantra ]
-      };
-      
-    PythonShell.run('download_players_list.py', options, function (err, results) {
-        if (err)
-        {
-            console.log('download_players_list.py ERROR: ', err)
-            throw err;
-        }
-        
-        saveFootballPlayers(config.schedule.excelFilenameClassic, config.schedule.excelFilenameMantra)
-    });
-}
-*/

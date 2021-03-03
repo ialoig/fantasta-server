@@ -33,6 +33,10 @@ const footballPlayersSchema = new Schema(
             type: Object,
             required: true,
         },
+        statistics: {
+          type: Object,
+          required: true,
+        },
         version: {
             type: Number,
             required: true,

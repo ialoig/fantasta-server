@@ -6,7 +6,8 @@
         "excelFilenameClassic" : "./test/footballPlayerListClassic.xls",
         "excelFilenameMantra" : "./test/footballPlayerListMantra.xls",
         "classicUrl": "http://www.fantacalcio.it//Servizi/Excel.ashx?type=0&r=1&t=",
-        "mantraUrl": "http://www.fantacalcio.it//Servizi/Excel.ashx?type=0&r=3&t="
+        "mantraUrl": "http://www.fantacalcio.it//Servizi/Excel.ashx?type=0&r=3&t=",
+        "statistiche": "https://www.fantacalcio.it/Servizi/Excel.ashx?type=2&r=1&t="
     },
     "token": {
         "kty": "oct",

@@ -61,12 +61,12 @@ const containsCorrectData = (footballPlayer_obj) =>
     return false
 }
 
-const mergeRoles = (footballPlayerListClassic_obj, footballPlayerListMantra_obj) => {
+const mergeRoles = (footballPlayerClassic, footballPlayerMantra) => {
     let footballPlayerList_obj = {}
 
-    for (const [footballPlayerId, footballPlayerClassic_obj] of Object.entries(footballPlayerListClassic_obj)) {
+    for (const [footballPlayerId, footballPlayerClassic_obj] of Object.entries(footballPlayerClassic)) {
 
-        let footballPlayerMantra_obj = footballPlayerListMantra_obj[footballPlayerId]
+        let footballPlayerMantra_obj = footballPlayerMantra[footballPlayerId]
 
         // merge roles
         let footballPlayer_obj = footballPlayerClassic_obj
@@ -81,15 +81,14 @@ const mergeRoles = (footballPlayerListClassic_obj, footballPlayerListMantra_obj)
     return footballPlayerList_obj
 }
 
-const getPlayersFromExcelContent = (excelContent_obj, isMantra) => {
+const getPlayersFromExcelContent = ( playersArray, isMantra ) => {
 
-    let footballPlayerList_obj = {};
+    let playersObj = {}
 
-    excelContent_obj.forEach((footballPlayer) => {
+    playersArray.forEach((footballPlayer) => {
 
         let footballPlayerId = footballPlayer["Id"];
 
-        // Create footballPlayer object
         let footballPlayer_obj = {
             id: footballPlayerId,
             name: footballPlayer["Nome"],
@@ -100,71 +99,113 @@ const getPlayersFromExcelContent = (excelContent_obj, isMantra) => {
             initialPrice: footballPlayer["Qt. I"],
         };
 
-        footballPlayerList_obj[footballPlayerId] = footballPlayer_obj;
-    });
-
-    return footballPlayerList_obj;
+        playersObj[footballPlayerId] = footballPlayer_obj;
+    })
+    return playersObj
 }
 
-const saveFootballPlayerWithVersion = async (footballPlayerList_obj, version) => {
+const getStatisticsFromExcelContent = ( statistics ) => {
+
+    let statisticsObj = {}
+
+    statistics.forEach((footballPlayer) => {
+
+        let footballPlayerId = footballPlayer["Id"];
+
+        let playerStatistics = {
+            id: footballPlayerId,
+            name: footballPlayer["Nome"],
+            team: footballPlayer["Squadra"],
+            role: footballPlayer["R"],
+            amm: footballPlayer["Amm"],
+            asf: footballPlayer["Asf"],
+            ass: footballPlayer["Ass"],
+            au: footballPlayer["Au"],
+            esp: footballPlayer["Esp"],
+            gf: footballPlayer["Gf"],
+            gs: footballPlayer["Gs"],
+            mf: footballPlayer["Mf"],
+            mv: footballPlayer["Mv"],
+            pg: footballPlayer["Pg"],
+            rc: footballPlayer["Rc"],
+            rp: footballPlayer["Rp"],
+            'r-': footballPlayer["R-"],
+            'r+': footballPlayer["R+"]
+        };
+
+        statisticsObj[footballPlayerId] = playerStatistics
+    })
+    return statisticsObj
+}
+
+const saveFootballPlayerWithVersion = async ( footballPlayers, statistics,  version) => {
 
     let footballPlayer = FootballPlayer({
-        footballPlayers: footballPlayerList_obj,
+        footballPlayers: footballPlayers,
+        statistics: statistics,
         version: version,
     });
 
     try {
         await footballPlayer.save();
-    } catch (error) {
+    }
+    catch (error)
+    {
         console.error(`[saveFootballPlayers] error saving FootballPlayer. ${error}`);
     }
 }
 
-const saveFootballPlayers = async ( classicFile, mantraFile ) => {
-
-    // used to measure execution time
+const saveFootballPlayers = async ( classicFile, mantraFile, statisticsFile ) =>
+{
     const duration_start = process.hrtime()
 
-    // Excel file to Json object
+    let footballPlayersObj = null
+    let statisticsObj = null
+
     let excelContentClassic = xlsxUtils.readFile( classicFile, 1 )
     let excelContentMantra = xlsxUtils.readFile( mantraFile, 1 )
-    
     if ( excelContentClassic.length && excelContentMantra.length )
     {
         // Extract footballPlayer from Json object
-        let footballPlayerListClassic_obj = getPlayersFromExcelContent(excelContentClassic, false);
-        let footballPlayerListMantra_obj = getPlayersFromExcelContent(excelContentMantra, true);
+        let footballPlayerClassic_obj = getPlayersFromExcelContent(excelContentClassic, false);
+        let footballPlayerMantra_obj = getPlayersFromExcelContent(excelContentMantra, true);
 
-        // Merge Classic and Mantra roles
-        let footballPlayerList_obj = mergeRoles(footballPlayerListClassic_obj, footballPlayerListMantra_obj)
+        footballPlayersObj = mergeRoles( footballPlayerClassic_obj, footballPlayerMantra_obj )
+    }
 
-        // Update FootballPlayer table
+    let excelContent = xlsxUtils.readFile( statisticsFile, 1 )
+    if ( excelContent.length )
+    {
+        statisticsObj = getStatisticsFromExcelContent( excelContent )
+    }
+
+    if ( footballPlayersObj || statisticsObj )
+    {
         try
         {
-            let footballPlayerListOld_obj = await FootballPlayer.findOne()
+            // recupero i giocatori
+            let oldTable = await FootballPlayer.findOne()
+            
+            // svuoto la tabella
+            await FootballPlayer.deleteMany({})
 
-            // There is an existing version of FootballPlayer collection in the DB
-            if (footballPlayerListOld_obj && footballPlayerListOld_obj.footballPlayers) {
+            let players = oldTable && oldTable.footballPlayers || null
+            let statistics = oldTable && oldTable.statistics || null
 
-                // Check if an update is needed
-                let equals = _.isEqual(footballPlayerListOld_obj.footballPlayers, footballPlayerList_obj);
-                
-                if ( !equals )
+            if ( !_.isEqual(players, footballPlayersObj) || !_.isEqual(statistics, statisticsObj) )
+            {
+                if ( !_.isEqual(players, footballPlayersObj) )
                 {
-                    console.log(`[saveFootballPlayers] FootballPlayer collection has to be updated`);
-                    FootballPlayer.deleteMany({}, (error, deleteStatus) => {
-                        if (error) {
-                            console.error(`[saveFootballPlayers] error deleting FootballPlayer. ${error}`);
-                        }
-                        // save new version of FootballPlayer collection
-                        saveFootballPlayerWithVersion(footballPlayerList_obj, new Date().getTime())
-                    });
+                    console.log(`[saveFootballPlayers] FootballPlayers collection has to be updated`)
+                    players = footballPlayersObj
                 }
-            }
-            // save footballPlayers collection for the first time
-            else {
-                console.log(`[saveFootballPlayers] creation of FootballPlayer collection`);
-                saveFootballPlayerWithVersion(footballPlayerList_obj, new Date().getTime())
+                if ( !_.isEqual(statistics, statisticsObj) )
+                {
+                    console.log(`[saveFootballPlayers] Statistics collection has to be updated`)
+                    statistics = statisticsObj
+                }
+
+                saveFootballPlayerWithVersion( players, statistics, new Date().getTime() )
             }
 
             console.info(`[saveFootballPlayers] execution time: ${secondsFrom(duration_start)} seconds`)
