@@ -53,6 +53,7 @@ const extractTimestamp = (str, regex_timestamp) => {
     // extract url
     const regex_url = /(www.*?)(?=")/m // from 'www' up to first occurrence of '"' not included
     const url = clean_str.match(regex_url) && clean_str.match(regex_url)[0] || ''
+    console.log(`[downloadPlayers] extracted url: ${url}`)
 
     // extract timestamp
     return url.match(regex_timestamp) && url.match(regex_timestamp)[1] || ''
