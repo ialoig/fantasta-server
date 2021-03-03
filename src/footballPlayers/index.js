@@ -65,6 +65,15 @@ const extractQuotesTimestamp = (str) => {
     return timestamp
 }
 
+const getStatisticsTimestamp = async () =>
+{
+    let data = await getDataFromHtml( "https://www.fantacalcio.it/statistiche-serie-a" )
+        
+    const timestamp = data ? extractStatisticsTimestamp(data) : ''
+
+    return Promise.resolve(timestamp)
+}
+
 const extractStatisticsTimestamp = (str) => {
 
     // remove spaces and new lines
@@ -115,15 +124,6 @@ const getDataFromHtml = async ( url ) =>
         console.error(error)
     }
     return Promise.resolve(elem || '')
-}
-
-const getStatisticsTimestamp = async () =>
-{
-    let data = await getDataFromHtml( "https://www.fantacalcio.it/statistiche-serie-a" )
-        
-    const timestamp = data ? extractStatisticsTimestamp(data) : ''
-
-    return Promise.resolve(timestamp)
 }
 
 const downloadList = async ( url ) =>
