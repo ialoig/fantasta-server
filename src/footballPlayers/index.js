@@ -54,7 +54,7 @@ const getTimestamp = async () => {
         // console.log(parsedHTML(script_name));
         // console.log("===================")
 
-        const parsedNodes = parsedHTML && parsedHTML.get && parsedHTML.get()
+        const parsedNodes = parsedHTML && parsedHTML.get && parsedHTML.get() || null
 
         let parsedNode = null
         if ( parsedNodes && parsedNodes.length ) 
