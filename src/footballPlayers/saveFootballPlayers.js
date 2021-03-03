@@ -185,9 +185,6 @@ const saveFootballPlayers = async ( classicFile, mantraFile, statisticsFile ) =>
         {
             // recupero i giocatori
             let oldTable = await FootballPlayer.findOne()
-            
-            // svuoto la tabella
-            await FootballPlayer.deleteMany({})
 
             let players = oldTable && oldTable.footballPlayers || null
             let statistics = oldTable && oldTable.statistics || null
@@ -212,6 +209,8 @@ const saveFootballPlayers = async ( classicFile, mantraFile, statisticsFile ) =>
                     console.log(`[saveFootballPlayers] Statistics collection already up to date`)
                 }
 
+                // svuoto la tabella
+                await FootballPlayer.deleteMany({})
                 saveFootballPlayerWithVersion( players, statistics, new Date().getTime() )
             }
             else
