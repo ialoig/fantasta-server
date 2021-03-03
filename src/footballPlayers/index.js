@@ -54,15 +54,15 @@ const extractQuotesTimestamp = (str) => {
     const regex_spaces_and_newlines = /(\r\n|\n|\r|\s)/gm
     let clean_str = str.replace(regex_spaces_and_newlines, "")
 
-    let sub_str = clean_str.substring( clean_str.indexOf("location.href"), clean_str.lastIndexOf("\"")+1 )
+    let url_str = clean_str.substring( clean_str.indexOf("href=\"")+6, clean_str.lastIndexOf("\"") )
 
     // extract url
     // const regex_location_href = /.*location.href="\/\/([^\n\r]*)"\}\);/m
     // const regex_timestamp = /.*location.href=".*\=([^\n\r]*)"\}\);/m
-    const regex_timestamp = /.*location.href=".*\=([^\n\r]*)"/m
-    const timestamp = sub_str.match(regex_timestamp) && sub_str.match(regex_timestamp)[1] || ''
+    // const regex_timestamp = /t=([^\n\r]*)/m
+    const regex_digt = /t=([\d]*)/m
 
-    return timestamp
+    return url_str.match(regex_digt) && url_str.match(regex_digt)[1] || ''
 }
 
 const getStatisticsTimestamp = async () =>
@@ -74,24 +74,16 @@ const getStatisticsTimestamp = async () =>
     return Promise.resolve(timestamp)
 }
 
-const extractStatisticsTimestamp = (str) => {
-
-    // remove spaces and new lines
+const extractStatisticsTimestamp = (str) =>
+{
     const regex_spaces_and_newlines = /(\r\n|\n|\r|\s)/gm
     let clean_str = str.replace(regex_spaces_and_newlines, "")
 
-    let sub_str = clean_str.substring( clean_str.indexOf("location.href"), clean_str.lastIndexOf("\"")+1 )
+    let url_str = clean_str.substring( clean_str.indexOf("href=\"")+6, clean_str.indexOf("\"})") )
 
-    // extract url
-    // const regex_location_href = /.*location.href="\/\/([^\n\r]*)"\}\);/m
-    // const regex_timestamp = /.*location.href=".*\=([^\n\r]*)"\}\);/m
-    const regex_timestamp = /([^\n\r]*)"/m
-
-    let sub = sub_str.split('location.href="//').filter((elem) => elem.length ).map(elem => elem.match(regex_timestamp))
-
-    const timestamp = sub[0][1].split('t=') && sub[0][1].split('t=')[1] || ''
-
-    return timestamp
+    const regex_timestamp = /t=([\ds=\-&]*)/m
+    
+    return url_str.match(regex_timestamp) && url_str.match(regex_timestamp)[1] || ''
 }
 
 const getDataFromHtml = async ( url ) =>
