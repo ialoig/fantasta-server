@@ -1,52 +1,40 @@
 
 import { Constants, Response, userUtils } from '../../../utils'
-import { errorMetric, saveMetric } from "../../../metrics"
+import { metricApiError, metricApiSuccess } from "../../../metrics"
 
 /** 
  * @route DELETE api/auth/deleteAccount
 * */
-const deleteAccount = async (req, res, next) =>
-{
+const deleteAccount = async (req, res, next) => {
     const duration_start = process.hrtime()
 
-    const { password='' } = req.body
-    if ( password )
-    {
-        try
-        {
+    const { password = '' } = req.body
+    if (password) {
+        try {
             const auth = await userUtils.userFromToken(req);
             const user = auth.user;
-            
-            if ( user.password!=password )
-            {
-                errorMetric( "auth.delete", Constants.WRONG_PASSWORD, duration_start )
 
+            if (user.password != password) {
                 console.error("Auth Delete: ", Constants.WRONG_PASSWORD)
-                res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.WRONG_PASSWORD, null, req.headers.language ) )
-            } 
-            else
-            {
-                saveMetric( "auth.delete", '', duration_start )
-
+                metricApiError("auth.delete", Constants.WRONG_PASSWORD, duration_start)
+                res.status(400).send(Response.reject(Constants.BAD_REQUEST, Constants.WRONG_PASSWORD, null, req.headers.language))
+            }
+            else {
+                metricApiSuccess("auth.delete", '', duration_start)
                 //user.remove();
-
-                res.json( Response.resolve( Constants.OK, true ) )
+                res.json(Response.resolve(Constants.OK, true))
             }
         }
-        catch (error)
-        {
-            errorMetric( "auth.delete", Constants[error] || Constants.BAD_REQUEST, duration_start )
-
+        catch (error) {
             console.log("Auth Delete: ", error)
-            res.status(404).send( Response.reject( Constants.BAD_REQUEST, Constants[error] || Constants.BAD_REQUEST, error, req.headers.language ) )
+            metricApiError("auth.delete", Constants[error] || Constants.BAD_REQUEST, duration_start)
+            res.status(404).send(Response.reject(Constants.BAD_REQUEST, Constants[error] || Constants.BAD_REQUEST, error, req.headers.language))
         }
     }
-    else
-    {
-        errorMetric( "auth.delete", Constants.PARAMS_ERROR, duration_start )
-
+    else {
         console.error('Auth Delete: PARAMS_ERROR')
-        res.status(400).send( Response.reject( Constants.BAD_REQUEST, Constants.PARAMS_ERROR, null, req.headers.language ) )
+        metricApiError("auth.delete", Constants.PARAMS_ERROR, duration_start)
+        res.status(400).send(Response.reject(Constants.BAD_REQUEST, Constants.PARAMS_ERROR, null, req.headers.language))
     }
 }
 

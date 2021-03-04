@@ -3,57 +3,55 @@ import _ from "lodash"
 
 import { FootballPlayer } from "../database"
 import { xlsxUtils } from "../utils"
-import { errorPlayersMetric, loadPlayersMetric, secondsFrom } from "../metrics"
+import { METRIC_STATUS, secondsFrom, load_footballPlayer_duration_seconds } from "../metrics"
 
 const classicRolesAllowed = ["P", "D", "C", "A"]
 const mandatoryFields = ["id", "name", "team", "roleClassic", "roleMantra", "actualPrice", "initialPrice"];
 const mantraRolesAllowed = ["Por", "Dd", "Ds", "Dc", "E", "M", "C", "W", "T", "A", "Pc"]
 
-const containsCorrectData = (footballPlayer_obj) =>
-{
+const containsCorrectData = (footballPlayer_obj) => {
     let reason = ''
-    if ( !mandatoryFields.every(item => footballPlayer_obj.hasOwnProperty(item)) )  // all fields must be present
+    if (!mandatoryFields.every(item => footballPlayer_obj.hasOwnProperty(item)))  // all fields must be present
     {
         reason = "Object does not contain mandatory fields"
     }
-    else if ( footballPlayer_obj["id"] < 0 )                // Check "id"
+    else if (footballPlayer_obj["id"] < 0)                // Check "id"
     {
         reason = "'id' cannot be < 0"
     }
-    else if ( !footballPlayer_obj["name"] )                 // Check "name"
+    else if (!footballPlayer_obj["name"])                 // Check "name"
     {
         reason = "'name' cannot be null or empty"
     }
-    else if ( !footballPlayer_obj["team"] )                 // Check "team"
+    else if (!footballPlayer_obj["team"])                 // Check "team"
     {
         reason = "'team' cannot be null or empty"
     }
-    else if ( !footballPlayer_obj["roleClassic"] )          // Check "roleClassic"
+    else if (!footballPlayer_obj["roleClassic"])          // Check "roleClassic"
     {
         reason = "'roleClassic' must be defined"
     }
-    else if ( !classicRolesAllowed.includes(footballPlayer_obj["roleClassic"]) )    // Check "roleClassic"
+    else if (!classicRolesAllowed.includes(footballPlayer_obj["roleClassic"]))    // Check "roleClassic"
     {
         reason = "'roleClassic' value not allowed"
     }
-    else if ( !footballPlayer_obj["roleMantra"] )           // Check "roleMantra"
+    else if (!footballPlayer_obj["roleMantra"])           // Check "roleMantra"
     {
         reason = "'roleMantra' must be defined"
     }
-    else if ( !footballPlayer_obj["roleMantra"].every(roleMantra => mantraRolesAllowed.includes(roleMantra)) )        // Check "roleMantra"
+    else if (!footballPlayer_obj["roleMantra"].every(roleMantra => mantraRolesAllowed.includes(roleMantra)))        // Check "roleMantra"
     {
         reason = "'roleMantra' value not allowed"
     }
-    else if ( footballPlayer_obj["actualPrice"] < 0 )       // Check "actualPrice"
+    else if (footballPlayer_obj["actualPrice"] < 0)       // Check "actualPrice"
     {
         reason = "'actualPrice' cannot be < 0"
     }
-    else if ( footballPlayer_obj["initialPrice"] < 0 )      // Check "initialPrice"
+    else if (footballPlayer_obj["initialPrice"] < 0)      // Check "initialPrice"
     {
         reason = "'initialPrice' cannot be < 0"
     }
-    else
-    {
+    else {
         return true
     }
 
@@ -81,7 +79,7 @@ const mergeRoles = (footballPlayerClassic, footballPlayerMantra) => {
     return footballPlayerList_obj
 }
 
-const getPlayersFromExcelContent = ( playersArray, isMantra ) => {
+const getPlayersFromExcelContent = (playersArray, isMantra) => {
 
     let playersObj = {}
 
@@ -104,7 +102,7 @@ const getPlayersFromExcelContent = ( playersArray, isMantra ) => {
     return playersObj
 }
 
-const getStatisticsFromExcelContent = ( statistics ) => {
+const getStatisticsFromExcelContent = (statistics) => {
 
     let statisticsObj = {}
 
@@ -138,7 +136,7 @@ const getStatisticsFromExcelContent = ( statistics ) => {
     return statisticsObj
 }
 
-const saveFootballPlayerWithVersion = async ( footballPlayers, statistics,  version) => {
+const saveFootballPlayerWithVersion = async (footballPlayers, statistics, version) => {
 
     let footballPlayer = FootballPlayer({
         footballPlayers: footballPlayers,
@@ -149,83 +147,72 @@ const saveFootballPlayerWithVersion = async ( footballPlayers, statistics,  vers
     try {
         await footballPlayer.save();
     }
-    catch (error)
-    {
+    catch (error) {
         console.error(`[saveFootballPlayers] error saving FootballPlayer. ${error}`);
     }
 }
 
-const saveFootballPlayers = async ( classicFile, mantraFile, statisticsFile ) =>
-{
+const saveFootballPlayers = async (classicFile, mantraFile, statisticsFile) => {
     const duration_start = process.hrtime()
 
     let footballPlayersObj = null
     let statisticsObj = null
 
-    let excelContentClassic = xlsxUtils.readFile( classicFile, 1 )
-    let excelContentMantra = xlsxUtils.readFile( mantraFile, 1 )
-    if ( excelContentClassic.length && excelContentMantra.length )
-    {
+    let excelContentClassic = xlsxUtils.readFile(classicFile, 1)
+    let excelContentMantra = xlsxUtils.readFile(mantraFile, 1)
+    if (excelContentClassic.length && excelContentMantra.length) {
         // Extract footballPlayer from Json object
         let footballPlayerClassic_obj = getPlayersFromExcelContent(excelContentClassic, false);
         let footballPlayerMantra_obj = getPlayersFromExcelContent(excelContentMantra, true);
 
-        footballPlayersObj = mergeRoles( footballPlayerClassic_obj, footballPlayerMantra_obj )
+        footballPlayersObj = mergeRoles(footballPlayerClassic_obj, footballPlayerMantra_obj)
     }
 
-    let excelContent = xlsxUtils.readFile( statisticsFile, 1 )
-    if ( excelContent.length )
-    {
-        statisticsObj = getStatisticsFromExcelContent( excelContent )
+    let excelContent = xlsxUtils.readFile(statisticsFile, 1)
+    if (excelContent.length) {
+        statisticsObj = getStatisticsFromExcelContent(excelContent)
     }
 
-    if ( footballPlayersObj || statisticsObj )
-    {
-        try
-        {
+    if (footballPlayersObj || statisticsObj) {
+        try {
             // recupero i giocatori
             let oldTable = await FootballPlayer.findOne()
 
             let players = oldTable && oldTable.footballPlayers || null
             let statistics = oldTable && oldTable.statistics || null
 
-            if ( !_.isEqual(players, footballPlayersObj) || !_.isEqual(statistics, statisticsObj) )
-            {
-                if ( !_.isEqual(players, footballPlayersObj) )
-                {
+            if (!_.isEqual(players, footballPlayersObj) || !_.isEqual(statistics, statisticsObj)) {
+                if (!_.isEqual(players, footballPlayersObj)) {
                     console.log(`[saveFootballPlayers] FootballPlayers collection has to be updated`)
                     players = footballPlayersObj
                 }
-                else{
+                else {
                     console.log(`[saveFootballPlayers] FootballPlayers collection already up to date`)
                 }
 
-                if ( !_.isEqual(statistics, statisticsObj) )
-                {
+                if (!_.isEqual(statistics, statisticsObj)) {
                     console.log(`[saveFootballPlayers] Statistics collection has to be updated`)
                     statistics = statisticsObj
                 }
-                else{
+                else {
                     console.log(`[saveFootballPlayers] Statistics collection already up to date`)
                 }
 
                 // svuoto la tabella
                 await FootballPlayer.deleteMany({})
-                saveFootballPlayerWithVersion( players, statistics, new Date().getTime() )
+                saveFootballPlayerWithVersion(players, statistics, new Date().getTime())
             }
-            else
-            {
+            else {
                 console.log(`[saveFootballPlayers] FootballPlayers collection already up to date`)
                 console.log(`[saveFootballPlayers] Statistics collection already up to date`)
             }
 
             console.info(`[saveFootballPlayers] execution time: ${secondsFrom(duration_start)} seconds`)
-            loadPlayersMetric( duration_start )
+            load_footballPlayer_duration_seconds.observe({ status: METRIC_STATUS.SUCCESS, msg: "" }, secondsFrom(duration_start))
         }
-        catch (error)
-        {
+        catch (error) {
             console.error(`[saveFootballPlayers] error updating FootballPlayer. ${error}`);
-            errorPlayersMetric( error, duration_start )
+            load_footballPlayer_duration_seconds.observe({ status: METRIC_STATUS.ERROR, msg: error }, secondsFrom(duration_start))
         }
     }
 }

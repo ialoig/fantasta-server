@@ -2,7 +2,7 @@
 export const prometheusClient = require('prom-client')
 
 // Possible status values for labeling a metric
-const METRIC_STATUS = {
+export const METRIC_STATUS = {
     SUCCESS: "success",
     ERROR: "error"
 }
@@ -22,7 +22,7 @@ export const secondsFrom = (start_time) => {
 }
 
 // Histograms
-const load_footballPlayer_duration_seconds = new prometheusClient.Histogram({
+export const load_footballPlayer_duration_seconds = new prometheusClient.Histogram({
     name: 'load_footballPlayer_duration_seconds',
     help: 'seconds duration for loading footballPlayers',
     labelNames: ['status', 'msg']
@@ -41,46 +41,30 @@ export const mongodb_connection_status_counter = new prometheusClient.Counter({
     labelNames: ['status']
 })
 
-export const saveMetric = ( name, msg, start ) =>
-{
+export const email_status_counter = new prometheusClient.Counter({
+    name: 'email_status_counter',
+    help: 'counter for email sending statuses',
+    labelNames: ['status']
+})
+
+export const metricApiSuccess = (name, msg, duration_start) => {
+
     api_duration_seconds.observe(
         {
             name: name,
             status: METRIC_STATUS.SUCCESS,
             msg: msg
         },
-        secondsFrom(start)
+        secondsFrom(duration_start)
     )
 }
 
-export const errorMetric = ( name, msg, start ) =>
-{
+export const metricApiError = (name, msg, duration_start) => {
     api_duration_seconds.observe(
         {
             name: name,
             status: METRIC_STATUS.ERROR,
-            msg
+            msg: msg
         },
-        secondsFrom(start)
-    )
-}
-
-export const loadPlayersMetric = ( start ) =>
-{
-    load_footballPlayer_duration_seconds.observe(
-        {
-            status: METRIC_STATUS.SUCCESS,
-            msg: ""
-        },
-        secondsFrom(start)
-    )
-}
-
-export const errorPlayersMetric = ( error, start ) =>
-{
-    load_footballPlayer_duration_seconds.observe(
-        {
-            status: METRIC_STATUS.ERROR,
-            msg: error
-        }, secondsFrom(start))
+        secondsFrom(duration_start))
 }
