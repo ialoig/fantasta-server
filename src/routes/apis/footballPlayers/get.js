@@ -1,7 +1,7 @@
 
 import { FootballPlayer } from "../../../database"
 import { Constants, Response } from "../../../utils"
-import { metricApiError, metricApiSuccess } from "../../../metrics"
+import { metricApiError, metricApiSuccess, metricApiPayloadSize } from "../../../metrics"
 
 const get = async (req, res, next) => {
     const duration_start = process.hrtime()
@@ -24,14 +24,14 @@ const get = async (req, res, next) => {
             let dbVersion = footballPlayers.version ? parseInt(footballPlayers.version) : 0
             let mobileVersion = req.query.version ? parseInt(req.query.version) : 0
 
-            metricApiSuccess("footballPlayer.get", '', duration_start)
-            // TODO: metricApiPayload( "footballPlayer.get", `payload ${Buffer.byteLength(JSON.stringify(response), 'utf8')} bytes`, duration_start )
-
             response = {
                 version: dbVersion,
                 footballPlayers: dbVersion === mobileVersion ? {} : footballPlayers.footballPlayers,
                 updated: mobileVersion !== dbVersion,
             }
+
+            metricApiSuccess("footballPlayer.get", '', duration_start)
+            metricApiPayloadSize("footballPlayer.get", response)
             res.json(Response.resolve(Constants.OK, response))
         }
     }

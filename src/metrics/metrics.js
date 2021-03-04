@@ -34,6 +34,14 @@ const api_duration_seconds = new prometheusClient.Histogram({
     labelNames: ['name', 'status', 'msg']
 })
 
+// Gauges
+const api_payload_bytes = new prometheusClient.Gauge({
+    name: 'api_payload_bytes',
+    help: 'keep track of api response payload size',
+    labelNames: ['name']
+});
+
+
 // Counters
 export const mongodb_connection_status_counter = new prometheusClient.Counter({
     name: 'mongodb_connection_status_counter',
@@ -47,8 +55,24 @@ export const email_status_counter = new prometheusClient.Counter({
     labelNames: ['status']
 })
 
-export const metricApiSuccess = (name, msg, duration_start) => {
 
+/**
+ * 
+ * @param {*} name : API name
+ * @param {*} payload : json object
+ */
+export const metricApiPayloadSize = (name, payload) => {
+    const size = Buffer.byteLength(JSON.stringify(payload), 'utf8')
+    api_payload_bytes.labels(name = name).set(size);
+}
+
+/**
+ * 
+ * @param {*} name : API name
+ * @param {*} msg : metric message
+ * @param {*} duration_start : timer start duration
+ */
+export const metricApiSuccess = (name, msg, duration_start) => {
     api_duration_seconds.observe(
         {
             name: name,
@@ -59,6 +83,12 @@ export const metricApiSuccess = (name, msg, duration_start) => {
     )
 }
 
+/**
+ * 
+ * @param {*} name : API name
+ * @param {*} msg : metric message
+ * @param {*} duration_start : timer start duration
+ */
 export const metricApiError = (name, msg, duration_start) => {
     api_duration_seconds.observe(
         {
