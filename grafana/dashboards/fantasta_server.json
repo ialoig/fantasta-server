@@ -347,6 +347,20 @@
       }
     },
     {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 18
+      },
+      "id": 10,
+      "panels": [],
+      "title": "APIs",
+      "type": "row"
+    },
+    {
       "aliasColors": {},
       "bars": false,
       "dashLength": 10,
@@ -365,7 +379,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 18
+        "y": 19
       },
       "hiddenSeries": false,
       "id": 2,
@@ -501,7 +515,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 18
+        "y": 19
       },
       "hiddenSeries": false,
       "id": 3,
@@ -585,20 +599,6 @@
         "align": false,
         "alignLevel": null
       }
-    },
-    {
-      "collapsed": false,
-      "datasource": null,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 26
-      },
-      "id": 10,
-      "panels": [],
-      "title": "APIs",
-      "type": "row"
     },
     {
       "aliasColors": {},
@@ -1137,5 +1137,5 @@
   "timezone": "browser",
   "title": "Fantasta Server",
   "uid": "hghajaEMk",
-  "version": 13
+  "version": 14
 }
