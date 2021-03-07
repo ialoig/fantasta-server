@@ -1,13 +1,11 @@
-
 import { createServer } from 'http'
-import Socket from 'socket.io'
+import * as socketio from 'socket.io'
 
-import * as a from './socket'
-
-const init = ( app ) => {
+export const init = ( app ) => {
     
     const server = createServer(app)
-    const io = Socket(server)
+    const io = new socketio.Server();
+    io.attach(server);
 
     io.on( 'connection', () => {
         console.log("Socket.io connected")
@@ -21,5 +19,3 @@ const init = ( app ) => {
 
     return server
 }
-
-export { init }

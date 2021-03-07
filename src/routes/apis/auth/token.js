@@ -1,6 +1,5 @@
-
-import { Constants, Response, userUtils } from '../../../utils'
-import { metricApiError, metricApiSuccess } from "../../../metrics"
+import { Constants, Response, userUtils } from '../../../utils/index.js'
+import { metricApiError, metricApiSuccess } from '../../../metrics/index.js'
 
 const token = async (req, res, next) => {
     const duration_start = process.hrtime()

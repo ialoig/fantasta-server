@@ -1,7 +1,7 @@
 
-import { FootballPlayer } from "../../../database"
-import { Constants, Response } from "../../../utils"
-import { metricApiError, metricApiSuccess, metricApiPayloadSize } from "../../../metrics"
+import { FootballPlayer } from '../../../database/index.js'
+import { Constants, Response } from '../../../utils/index.js'
+import { metricApiError, metricApiSuccess, metricApiPayloadSize } from '../../../metrics/index.js'
 
 const get = async (req, res, next) => {
     const duration_start = process.hrtime()

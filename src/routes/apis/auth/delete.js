@@ -1,6 +1,6 @@
 
-import { Constants, Response, userUtils } from '../../../utils'
-import { metricApiError, metricApiSuccess } from "../../../metrics"
+import { Constants, Response, userUtils } from '../../../utils/index.js'
+import { metricApiError, metricApiSuccess } from '../../../metrics/index.js'
 
 /** 
  * @route DELETE api/auth/deleteAccount

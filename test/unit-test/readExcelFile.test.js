@@ -1,9 +1,7 @@
-import "regenerator-runtime/runtime.js"
-import _ from "lodash";
-import { xlsxUtils } from "../../src/utils";
-import { mergeRoles, getPlayersFromExcelContent } from "../../src/footballPlayers/saveFootballPlayers"
-
-const assert = require("assert")
+import _ from 'lodash'
+import { xlsxUtils } from '../../src/utils/index.js'
+import { mergeRoles, getPlayersFromExcelContent } from '../../src/footballPlayers/saveFootballPlayers.js'
+import { strict as assert } from 'assert'
 
 describe("parse Excel file", function () {
     //this.timeout(0) // disable test environment timeout

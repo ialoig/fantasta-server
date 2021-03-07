@@ -1,7 +1,6 @@
-
-import { League } from '../../../database'
-import { Constants, Response, userUtils } from '../../../utils'
-import { metricApiError, metricApiSuccess } from "../../../metrics"
+import { League } from '../../../database/index.js'
+import { Constants, Response, userUtils } from '../../../utils/index.js'
+import { metricApiError, metricApiSuccess } from '../../../metrics/index.js'
 
 const present = async (req, res, next) => {
     const duration_start = process.hrtime()

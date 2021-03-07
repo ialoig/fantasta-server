@@ -1,4 +1,4 @@
-import { email_status_counter, METRIC_STATUS } from '../metrics'
+import { email_status_counter, METRIC_STATUS } from '../metrics/index.js'
 import { createTransport } from 'nodemailer'
 
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

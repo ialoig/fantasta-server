@@ -1,7 +1,5 @@
-
 import I18n from 'i18n-js'
-
-import { getLanguage } from '../languages'
+import { getLanguage } from '../languages/index.js'
 
 const resolve = ( status, data ) =>
 {
