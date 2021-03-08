@@ -24,9 +24,6 @@
       "text-summary",
       "html"
     ],
-    "require": [
-      "babel-core/register"
-    ],
     "extension": [
       ".js"
     ],

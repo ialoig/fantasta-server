@@ -20,9 +20,9 @@
     "docker-prod": "docker-compose -f ./docker-compose.yml -f ./docker-compose.prod.yml up --build --force-recreate --detach"
   },
   "dependencies": {
-    "axios": "0.21.1",
+    "axios": "^0.21.1",
     "cheerio": "^1.0.0-rc.5",
-    "config": "^3.3.4",
+    "config": "^3.3.6",
     "cookie-parser": "^1.4.5",
     "express": "^4.17.1",
     "i18n-js": "^3.8.0",
@@ -33,7 +33,6 @@
     "morgan": "^1.10.0",
     "node-schedule": "^2.0.0",
     "nodemailer": "^6.5.0",
-    "pm2": "^4.5.5",
     "prom-client": "^13.1.0",
     "pug": "^3.0.2",
     "socket.io": "^3.1.2",
@@ -41,8 +40,8 @@
     "xlsx": "0.16.9"
   },
   "devDependencies": {
-    "debug": "4.3.1",
-    "chai": "^4.3.0",
+    "debug": "^4.3.1",
+    "chai": "^4.3.3",
     "chai-http": "^4.3.0",
     "mocha": "^8.3.1",
     "nodemon": "^2.0.7",
