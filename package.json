@@ -5,10 +5,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "node /usr/fantasta_server/src/fantasta.js",
+    "start": "node src/fantasta.js",
     "stop": "docker stop grafana prometheus fantasta_server fantasta_mongo",
-    "debug": "nodemon /usr/fantasta_server/src/fantasta.js",
-    "test": "nyc mocha /usr/fantasta_server/test/**/*.test.js --exit --timeout 0",
+    "debug": "nodemon src/fantasta.js",
+    "test": "nyc mocha test/**/*.test.js --exit --timeout 0",
     "test-unit": "nyc mocha test/unit-test/*.test.js --exit --timeout 0",
     "test-integration": "nyc mocha test/integration/*.test.js --exit --timeout 0",
     "docker-build": "docker-compose build --no-cache",
