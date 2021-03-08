@@ -1,6 +1,5 @@
-
-import { Router } from "express"
-import { default as apis } from "./apis"
+import { Router } from 'express'
+import { default as apis } from './apis/index.js'
 
 let routing = Router()
 

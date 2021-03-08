@@ -1,7 +1,5 @@
 //"use strict"
 // const mongoose = require('mongoose')
-
-import "regenerator-runtime/runtime.js"
 // import { FootballPlayer } from "../../src/database"
 
 const assert = require("assert")

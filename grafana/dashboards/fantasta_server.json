@@ -376,7 +376,7 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 13,
+        "h": 8,
         "w": 12,
         "x": 0,
         "y": 19
@@ -451,14 +451,6 @@
           "intervalFactor": 10,
           "legendFormat": "{{name}} - {{status}} - {{msg}}",
           "refId": "E"
-        },
-        {
-          "expr": "(rate(api_duration_seconds_sum{name=\"auth.delete\", status=\"success\"}[1m])/rate(api_duration_seconds_count{name=\"auth.delete\", status=\"success\"}[1m]))*1000",
-          "hide": true,
-          "interval": "",
-          "intervalFactor": 10,
-          "legendFormat": "{{name}} - {{status}} - {{msg}}",
-          "refId": "H"
         }
       ],
       "thresholds": [],
@@ -520,7 +512,7 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 13,
+        "h": 8,
         "w": 12,
         "x": 12,
         "y": 19
@@ -625,9 +617,9 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 8,
-        "w": 12,
+        "w": 8,
         "x": 0,
-        "y": 32
+        "y": 27
       },
       "hiddenSeries": false,
       "id": 12,
@@ -660,7 +652,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "(rate(api_duration_seconds_sum{name=\"footballPlayer.get\", status=\"success\"}[1m])/rate(api_duration_seconds_count{name=\"footballPlayer.get\", status=\"success\"}[1m]))*1000",
+          "expr": "api_duration_seconds_sum{name=\"footballPlayer.get\", status=\"success\"}",
           "hide": false,
           "interval": "",
           "legendFormat": "{{name}} - {{status}} - {{msg}}",
@@ -727,9 +719,111 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 32
+        "w": 8,
+        "x": 8,
+        "y": 27
+      },
+      "hiddenSeries": false,
+      "id": 21,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "hideEmpty": false,
+        "max": true,
+        "min": false,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null as zero",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.7",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "api_payload_bytes{name=\"footballPlayer.get\"}",
+          "hide": false,
+          "interval": "",
+          "legendFormat": " ",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "FootballPlayer (Payload)",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:51",
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:52",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 27
       },
       "hiddenSeries": false,
       "id": 13,
@@ -830,7 +924,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 40
+        "y": 35
       },
       "hiddenSeries": false,
       "id": 14,
@@ -863,21 +957,21 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "(rate(api_duration_seconds_sum{name=\"league.create\", status=\"success\"}[1m])/rate(api_duration_seconds_count{name=\"league.create\", status=\"success\"}[1m]))*1000",
+          "expr": "api_duration_seconds_sum{name=\"league.create\", status=\"success\"}",
           "hide": false,
           "interval": "",
           "legendFormat": "{{name}} - {{status}} - {{msg}}",
           "refId": "A"
         },
         {
-          "expr": "(rate(api_duration_seconds_sum{name=\"league.join\", status=\"success\"}[1m])/rate(api_duration_seconds_count{name=\"league.join\", status=\"success\"}[1m]))*1000",
+          "expr": "api_duration_seconds_sum{name=\"league.join\", status=\"success\"}",
           "hide": false,
           "interval": "",
           "legendFormat": "{{name}} - {{status}} - {{msg}}",
           "refId": "B"
         },
         {
-          "expr": "(rate(api_duration_seconds_sum{name=\"league.present\", status=\"success\"}[1m])/rate(api_duration_seconds_count{name=\"league.present\", status=\"success\"}[1m]))*1000",
+          "expr": "api_duration_seconds_sum{name=\"league.present\", status=\"success\"}",
           "hide": false,
           "interval": "",
           "legendFormat": "{{name}} - {{status}} - {{msg}}",
@@ -946,7 +1040,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 40
+        "y": 35
       },
       "hiddenSeries": false,
       "id": 15,
@@ -1036,12 +1130,12 @@
     "list": []
   },
   "time": {
-    "from": "now-3h",
+    "from": "now-15m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "Fantasta Server",
   "uid": "hghajaEMk",
-  "version": 8
+  "version": 14
 }

@@ -1,5 +1,6 @@
+import * as prometheusClient from 'prom-client'
 
-export const prometheusClient = require('prom-client')
+export const prometheusRegister = prometheusClient.register
 
 // Possible status values for labeling a metric
 export const METRIC_STATUS = {

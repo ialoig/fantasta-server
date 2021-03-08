@@ -1,9 +1,7 @@
-
-
-import * as auth from './auth'
-import * as footballPlayers from './footballPlayers'
-import * as league from './league'
-import * as metrics from './metrics'
+import * as auth from './auth/index.js'
+import * as footballPlayers from './footballPlayers/index.js'
+import * as league from './league/index.js'
+import * as metrics from './metrics/index.js'
 
 export default {
     auth,

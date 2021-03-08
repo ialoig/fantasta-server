@@ -1,5 +1,5 @@
-
-import { sign, verify } from 'jsonwebtoken'
+import jsonwebtoken from 'jsonwebtoken'
+const { sign, verify } = jsonwebtoken
 
 const Create = ( tokenPassword, email, password, username ) =>
 {

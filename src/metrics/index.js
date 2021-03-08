@@ -1,5 +1,5 @@
 export {
-    prometheusClient,
+    prometheusRegister,
     METRIC_STATUS,
     secondsFrom,
     load_footballPlayer_duration_seconds,
@@ -8,4 +8,4 @@ export {
     metricApiPayloadSize,
     mongodb_connection_status_counter,
     email_status_counter
-} from './metrics'
+} from './metrics.js'

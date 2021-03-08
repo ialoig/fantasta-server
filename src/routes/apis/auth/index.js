@@ -1,6 +1,6 @@
 
-export { default as login } from './login'
-export { default as register } from './register'
-export { default as token } from './token'
-export { default as update } from './update'
-export { default as deleteAccount } from './delete'
+export { default as login } from './login.js'
+export { default as register } from './register.js'
+export { default as token } from './token.js'
+export { default as update } from './update.js'
+export { default as deleteAccount } from './delete.js'

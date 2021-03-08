@@ -4,8 +4,9 @@ services:
     environment:
       - NODE_ENV=dev
     volumes:
-      - ./:/usr/fantasta_server/
+      - ./src:/usr/fantasta_server/src
     command: npm run debug
+    # command: bash -c "while true; do echo sleeping...; sleep 2; done"
 
   grafana:
     environment:

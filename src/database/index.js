@@ -2,11 +2,10 @@
 
 import mongoose from 'mongoose'
 import config from 'config'
-
-import { downloadPlayers } from '../footballPlayers'
-import { default as populate } from './populate'
-import { mongodb_connection_status_counter } from '../metrics'
-import { seed } from "../../test/seed" // for development only
+import { downloadPlayers } from '../footballPlayers/index.js'
+import { default as populate } from './populate.js'
+import { mongodb_connection_status_counter } from '../metrics/index.js'
+import { seed } from "../utils/seed/index.js" // for development only
 
 // use ES6 Promise instead of mongoose.Promise
 mongoose.Promise = Promise
@@ -85,5 +84,5 @@ process.on( 'SIGINT', () => {
     })
 })
 
-export { League, FootballPlayer, Team, User } from './models'
+export { League, FootballPlayer, Team, User } from './models/index.js'
 export { initMongoConnection, populate }

@@ -1,5 +1,7 @@
 
-import { Schema, model } from 'mongoose'
+import mongoose from 'mongoose'
+const { Schema, model } = mongoose
+
 import _ from 'lodash'
 
 const leagueSchema = new Schema(

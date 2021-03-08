@@ -1,12 +1,9 @@
-
-import "regenerator-runtime/runtime.js"
 import { expect, should, use } from 'chai'
 import chaiHttp from 'chai-http'
 import config from 'config'
-
-import { User } from '../../src/database'
-import { tokenUtils } from '../../src/utils'
-import { requester } from './index'
+import { User } from '../../src/database/index.js'
+import { tokenUtils } from '../../src/utils/index.js'
+import { requester } from './index.js'
 
 use(chaiHttp);
 should();

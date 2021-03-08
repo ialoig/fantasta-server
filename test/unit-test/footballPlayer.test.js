@@ -1,7 +1,5 @@
-import "regenerator-runtime/runtime.js"
-import { containsCorrectData } from "../../src/footballPlayers/saveFootballPlayers"
-
-const assert = require("assert")
+import { containsCorrectData } from "../../src/footballPlayers/saveFootballPlayers.js"
+import { strict as assert } from 'assert'
 
 describe("FootballPlayer validation", function () {
    

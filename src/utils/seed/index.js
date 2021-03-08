@@ -1,34 +1,27 @@
-
-const _ = require("lodash");
-const { User, League, Team } = require("../../src/database/models");
-
-import { fakeUsers, fakeLeagues, fakeTeams } from "./fakeData"
+import _ from 'lodash'
+import { User, League, Team } from "../../database/models/index.js"
+import { fakeUsers, fakeLeagues, fakeTeams } from "./fakeData.js"
 
 const seed = async () => {
     try {
         const count = await User.estimatedDocumentCount({});
-        console.log("[seed] - user found in db=" +count)
+        console.log("[seed] user found in db=" +count)
         if (count >= 10) {
-            console.log("[seed] - db already seeded ! Return.")
+            console.log("[seed] db already seeded!")
             return
         } else {
-
-            await inserFakeUsers();
-        
-            await inserFakeLeagues();
-            
+            await inserFakeUsers();        
+            await inserFakeLeagues();            
             await inserFakeTeams();
         }
-
-
-        console.log("[seed] - Done. Database seeded!")
+        console.log("[seed] Done. Database seeded!")
     } catch (error) {
         console.error("Error seeding database file: " + error)
     }   
 }
 
 const inserFakeUsers = async () => {
-    console.log("[seed] - insert users=" +fakeUsers.length)
+    console.log("[seed] insert users=" +fakeUsers.length)
     await User.insertMany(fakeUsers);
 }
 
@@ -42,9 +35,9 @@ const inserFakeLeagues = async () => {
         
         leagues.push(fakeLeagues[i])
     }
-    console.log("[seed] - insert leagues=" +leagues.length)
+    console.log("[seed] insert leagues=" +leagues.length)
     let createdLeagues = await League.insertMany(leagues);
-    console.log("[seed] - \t... done")
+    console.log("[seed] \t... done")
 }
 
 
@@ -68,10 +61,9 @@ const inserFakeTeams = async () => {
         await userFound.save();
 
         teams.push(fakeTeams[i])
-    }
-    
-    console.log("[seed] - insert teams=" +teams.length)
-    console.log("[seed] - \t... done")
+    }    
+    console.log("[seed] insert teams=" +teams.length)
+    console.log("[seed] \t... done")
 }
 
 export { seed }

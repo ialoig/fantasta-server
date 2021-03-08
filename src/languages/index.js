@@ -1,7 +1,6 @@
 
 import I18n from 'i18n-js'
-
-import { langs } from './translations'
+import { langs } from './translations/index.js'
 
 const defaultLang = 'it'
 const availableLangs = [ 'it', 'en' ]

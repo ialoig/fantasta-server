@@ -1,10 +1,10 @@
-import { prometheusClient } from "../../../metrics"
+import { prometheusRegister } from '../../../metrics/index.js'
 
 export const get = async (req, res, next) => {
 
     // fetch current metrics
-    let metrics = await prometheusClient.register.metrics()
+    let metrics = await prometheusRegister.metrics()
     
-    res.setHeader('Content-Type', prometheusClient.register.contentType)
+    res.setHeader('Content-Type', prometheusRegister.contentType)
     res.send(metrics)
 }

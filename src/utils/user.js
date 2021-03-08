@@ -1,9 +1,7 @@
-
 import config from 'config'
-
-import { populate, User } from '../database'
-import { default as Token } from './token'
-import { Constants, tokenUtils } from '../utils'
+import { populate, User } from '../database/index.js'
+import { default as Token } from './token.js'
+import { Constants, tokenUtils } from '../utils/index.js'
 
 const userFromToken = async ( req ) =>
 {

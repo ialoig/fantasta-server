@@ -5,7 +5,7 @@ import axios from 'axios'
 import { read } from 'xlsx'
 import { load } from 'cheerio'
 
-import { saveFootballPlayers } from './saveFootballPlayers'
+import { saveFootballPlayers } from './saveFootballPlayers.js'
 
 const JobSchedule = () =>
 {

@@ -5,9 +5,10 @@ services:
     environment:
       - NODE_ENV=test
     volumes:
-      - ./:/usr/fantasta_server/
-      #- ./coverage:/usr/fantasta_server/coverage
+      # - ./src:/usr/fantasta_server/src
+      - ./test:/usr/fantasta_server/test
     command: npm run start
+    # command: bash -c "while true; do echo sleeping...; sleep 2; done"
 
   grafana:
     environment:

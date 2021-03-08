@@ -3,10 +3,12 @@ import path from 'path'
 import morgan from 'morgan'
 import cookieParser from 'cookie-parser'
 import config from 'config'
+import { initMongoConnection } from './database/index.js'
+import { init } from './socket/index.js'
+import routing  from './routes/index.js'
+import { fileURLToPath } from 'url';
 
-import { initMongoConnection } from './src/database'
-import { init } from './src/socket'
-import routing  from './src/routes'
+const __dirname = fileURLToPath(import.meta.url);
 
 let app = express()
 
@@ -57,4 +59,4 @@ server.listen( config.port, () => {
     console.log(`************************************`)
 })
 
-module.exports = app
+export default app
