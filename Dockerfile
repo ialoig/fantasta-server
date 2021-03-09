@@ -1,5 +1,5 @@
 # base docker
-FROM node:lts-slim
+FROM node:14.16.0-slim
 
 # Create app directory and set WORKDIR. Each next command will run in the WORKDIR
 RUN mkdir -p /usr/fantasta_server
