@@ -7,7 +7,7 @@ const serverUrl = config.serverUrl || "http://localhost:3000";
 
 chai.use(chaiHttp);
 
-initMongoConnection()
+initMongoConnection(false)
 
 export const requester = chai.request(serverUrl)
 

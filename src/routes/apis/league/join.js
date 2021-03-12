@@ -1,6 +1,6 @@
 import { League, populate } from '../../../database/index.js'
 import { Constants, Response, leagueUtils, userUtils } from '../../../utils/index.js'
-import { metricApiError, metricApiSuccess } from '../../../metrics/index.js'
+import { metricApiError, metricApiSuccess, metricApiPayloadSize } from '../../../metrics/index.js'
 import * as Socket from 'socket.io'
 
 const join = async (req, res, next) => {
@@ -61,7 +61,7 @@ const join = async (req, res, next) => {
             // Socket.leagueCreate( req, newLeag.name, '' )
 
             metricApiSuccess("league.join", '', duration_start)
-
+            metricApiPayloadSize("league.join", response)
             res.json(Response.resolve(Constants.OK, response))
         }
         catch (error) {

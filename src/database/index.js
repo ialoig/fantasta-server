@@ -20,7 +20,7 @@ const mongoConnectionParams = {
 }
 
 
-const initMongoConnection = async () => {
+const initMongoConnection = async (trigger_download = true) => {
 
     console.log( `[mongodb] endpoint: ${mongodbConnection}`)
     
@@ -68,7 +68,8 @@ const initMongoConnection = async () => {
         console.log("[mongodb] status: open")
         mongodb_connection_status_counter.inc({ status: "open" });
 
-        downloadPlayers() //TODO: restore as callback otherwise we trigger download at each test iteration
+        if(trigger_download)
+            downloadPlayers()
         
         // Seed database with fake data
         if(process.env.NODE_ENV == "dev"){

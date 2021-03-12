@@ -3,7 +3,7 @@ import chaiHttp from 'chai-http'
 import { User, League, Team, populate } from '../../src/database/index.js'
 import config from 'config'
 import { tokenUtils } from '../../src/utils/index.js'
-import { requester, findPropertyValueInNestedObject } from './index.js'
+import { requester, findPropertyValueInNestedObject, printObject } from './index.js'
 
 use(chaiHttp);
 should();
@@ -13,24 +13,24 @@ describe("LEAGUE.JOIN", () => {
     const league_join_api = "/fantasta/league/join"
 
     const test_user_1 = {
-        email: 'test@test.com',
-        password: '123456',
-        username: 'username'
+        email: 'test_1@test.com',
+        password: 'password_1',
+        username: 'username_1'
     }
     const token_1 = tokenUtils.Create(config.token.kid, test_user_1.email, test_user_1.password, test_user_1.username)
     const test_team_name_1 = "team_name_1"
 
     const test_user_2 = {
-        email: 'test2@test2.com',
-        password: '123456',
+        email: 'test_2@test.com',
+        password: 'password_2',
         username: 'username_2'
     }
     const test_team_name_2 = "team_name_2"
     const token_2 = tokenUtils.Create(config.token.kid, test_user_2.email, test_user_2.password, test_user_2.username)
 
     const test_user_3 = {
-        email: 'test2@test2.com',
-        password: '123456',
+        email: 'test_3@test.com',
+        password: 'password_3',
         username: 'username_3'
     }
     const test_team_name_3 = "team_name_3"
@@ -46,11 +46,11 @@ describe("LEAGUE.JOIN", () => {
         midfielders: 4,
         strikers: 2,
         players: 10,
-        budget: 11, //TODO: if budget is specified also in LEAGUE we end up with 2 objects
+        budget: 11,
         countdown: 3,
         auctionType: "call",
         startPrice: "zero",
-        teams: [] // will be added once a Team is created
+        teams: [] // will be added once the join is successful
     }
 
     before(async () => {
@@ -63,6 +63,7 @@ describe("LEAGUE.JOIN", () => {
         // Create User
         const test_user_1_db = await User.create(test_user_1)
         const test_user_2_db = await User.create(test_user_2)
+        const test_user_3_db = await User.create(test_user_3)
 
         // Create League
         test_league["admin"] = test_user_1_db._id
