@@ -385,7 +385,7 @@ describe("LEAGUE.JOIN", () => {
         expect(findPropertyValueInNestedObject(res.body.league.teams, 'email', test_user_2.email)).to.be.true;
     });
 
-    it("Third USER IS JOINING the league but LEAGUE ID FULL", async () => {
+    it("Third USER IS JOINING the league but LEAGUE IS FULL", async () => {
         const res = await requester.put(league_join_api)
             .set('Authorization', token_3)
             .send({
