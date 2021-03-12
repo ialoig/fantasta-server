@@ -50,7 +50,7 @@ describe("LEAGUE.JOIN", () => {
         countdown: 3,
         auctionType: "call",
         startPrice: "zero",
-        teams: [] // will be added once the join is successful
+        teams: [] // will be added once the league.Join api is successful
     }
 
     before(async () => {
