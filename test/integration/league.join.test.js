@@ -8,12 +8,6 @@ import { requester, findPropertyValueInNestedObject } from './index.js'
 use(chaiHttp);
 should();
 
-const printObject = (msg, obj) => {
-    console.log("------------------------------------")
-    console.log(`${msg}: ${JSON.stringify(obj, null, 2)}`)
-    console.log("------------------------------------")
-}
-
 describe("LEAGUE.JOIN", () => {
 
     const league_join_api = "/fantasta/league/join"
