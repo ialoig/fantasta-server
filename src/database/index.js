@@ -68,7 +68,7 @@ const initMongoConnection = async () => {
         console.log("[mongodb] status: open")
         mongodb_connection_status_counter.inc({ status: "open" });
 
-        downloadPlayers()
+        downloadPlayers() //TODO: restore as callback otherwise we trigger download at each test iteration
         
         // Seed database with fake data
         if(process.env.NODE_ENV == "dev"){

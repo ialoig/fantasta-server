@@ -23,7 +23,7 @@ describe("LEAGUE.JOIN", () => {
         password: '123456',
         username: 'username'
     }
-    const token = tokenUtils.Create(config.token.kid, test_user_1.email, test_user_1.password, test_user_1.username)
+    const token_1 = tokenUtils.Create(config.token.kid, test_user_1.email, test_user_1.password, test_user_1.username)
     const test_team_name_1 = "team_name_1"
 
     const test_user_2 = {
@@ -59,36 +59,20 @@ describe("LEAGUE.JOIN", () => {
         teams: [] // will be added once a Team is created
     }
 
-    /*
-    let test_team = {
-        name: "test_team",
-        footballPlayers: [],
-        budget: 100, //TODO: if budget is specified also in TEAM we end up with 2 objects
-        user: null,   // will be added once a User is created
-        league: null, // will be added once a League is created
-    }
-    */
-
     before(async () => {
-        // Create User
+        
+        // Clean DB
         await User.deleteMany()
-        const test_user_db = await User.create(test_user_1)
-        // console.log(`test_user_db: ${test_user_db}`)
-        const test_user_db_2 = await User.create(test_user_2)
-        // console.log(`test_user_2: ${test_user_2}`)
+        await League.deleteMany()
+        await Team.deleteMany()
+        
+        // Create User
+        const test_user_1_db = await User.create(test_user_1)
+        const test_user_2_db = await User.create(test_user_2)
 
         // Create League
-        await League.deleteMany()
-        test_league["admin"] = test_user_db._id
+        test_league["admin"] = test_user_1_db._id
         const test_league_db = await League.create(test_league)
-        // console.log(`test_league_db: ${test_league_db}`)
-
-        // Create Team
-        await Team.deleteMany()
-        // test_team["user"] = test_user_db._id
-        // test_team["league"] = test_league_db._id
-        // const test_team_db = await Team.create(test_team)
-        // console.log(`test_team_db: ${test_team_db}`)
     });
 
     after(() => {
@@ -142,8 +126,8 @@ describe("LEAGUE.JOIN", () => {
             .send({
                 id: null,
                 name: null,
-                password: "1234",
-                teamname: "team1"
+                password: test_league.password,
+                teamname: test_team_name_1
             })
 
         expect(res).to.have.status(400);
@@ -167,8 +151,8 @@ describe("LEAGUE.JOIN", () => {
             .send({
                 id: '',
                 name: null,
-                password: "1234",
-                teamname: "team1"
+                password: test_league.password,
+                teamname: test_team_name_1
             })
 
         expect(res).to.have.status(400);
@@ -191,9 +175,9 @@ describe("LEAGUE.JOIN", () => {
         const res = await requester.put(league_join_api)
             .send({
                 id: '',
-                name: "league1",
+                name: test_league.name,
                 password: null,
-                teamname: "team1"
+                teamname: test_team_name_1
             })
 
         expect(res).to.have.status(400);
@@ -214,8 +198,8 @@ describe("LEAGUE.JOIN", () => {
         const res = await requester.put(league_join_api)
             .send({
                 id: '',
-                name: "league1",
-                password: "1234",
+                name: test_league.name,
+                password: test_league.password,
                 teamname: null
             })
 
@@ -235,12 +219,12 @@ describe("LEAGUE.JOIN", () => {
 
     it("League_name does NOT EXIST", async () => {
         const res = await requester.put(league_join_api)
-            .set('Authorization', token)
+            .set('Authorization', token_1)
             .send({
                 id: '',
-                name: "unexisting league",
-                password: "1234",
-                teamname: "team1"
+                name: "not existing league",
+                password: test_league.password,
+                teamname: test_team_name_1
             })
 
         expect(res).to.have.status(400);
@@ -262,12 +246,12 @@ describe("LEAGUE.JOIN", () => {
 
     it("League_password is NOT CORRECT", async () => {
         const res = await requester.put(league_join_api)
-            .set('Authorization', token)
+            .set('Authorization', token_1)
             .send({
                 id: '',
-                name: "league1",
-                password: "wrong_password",
-                teamname: "team1"
+                name: test_league.name,
+                password: "wrong password",
+                teamname: test_team_name_1
             })
 
         expect(res).to.have.status(400);
@@ -280,27 +264,22 @@ describe("LEAGUE.JOIN", () => {
         expect(res.body.info.message).to.be.a('string');
         expect(res.body.info.code).to.be.a('string');
         expect(res.body.info.status).to.be.a('string');
-        // expect(res.body.info.title).to.equal(ErrorMessages.LEAGUE_NOT_FOUND.title);    // todo: something like this
-        // expect(res.body.info.message).toequal(ErrorMessages.LEAGUE_NOT_FOUND.message); // todo: something like this
-        // expect(res.body.info.code).to.equal(Constants.LEAGUE_NOT_FOUND);               // todo: something like this
-        // expect(res.body.info.status).toequal(Constants.LEAGUE_NOT_FOUND);              // todo: something like this
-        expect(res.body.data).to.equal('LEAGUE_NOT_FOUND');
+        // expect(res.body.info.title).to.equal(ErrorMessages.WRONG_PASSWORD.title);    // todo: something like this
+        // expect(res.body.info.message).toequal(ErrorMessages.WRONG_PASSWORD.message); // todo: something like this
+        // expect(res.body.info.code).to.equal(Constants.WRONG_PASSWORD);               // todo: something like this
+        // expect(res.body.info.status).toequal(Constants.WRONG_PASSWORD);              // todo: something like this
+        expect(res.body.data).to.equal('WRONG_PASSWORD');
     });
 
-    it("USER IS JOINING the league", async () => {
+    it("First USER IS JOINING the league", async () => {
         const res = await requester.put(league_join_api)
-            .set('Authorization', token)
+            .set('Authorization', token_1)
             .send({
                 id: '',
                 name: test_league.name,
                 password: test_league.password,
                 teamname: test_team_name_1
             })
-
-        // res contains User, Team, League fully populated objects
-        // const saved_user = await User.find({ username: test_user_1.username })
-        // const saved_team = await Team.find({ name: test_team_name_1 })
-        // const saved_league = await League.find({ name: test_league.name })
 
         expect(res).to.have.status(200)
 
@@ -332,9 +311,28 @@ describe("LEAGUE.JOIN", () => {
         expect(findPropertyValueInNestedObject(res.body.league.teams, 'email', test_user_1.email)).to.be.true;
     });
 
-    it("League_name and League_password are CORRECT but TEAM NAME IS ALREADY PRESENT", async () => {
+    it("First USER IS JOINING the league but USER ALREADY PRESENT", async () => {
         const res = await requester.put(league_join_api)
-            .set('Authorization', token)
+            .set('Authorization', token_1)
+            .send({
+                id: '',
+                name: test_league.name,
+                password: test_league.password,
+                teamname: "new_team_name_1"
+            })
+
+        expect(res).to.have.status(400);
+        expect(res.body).to.be.a('object');
+        expect(res.body.code).to.equal(400);
+        expect(res.body.info).to.be.a('object');
+        expect(res.body.info.title).to.be.a('string');
+        expect(res.body.info.message).to.be.a('string');
+        expect(res.body.data).to.equal('USER_TEAM_PRESENT'); //todo: it should be USER_PRESENT
+    });
+
+    it("Second USER is JOINING the league but TEAM NAME IS ALREADY PRESENT", async () => {
+        const res = await requester.put(league_join_api)
+            .set('Authorization', token_2)
             .send({
                 id: '',
                 name: test_league.name,
@@ -348,26 +346,7 @@ describe("LEAGUE.JOIN", () => {
         expect(res.body.info).to.be.a('object');
         expect(res.body.info.title).to.be.a('string');
         expect(res.body.info.message).to.be.a('string');
-        expect(res.body.data).to.equal('USER_TEAM_PRESENT');
-    });
-
-    it("League_name and League_password are CORRECT but USER ALREADY PRESENT", async () => {
-        const res = await requester.put(league_join_api)
-            .set('Authorization', token)
-            .send({
-                id: '',
-                name: test_league.name,
-                password: test_league.password,
-                teamname: "new_test_team"
-            })
-
-        expect(res).to.have.status(400);
-        expect(res.body).to.be.a('object');
-        expect(res.body.code).to.equal(400);
-        expect(res.body.info).to.be.a('object');
-        expect(res.body.info.title).to.be.a('string');
-        expect(res.body.info.message).to.be.a('string');
-        expect(res.body.data).to.equal('USER_TEAM_PRESENT'); //todo: it should be USER_PRESENT
+        expect(res.body.data).to.equal('TEAM_PRESENT');
     });
 
     it("Second USER IS JOINING the league", async () => {
@@ -379,18 +358,6 @@ describe("LEAGUE.JOIN", () => {
                 password: test_league.password,
                 teamname: test_team_name_2
             })
-
-        // res contains User, Team, League fully populated objects
-        const saved_user = await User.find({ username: test_user_2.username })
-        const saved_team = await Team.find({ name: test_team_name_2 })
-        const saved_league = await League.find({ name: test_league.name })
-
-        console.log(`==================================================`)
-        printObject("saved_user", saved_user)
-        printObject("saved_team", saved_team)
-        printObject("saved_league", saved_league)
-        printObject("res", res)
-        console.log(`==================================================`)
 
         expect(res).to.have.status(200)
 
@@ -434,14 +401,6 @@ describe("LEAGUE.JOIN", () => {
                 teamname: test_team_name_3
             })
 
-        // res contains User, Team, League fully populated objects
-        // const saved_user = await User.find({ username: test_user_3.username })
-        // const saved_team = await Team.find({ name: test_team_name_3 })
-        // const saved_league = await League.find({ name: test_league.name })
-
-        printObject(`res: ${res}`)
-        // TODO: the response contains all the information about the league, user and teams
-
         expect(res).to.have.status(400);
         expect(res.body).to.be.a('object');
         expect(res.body.code).to.equal(400);
@@ -450,7 +409,6 @@ describe("LEAGUE.JOIN", () => {
         expect(res.body.info.message).to.be.a('string');
         // expect(res.body.data).toequal(Constants.FULL_LEAGUE);      // todo: something like this
         expect(res.body.data).to.equal('FULL_LEAGUE');
-
     });
 
 });
