@@ -1,7 +1,6 @@
 version: "3"
 services:
   fantasta_server:
-    restart: "no"
     environment:
       - NODE_ENV=test
     volumes:
@@ -15,4 +14,3 @@ services:
       - GF_AUTH_DISABLE_LOGIN_FORM=true
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
-    
