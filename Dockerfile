@@ -1,5 +1,5 @@
 # base docker
-FROM node:lts-slim
+FROM node:14.16.0-slim
 
 # Create app directory and set WORKDIR. Each next command will run in the WORKDIR
 RUN mkdir -p /usr/fantasta_server
@@ -9,7 +9,9 @@ RUN mkdir -p /usr/fantasta_server/src
 WORKDIR /usr/fantasta_server
 
 # Bundle app source
-COPY package.json .
+COPY config ./config
+COPY src ./src
+COPY package.json package-lock.json ./
 
 # Install app dependencies
 #RUN if [ "$NODE_ENV" = "dev" ]; \
@@ -18,15 +20,15 @@ COPY package.json .
 #    fi
 
 ######### only for development ###########
-#RUN apt-get update &&\
-# apt-get install -y procps &&\
-# apt-get install vim -y
+RUN apt-get update &&\
+apt-get install -y procps &&\
+apt-get install vim -y
 ##########################################
 
 # Install app dependencies
 RUN npm install
 
-COPY . .
+#COPY . .
 
 # Build the built version
 RUN npm run build

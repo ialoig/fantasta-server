@@ -1,6 +1,6 @@
 import { League, populate } from '../../../database'
 import { Constants, Response, leagueUtils, userUtils } from '../../../utils'
-import { metricApiError, metricApiSuccess } from '../../../metrics'
+import { metricApiError, metricApiSuccess, metricApiPayloadSize } from '../../../metrics'
 import * as Socket from 'socket.io'
 
 const join = async (req, res, next) => {
@@ -50,7 +50,6 @@ const join = async (req, res, next) => {
                 user.leagues.push(league._id)
                 await user.save()
             }
-
             if (!team || !team.$isValid() || team.$isEmpty()) {
                 throw Constants.TEAM_NOT_FOUND
             }
@@ -62,17 +61,17 @@ const join = async (req, res, next) => {
             // Socket.leagueCreate( req, newLeag.name, '' )
 
             metricApiSuccess("league.join", '', duration_start)
-
+            metricApiPayloadSize("league.join", response)
             res.json(Response.resolve(Constants.OK, response))
         }
         catch (error) {
-            console.error('League Join: ', error)
+            console.error(`[api] league.join: ${error}`)
             metricApiError("league.join", Constants[error] || Constants.BAD_REQUEST, duration_start)
             res.status(400).send(Response.reject(Constants.BAD_REQUEST, Constants[error] || Constants.BAD_REQUEST, error, req.headers.language))
         }
     }
     else {
-        console.error('League Join: PARAMS_ERROR')
+        console.error(`[api] league.join: ${Constants.PARAMS_ERROR}`)
         metricApiError("league.join", Constants.PARAMS_ERROR, duration_start)
         res.status(400).send(Response.reject(Constants.BAD_REQUEST, Constants.PARAMS_ERROR, null, req.headers.language))
     }
@@ -97,7 +96,7 @@ const getLeague = async (user, id, name) => {
         return league && league.$isValid() ? Promise.resolve(league) : Promise.resolve(null)
     }
     catch (error) {
-        console.error('League Join -> getLeague: ', error)
+        console.error(`[api] league.join -> getLeague: ${error}`)
 
         return Promise.reject(error)
     }

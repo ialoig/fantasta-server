@@ -39,7 +39,7 @@ const userFromToken = async ( req ) =>
     }
     catch (error)
     {
-        console.error('UserFromToken: ', error)
+        console.error(`[api] UserFromToken: ${error}`)
 
         return Promise.reject(error)
     }

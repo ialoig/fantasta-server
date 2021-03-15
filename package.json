@@ -1,7 +1,7 @@
 {
   "name": "fantasta_server",
   "version": "1.0.0",
-  "description": "Fantasta server that entertain HTTP request from fantasta_mobile",
+  "description": "Fantasta server that entertain HTTP requests from fantasta_mobile",
   "private": true,
   "scripts": {
     "build": "babel src --out-dir ./dist --source-maps",

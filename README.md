@@ -1,6 +1,6 @@
-# Introduction
+# Fantasta server
 
-Fantasta_server is the server side of the fantasta application. It receives API calls from the mobile application querying the mongodb if necessary. It handles also the football player auction that is running on different devices belonging to the same league.
+Server side of the fantasta application. It receives API calls from the mobile application querying the mongodb if necessary. It handles also the football player auction that is running on different devices belonging to the same league.
 
 ## Dependencies
 
@@ -8,36 +8,31 @@ Fantasta_server is the server side of the fantasta application. It receives API 
 2. npm
 3. node
 
-## Build and Test
+## Build, Test, Run
 
-We use docker to launch the application in different environment: debug, test, production.
+We use docker to launch the application in different environments: debug, test, production.
 
 ### Docker
 
-#### Build docker images
-
-It builds the Fantasta_server docker images. This image will be used to by docker-compose to run the container
-
-```npm run docker-build```
-
 #### Test with docker
 
-It spawns the *Mongo* and *Fantasta_server* docker. Then run tests on the docker container
+It spawns the *fantasta_mongo* and *fantasta_server* docker containers. Then run tests in the *fantasta_server* container.
+
 ```npm run docker-test```
 
 #### Run with docker (DEBUG)
 
-It spawns the *fantasta_mongo* and *fantasta_server* docker in **debug** mode. It mounts local folders in the server docker and run it with nodemon. All local changes will be immediately reflected in the running server.
+It spawns the *fantasta_mongo* and *fantasta_server* docker containers in **debug** mode. It mounts local *src* directory in the *fantasta_server* container and run the server with *nodemon* -> any local change in */src* directory will trigger a server restart with the new code.
 
 ```npm run docker-debug```
 
 #### Run with docker (PRODUCTION)
 
-It spawns the *fantasta_mongo* and *Fantasta_server* docker in **production** mode. It mounts local folders in the server docker and run it with nodemon. All local changes will be immediately reflected in the running server.
+It spawns the *fantasta_mongo* and *fantasta_server* docker containers in **production** mode. Run the server as a service in the background.
 
 ```npm run docker-prod```
 
-### Local (it should not be used, prefer using the docker commands)
+### Local
 
 #### Test locally
 
@@ -45,20 +40,19 @@ Run tests on the local machine (requires docker mongo to be running already)
 
 ```npm run test```
 
-#### Debug locally
+#### Run locally (DEBUG)
 
 Run tests on the local machine (requires docker mongo to be running already)
 
 ```npm run debug```
 
 ## Monitoring
-Grafana docker container exposes port 3001. Just go to http://localhost:3001 to see the dashboards
 
+Prometheus and Grafana docker containers are responsible for getting and showing metrics produced by the application. [Prometheus client](https://github.com/siimon/prom-client) is running on the server and it is collecting metrics from the application. The server itself exposes those metrics via API call that prometheus docker container is scraping at regular intervals.
+Prometheus containers is later on sending those metrics to the grafana container making them available in the dashboards.
 
-## Other
+Useful links:
 
-If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
-
-* [ASP.NET Core](https://github.com/aspnet/Home)
-* [Visual Studio Code](https://github.com/Microsoft/vscode)
-* [Chakra Core](https://github.com/Microsoft/ChakraCore)
+* [Server metric API call](http://localhost:3000/fantasta/metrics)
+* [Collected metrics by Prometheus](http://localhost:9090)
+* [Grafana](http://localhost:3001)
