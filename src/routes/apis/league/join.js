@@ -1,6 +1,6 @@
-import { League, populate } from '../../../database/index.js'
-import { Constants, Response, leagueUtils, userUtils } from '../../../utils/index.js'
-import { metricApiError, metricApiSuccess } from '../../../metrics/index.js'
+import { League, populate } from '../../../database'
+import { Constants, Response, leagueUtils, userUtils } from '../../../utils'
+import { metricApiError, metricApiSuccess } from '../../../metrics'
 import * as Socket from 'socket.io'
 
 const join = async (req, res, next) => {

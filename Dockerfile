@@ -9,9 +9,7 @@ RUN mkdir -p /usr/fantasta_server/src
 WORKDIR /usr/fantasta_server
 
 # Bundle app source
-COPY config ./config
-COPY src ./src
-COPY package.json package-lock.json ./
+COPY package.json .
 
 # Install app dependencies
 #RUN if [ "$NODE_ENV" = "dev" ]; \
@@ -28,8 +26,16 @@ COPY package.json package-lock.json ./
 # Install app dependencies
 RUN npm install
 
+COPY . .
+
+# Build the built version
+RUN npm run build
+
+# Remove dev packages
+# RUN npm prune --production
+
 # expose a specific port (overwritten in docker-compose)
 EXPOSE 3000
 
 # run (overwritten in docker-compose)
-# CMD [ "npm", "start" ]
+# CMD [ "npm", "prod" ]

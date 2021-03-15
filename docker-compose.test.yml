@@ -4,10 +4,10 @@ services:
     restart: "no"
     environment:
       - NODE_ENV=test
-    volumes:
+    # volumes:
       # - ./src:/usr/fantasta_server/src
-      - ./test:/usr/fantasta_server/test
-    command: npm run start
+      # - ./test:/usr/fantasta_server/test
+    command: npm run prod
     # command: bash -c "while true; do echo sleeping...; sleep 2; done"
 
   grafana:

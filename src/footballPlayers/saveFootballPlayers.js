@@ -1,8 +1,8 @@
 
 import _ from "lodash"
-import { FootballPlayer } from "../database/index.js"
-import { xlsxUtils } from "../utils/index.js"
-import { METRIC_STATUS, secondsFrom, load_footballPlayer_duration_seconds } from "../metrics/index.js"
+import { FootballPlayer } from "../database"
+import { xlsxUtils } from "../utils"
+import { METRIC_STATUS, secondsFrom, load_footballPlayer_duration_seconds } from "../metrics"
 
 const classicRolesAllowed = ["P", "D", "C", "A"]
 const mandatoryFields = ["id", "name", "team", "roleClassic", "roleMantra", "actualPrice", "initialPrice"];

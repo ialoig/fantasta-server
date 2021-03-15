@@ -1,7 +1,7 @@
 import Validator from 'validator'
-import { User } from '../../../database/index.js'
-import { metricApiError, metricApiSuccess } from '../../../metrics/index.js'
-import { Constants, PASSWORD_OPT, Response, userUtils } from '../../../utils/index.js'
+import { User } from '../../../database'
+import { metricApiError, metricApiSuccess } from '../../../metrics'
+import { Constants, PASSWORD_OPT, Response, userUtils } from '../../../utils'
 
 const login = async (req, res, next) => {
     const duration_start = process.hrtime()

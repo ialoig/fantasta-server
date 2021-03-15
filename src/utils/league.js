@@ -1,6 +1,6 @@
 import _ from 'lodash'
-import { populate, Team } from '../database/index.js'
-import { Constants, userUtils } from '../utils/index.js'
+import { populate, Team } from '../database'
+import { Constants, userUtils } from '../utils'
 
 const errors = {
     LEAGUE_NAME_ERROR: 'LEAGUE_NAME_ERROR',

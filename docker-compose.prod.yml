@@ -3,7 +3,7 @@ services:
   fantasta_server:
     environment:
       - NODE_ENV=prod
-    command: npm run start
+    command: npm run prod
 
   grafana:
     environment:

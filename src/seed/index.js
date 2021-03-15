@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { User, League, Team } from "../../database/models/index.js"
+import { User, League, Team } from "../database/models"
 import { fakeUsers, fakeLeagues, fakeTeams } from "./fakeData.js"
 
 const seed = async () => {

@@ -1,5 +1,5 @@
-import chai from 'chai';
-const { expect, should, use } = chai;
+
+import { expect, should, use } from 'chai';
 import chaiHttp from 'chai-http'
 import config from 'config'
 import { User } from '../../src/database/index.js'

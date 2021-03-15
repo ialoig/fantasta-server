@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { default as apis } from './apis/index.js'
+import { default as apis } from './apis'
 
 let routing = Router()
 
@@ -9,6 +9,7 @@ routing.route("/auth/login").put(apis.auth.login)
 routing.route("/auth/token").put(apis.auth.token)
 routing.route("/auth/update").put(apis.auth.update)
 routing.route("/auth/deleteAccount").delete(apis.auth.deleteAccount)
+routing.route("/auth/forgot").put(apis.auth.forgot)
 
 //----- LEAGUE APIS -----//
 routing.route("/league/create").post(apis.league.create)

@@ -1,5 +1,5 @@
 
-import { expect, should, use } from 'chai'
+import { expect, should, use } from 'chai';
 import chaiHttp from 'chai-http'
 import { User } from '../../src/database/index.js'
 import { requester } from './index.js'
@@ -7,7 +7,7 @@ import { requester } from './index.js'
 use(chaiHttp);
 should();
 
-describe( "LOGIN", () =>
+describe( "Forgot", () =>
 {
     beforeEach((done) => {
         User.deleteMany({}, (err) => {
@@ -23,7 +23,7 @@ describe( "LOGIN", () =>
     {
         it("Body is undefined", (done) =>
         {
-            requester.put('/fantasta/auth/login')
+            requester.put('/fantasta/auth/forgot')
             .send(undefined)
             .end( (err, res) =>
             {
@@ -40,7 +40,7 @@ describe( "LOGIN", () =>
 
         it("Body is empty", (done) =>
         {
-            requester.put('/fantasta/auth/login')
+            requester.put('/fantasta/auth/forgot')
             .send({})
             .end( (err, res) =>
             {
@@ -57,8 +57,8 @@ describe( "LOGIN", () =>
 
         it("Email is NULL", (done) =>
         {
-            requester.put('/fantasta/auth/login')
-            .send({ email: null, password: '123456' })
+            requester.put('/fantasta/auth/forgot')
+            .send({ email: null })
             .end( (err, res) =>
             {
                 expect(res).to.have.status(400);
@@ -74,8 +74,8 @@ describe( "LOGIN", () =>
 
         it("Email is NOT CORRECT", (done) =>
         {
-            requester.put('/fantasta/auth/login')
-            .send({ email: 'asdgsdfgdsfg', password: '123456' })
+            requester.put('/fantasta/auth/forgot')
+            .send({ email: 'asdgsdfgdsfg' })
             .end( (err, res) =>
             {
                 expect(res).to.have.status(400);
@@ -89,44 +89,10 @@ describe( "LOGIN", () =>
             });
         });
 
-        it("Password is NULL", (done) =>
+        it("Email is CORRECT but USER NOT PRESENT", (done) =>
         {
-            requester.put('/fantasta/auth/login')
-            .send({ email: 'test@test.com', password: null })
-            .end( (err, res) =>
-            {
-                expect(res).to.have.status(400);
-                expect(res.body).to.be.a('object');
-                expect(res.body.code).to.equal(400);
-                expect(res.body.status).to.equal('Bad Request');
-                expect(res.body.info).to.be.a('object');
-                expect(res.body.info.title).to.be.a('string');
-                expect(res.body.info.message).to.be.a('string');
-                done();
-            });
-        });
-
-        it("Password is NOT CORRECT", (done) =>
-        {
-            requester.put('/fantasta/auth/login')
-            .send({ email: 'test@test.com', password: '3452' })
-            .end( (err, res) =>
-            {
-                expect(res).to.have.status(400);
-                expect(res.body).to.be.a('object');
-                expect(res.body.code).to.equal(400);
-                expect(res.body.status).to.equal('Bad Request');
-                expect(res.body.info).to.be.a('object');
-                expect(res.body.info.title).to.be.a('string');
-                expect(res.body.info.message).to.be.a('string');
-                done();
-            });
-        });
-
-        it("Email and password are CORRECT but USER NOT PRESENT", (done) =>
-        {
-            requester.put('/fantasta/auth/login')
-            .send({ email: 'test@test.com', password: '123456' })
+            requester.put('/fantasta/auth/forgot')
+            .send({ email: 'test@test.com' })
             .end( (err, res) =>
             {
                 expect(res).to.have.status(404);
@@ -139,36 +105,15 @@ describe( "LOGIN", () =>
             });
         });
 
-        it("USER IS PRESENT --> Email is CORRECT and password is INCORRECT", (done) =>
-        {
-            User.create({ email: 'test@test.com', password: '123456' }, () => {
-                requester.put('/fantasta/auth/login')
-                .send({ email: 'test@test.com', password: '654321' })
-                .end( (err, res) =>
-                {
-                    expect(res).to.have.status(400);
-                    expect(res.body).to.be.a('object');
-                    expect(res.body.code).to.equal(400);
-                    expect(res.body.status).to.equal('Bad Request');
-                    expect(res.body.info).to.be.a('object');
-                    expect(res.body.info.title).to.be.a('string');
-                    expect(res.body.info.message).to.be.a('string');
-                    done();
-                });
-            });
-        });
-
-        it("USER IS PRESENT 200 --> Email and password are CORRECT", (done) =>
+        it("USER IS PRESENT 200 --> Email is CORRECT", (done) =>
         {
             User.create({ email: 'test@test.com', password: '123456', username: 'username' }, () => {
-                requester.put('/fantasta/auth/login')
-                .send({ email: 'test@test.com', password: '123456' })
+                requester.put('/fantasta/auth/forgot')
+                .send({ email: 'test@test.com' })
                 .end( (err, res) =>
                 {
                     expect(res).to.have.status(200);
-                    expect(res.body).to.be.a('object').that.is.not.empty;
-                    expect(res.body.user).to.be.a('object').that.is.not.empty;
-                    expect(res.body.token).to.be.a('string');
+                    expect(res.body).to.be.a('object')
                     done();
                 });
             })

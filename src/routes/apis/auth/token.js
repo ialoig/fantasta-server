@@ -1,16 +1,13 @@
-import { Constants, Response, userUtils } from '../../../utils/index.js'
-import { metricApiError, metricApiSuccess } from '../../../metrics/index.js'
+import { Constants, Response, userUtils } from '../../../utils'
+import { metricApiError, metricApiSuccess } from '../../../metrics'
 
 const token = async (req, res, next) => {
     const duration_start = process.hrtime()
 
     try {
         let auth = await userUtils.userFromToken(req)
-        let usr = await userUtils.getUser(auth.user)
-        let response = {
-            user: usr,
-            token: auth.token
-        }
+
+        let response = await userUtils.createAuthResponse(auth.user, auth.user.password)
 
         metricApiSuccess("auth.token", '', duration_start)
 

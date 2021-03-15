@@ -1,4 +1,4 @@
-import { prometheusRegister } from '../../../metrics/index.js'
+import { prometheusRegister } from '../../../metrics'
 
 export const get = async (req, res, next) => {
 
