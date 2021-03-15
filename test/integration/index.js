@@ -10,7 +10,6 @@ use(chaiHttp);
 initMongoConnection(false)
 
 export const requester = request(serverUrl)
-// export const requester = chai.request(serverUrl) #todo: check this line
 
 
 /**
