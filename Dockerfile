@@ -13,6 +13,12 @@ COPY config ./config
 COPY src ./src
 COPY package.json package-lock.json ./
 
+# babel configuration
+COPY .babelrc ./
+
+# test framework configuration (for test ONLY)
+COPY .nycrc.json ./
+
 # Install app dependencies
 #RUN if [ "$NODE_ENV" = "dev" ]; \
 #        then npm install; \
@@ -27,8 +33,6 @@ apt-get install vim -y
 
 # Install app dependencies
 RUN npm install
-
-#COPY . .
 
 # Build the built version
 RUN npm run build
