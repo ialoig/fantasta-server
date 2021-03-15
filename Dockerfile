@@ -20,15 +20,15 @@ COPY .babelrc ./
 COPY .nycrc.json ./
 
 # Install app dependencies
-#RUN if [ "$NODE_ENV" = "dev" ]; \
+# RUN if [ "$NODE_ENV" = "dev" ]; \
 #        then npm install; \
 #        else npm install --only=production; \
-#    fi
+#     fi
 
 ######### only for development ###########
-#RUN apt-get update && \
-#apt-get install -y procps && \
-#apt-get install vim -y
+# RUN apt-get update && \
+#     apt-get install -y procps && \
+#     apt-get install vim -y
 ##########################################
 
 # Install app dependencies
