@@ -88,7 +88,7 @@ const validateleague = ( leagueData, userID ) =>
             admin: userID
         }
     }
-    throw Constants.PARAMS_ERROR
+    throw Constants.PARAMS_ERROR // todo: la variabile 'error' a cosa serve?
 }
 
 const parseLeague = ( league ) =>

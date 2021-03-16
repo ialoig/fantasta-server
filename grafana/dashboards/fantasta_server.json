@@ -1174,7 +1174,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "api_payload_bytes{name=\"league.join\"}",
+          "expr": "api_payload_bytes{name=~\"league.*\"}",
           "hide": false,
           "interval": "",
           "legendFormat": " {{ name }}",
@@ -1239,5 +1239,5 @@
   "timezone": "browser",
   "title": "Fantasta Server",
   "uid": "hghajaEMk",
-  "version": 17
+  "version": 22
 }
