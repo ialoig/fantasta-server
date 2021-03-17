@@ -314,14 +314,14 @@ describe("LEAGUE.JOIN", () => {
         expect(res.body.team.footballPlayers).to.have.length(0)
         expect(res.body.team.user._id).to.equal(test_user_1._id)
         expect(res.body.team.user.email).to.equal(test_user_1.email)
-        // expect(res.body.team.user.name).to.equal(test_user_1.username) // todo: why no user.name??
+        expect(res.body.team.user.name).to.equal(test_user_1.username)
 
         // Check league object
         expect(res.body.league).to.be.a('object')
         expect(res.body.league.name).to.equal(test_league.name)
         expect(res.body.league.password).to.equal(test_league.password)
         expect(res.body.league.participants).to.equal(test_league.participants)
-        // expect(res.body.league.type).to.equal(create_league_data.type) # todo: che fine ha fatto il campo type? mantra/classic
+        expect(res.body.league.type).to.equal(test_league.type)
         expect(res.body.league.goalkeepers).to.equal(test_league.goalkeepers)
         expect(res.body.league.defenders).to.equal(test_league.defenders)
         expect(res.body.league.midfielders).to.equal(test_league.midfielders)
@@ -341,7 +341,7 @@ describe("LEAGUE.JOIN", () => {
         expect(findPropertyValueInNestedObject(res.body.league.teams, '_id', res.body.team._id)).to.be.true;
         expect(findPropertyValueInNestedObject(res.body.league.teams, 'name', test_team_name_1)).to.be.true;
         expect(findPropertyValueInNestedObject(res.body.league.teams, '_id', test_user_1._id)).to.be.true;
-        // expect(findPropertyValueInNestedObject(res.body.league.teams, 'name', test_user_1.username)).to.be.true; // todo: why no user.name??
+        expect(findPropertyValueInNestedObject(res.body.league.teams, 'name', test_user_1.username)).to.be.true;
         expect(findPropertyValueInNestedObject(res.body.league.teams, 'email', test_user_1.email)).to.be.true;
     });
 
@@ -417,14 +417,14 @@ describe("LEAGUE.JOIN", () => {
         expect(res.body.team.footballPlayers).to.have.length(0)
         expect(res.body.team.user._id).to.equal(test_user_2._id)
         expect(res.body.team.user.email).to.equal(test_user_2.email)
-        // expect(res.body.team.user.name).to.equal(test_user_2.username) // todo: why no user.name??
+        expect(res.body.team.user.name).to.equal(test_user_2.username)
 
         // Check league object
         expect(res.body.league).to.be.a('object')
         expect(res.body.league.name).to.equal(test_league.name)
         expect(res.body.league.password).to.equal(test_league.password)
         expect(res.body.league.participants).to.equal(test_league.participants)
-        // expect(res.body.league.type).to.equal(create_league_data.type) # todo: che fine ha fatto il campo type? mantra/classic
+        expect(res.body.league.type).to.equal(test_league.type)
         expect(res.body.league.goalkeepers).to.equal(test_league.goalkeepers)
         expect(res.body.league.defenders).to.equal(test_league.defenders)
         expect(res.body.league.midfielders).to.equal(test_league.midfielders)

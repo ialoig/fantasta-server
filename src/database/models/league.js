@@ -42,6 +42,11 @@ const leagueSchema = new Schema(
                 message: "{VALUE} is not an integer value for participants"
             }
         },
+        type: {
+            type: Schema.Types.String,
+            enum: [ "classic", "mantra" ],
+            required: true
+        },
         goalkeepers: {
             type: Schema.Types.Number,
             required: true,

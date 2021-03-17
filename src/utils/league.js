@@ -11,7 +11,8 @@ const errors = {
     START_PRICE_ERROR: 'START_PRICE_ERROR',
     AUCTION_TYPE_ERROR: 'AUCTION_TYPE_ERROR',
     BUDGET_ERROR: 'BUDGET_ERROR',
-    COUNTDOWN_ERROR: 'COUNTDOWN_ERROR'
+    COUNTDOWN_ERROR: 'COUNTDOWN_ERROR',
+    LEAGUE_TYPE_ERROR: 'LEAGUE_TYPE_ERROR'
 }
 
 const validateleague = ( leagueData, userID ) =>
@@ -41,6 +42,10 @@ const validateleague = ( leagueData, userID ) =>
     else if ( parseInt(leagueData.participants)<2 )
     {
         error = errors.ATTENDEES_ERROR
+    }
+    else if ( ![ "mantra", "classic" ].includes(leagueData.type) )
+    {
+        error = errors.LEAGUE_TYPE_ERROR
     }
     else if ( parseInt(leagueData.goalkeepers)<1 )
     {
@@ -78,6 +83,7 @@ const validateleague = ( leagueData, userID ) =>
             auctionType: leagueData.auctionType,
             startPrice: leagueData.startPrice,
             participants: parseInt(leagueData.participants),
+            type: leagueData.type,
             goalkeepers: parseInt(leagueData.goalkeepers),
             defenders: parseInt(leagueData.defenders),
             midfielders: parseInt(leagueData.midfielders),
@@ -88,7 +94,7 @@ const validateleague = ( leagueData, userID ) =>
             admin: userID
         }
     }
-    throw Constants.PARAMS_ERROR // todo: la variabile 'error' a cosa serve?
+    throw Constants.PARAMS_ERROR // todo: la variabile 'error' a cosa serve? perche' non throw error?
 }
 
 const parseLeague = ( league ) =>
@@ -97,10 +103,11 @@ const parseLeague = ( league ) =>
         _id: league._id,
         admin: {
             _id: league.admin._id,
-            email: league.admin.email,
-            name: league.admin.email
+            email: league.admin.email, // TODO: forse dobbiamo toglierlo
+            name: league.admin.username
         },
         auctionType: league.auctionType,
+        type: league.type,
         budget: league.budget,
         countdown: league.countdown,
         createdAt: league.createdAt.toISOString(),
@@ -155,8 +162,8 @@ const parseTeam = ( team ) =>
         footballPlayers: [],
         user: {
             _id: team.user._id,
-            email: team.user.email,
-            name: team.user.name
+            email: team.user.email, // TODO: forse dobbiamo toglierlo
+            name: team.user.username
         }
     }
 
