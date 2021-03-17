@@ -3,10 +3,10 @@ import { xlsxUtils } from '../../src/utils/index.js'
 import { mergeRoles, getPlayersFromExcelContent } from '../../src/footballPlayers/saveFootballPlayers.js'
 import { strict as assert } from 'assert'
 
-describe("parse Excel file", function () {
+describe("Excel files parsing", function () {
     //this.timeout(0) // disable test environment timeout
 
-    it(`should be able to parse Classic and Mantra excel files`, done => {
+    it(`parse Classic and Mantra excel files`, done => {
 
         const footballPlayerListExpected_obj = {
             "250": {

@@ -14,7 +14,7 @@ describe("LEAGUE.CREATE", () => {
     const api = "/fantasta/league/create"
 
     const test_user_1 = {
-        //_id: it will be added once the user is created
+        //_id: will be added once the user is created
         email: 'test_1@test.com',
         password: 'password_1',
         username: 'username_1'
@@ -47,7 +47,7 @@ describe("LEAGUE.CREATE", () => {
 
         // Create User
         const test_user_1_db = await User.create(test_user_1)
-        test_user_1["id"] = test_user_1_db._id.toString()
+        test_user_1["_id"] = test_user_1_db._id.toString()
     });
 
     after(() => {
@@ -106,22 +106,23 @@ describe("LEAGUE.CREATE", () => {
 
         // Check user object
         expect(res.body.user).to.be.a('object')
-        expect(res.body.user._id).to.equal(test_user_1.id)
+        expect(res.body.user._id).to.equal(test_user_1._id)
         expect(res.body.user.email).to.equal(test_user_1.email)
         expect(res.body.user.username).to.equal(test_user_1.username)
         expect(res.body.user.leagues).to.have.length(1)
-        expect(findPropertyValueInNestedObject(res.body.user.leagues, 'name', create_league_data.name)).to.be.true;
-        expect(findPropertyValueInNestedObject(res.body.user.leagues, 'name', create_league_data.teamname)).to.be.true;
         expect(findPropertyValueInNestedObject(res.body.user.leagues, '_id', res.body.league._id)).to.be.true;
+        expect(findPropertyValueInNestedObject(res.body.user.leagues, 'name', create_league_data.name)).to.be.true;
         expect(findPropertyValueInNestedObject(res.body.user.leagues, '_id', res.body.team._id)).to.be.true;
+        expect(findPropertyValueInNestedObject(res.body.user.leagues, 'name', create_league_data.teamname)).to.be.true;
 
         // Check team object
         expect(res.body.team).to.be.a('object')
         expect(res.body.team.name).to.equal(create_league_data.teamname)
-        expect(res.body.team.budget).to.equal(res.body.league.budget)
+        expect(res.body.team.budget).to.equal(create_league_data.budget)
         expect(res.body.team.footballPlayers).to.have.length(0)
-        expect(res.body.team.user._id).to.equal(res.body.user._id)
-        expect(res.body.team.user.email).to.equal(res.body.user.email)
+        expect(res.body.team.user._id).to.equal(test_user_1._id)
+        expect(res.body.team.user.email).to.equal(test_user_1.email)
+        // expect(res.body.team.user.name).to.equal(test_user_1.username) // todo: why no user.name??
 
         // Check league object
         expect(res.body.league).to.be.a('object')
@@ -138,16 +139,18 @@ describe("LEAGUE.CREATE", () => {
         expect(res.body.league.countdown).to.equal(create_league_data.countdown)
         expect(res.body.league.auctionType).to.equal(create_league_data.auctionType)
         expect(res.body.league.startPrice).to.equal(create_league_data.startPrice)
-
+        
         expect(res.body.league.admin).to.be.a('object')
-        expect(res.body.league.admin._id).to.equal(res.body.user._id)
-        expect(res.body.league.admin.email).to.equal(res.body.user.email)
-        // expect(res.body.league.admin.name).to.equal(res.body.user.username) // TODO: why admin.name = email??
-
+        expect(res.body.league.admin._id).to.equal(test_user_1._id)
+        expect(res.body.league.admin.email).to.equal(test_user_1.email)
+        // expect(res.body.league.admin.name).to.equal(test_user_1.username) // TODO: why admin.name = email??
+        
         expect(res.body.league.teams).to.have.length(1)
-        expect(findPropertyValueInNestedObject(res.body.league.teams, '_id', res.body.user._id)).to.be.true;
-        expect(findPropertyValueInNestedObject(res.body.league.teams, 'name', res.body.team.name)).to.be.true;
-        expect(findPropertyValueInNestedObject(res.body.league.teams, 'email', res.body.user.email)).to.be.true;
+        expect(findPropertyValueInNestedObject(res.body.league.teams, '_id', res.body.team._id)).to.be.true;
+        expect(findPropertyValueInNestedObject(res.body.league.teams, 'name', create_league_data.teamname)).to.be.true;
+        expect(findPropertyValueInNestedObject(res.body.league.teams, '_id', test_user_1._id)).to.be.true;
+        // expect(findPropertyValueInNestedObject(res.body.league.teams, 'name', test_user_1.name)).to.be.true; // TODO: why admin.name = email??
+        expect(findPropertyValueInNestedObject(res.body.league.teams, 'email', test_user_1.email)).to.be.true;
     });
 
     it("user CREATE a LEAGUE with an EXISTING NAME", async () => {
@@ -187,14 +190,17 @@ describe("LEAGUE.CREATE", () => {
 
         // Check user object
         expect(res.body.user).to.be.a('object')
-        expect(res.body.user._id).to.equal(test_user_1.id)
+        expect(res.body.user._id).to.equal(test_user_1._id)
         expect(res.body.user.email).to.equal(test_user_1.email)
         expect(res.body.user.username).to.equal(test_user_1.username)
         expect(res.body.user.leagues).to.have.length(2)
-        expect(findPropertyValueInNestedObject(res.body.user.leagues, 'name', create_league_data_2.name)).to.be.true;
-        expect(findPropertyValueInNestedObject(res.body.user.leagues, 'name', create_league_data_2.teamname)).to.be.true;
         expect(findPropertyValueInNestedObject(res.body.user.leagues, '_id', res.body.league._id)).to.be.true;
+        expect(findPropertyValueInNestedObject(res.body.user.leagues, 'name', create_league_data.name)).to.be.true;
+        expect(findPropertyValueInNestedObject(res.body.user.leagues, 'name', create_league_data.teamname)).to.be.true;
+        expect(findPropertyValueInNestedObject(res.body.user.leagues, '_id', res.body.league._id)).to.be.true;
+        expect(findPropertyValueInNestedObject(res.body.user.leagues, 'name', create_league_data_2.name)).to.be.true;
         expect(findPropertyValueInNestedObject(res.body.user.leagues, '_id', res.body.team._id)).to.be.true;
+        expect(findPropertyValueInNestedObject(res.body.user.leagues, 'name', create_league_data_2.teamname)).to.be.true;
 
         // Check team object
         expect(res.body.team).to.be.a('object')
@@ -203,6 +209,7 @@ describe("LEAGUE.CREATE", () => {
         expect(res.body.team.footballPlayers).to.have.length(0)
         expect(res.body.team.user._id).to.equal(res.body.user._id)
         expect(res.body.team.user.email).to.equal(res.body.user.email)
+        // expect(res.body.team.user.name).to.equal(test_user_1.username) // todo: why no user.name??
 
         // Check league object
         expect(res.body.league).to.be.a('object')
@@ -226,9 +233,11 @@ describe("LEAGUE.CREATE", () => {
         // expect(res.body.league.admin.name).to.equal(res.body.user.username) // TODO: why admin.name = email??
 
         expect(res.body.league.teams).to.have.length(1)
-        expect(findPropertyValueInNestedObject(res.body.league.teams, '_id', res.body.user._id)).to.be.true;
-        expect(findPropertyValueInNestedObject(res.body.league.teams, 'name', res.body.team.name)).to.be.true;
-        expect(findPropertyValueInNestedObject(res.body.league.teams, 'email', res.body.user.email)).to.be.true;
+        expect(findPropertyValueInNestedObject(res.body.league.teams, '_id', res.body.team._id)).to.be.true;
+        expect(findPropertyValueInNestedObject(res.body.league.teams, 'name', create_league_data_2.teamname)).to.be.true;
+        expect(findPropertyValueInNestedObject(res.body.league.teams, '_id', test_user_1._id)).to.be.true;
+        // expect(findPropertyValueInNestedObject(res.body.league.teams, 'name', test_user_1.name)).to.be.true; // TODO: why admin.name = email??
+        expect(findPropertyValueInNestedObject(res.body.league.teams, 'email', test_user_1.email)).to.be.true;
     });
 
 });

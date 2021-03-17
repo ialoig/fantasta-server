@@ -1,9 +1,9 @@
 import { containsCorrectData } from "../../src/footballPlayers/saveFootballPlayers.js"
 import { strict as assert } from 'assert'
 
-describe("FootballPlayer validation", function () {
+describe("FOOTBALLPLAYER VALIDATION", function () {
    
-    it(`should be able to validate footballPlayers`, done => {
+    it(`validate footballPlayerList`, done => {
 
         const footballPlayerList_obj = {
             "1": {
@@ -41,7 +41,7 @@ describe("FootballPlayer validation", function () {
         done()
     })
 
-    it(`should be able to validate footballPlayerList with wrong id`, done => {
+    it(`validate footballPlayerList with WRONG ID`, done => {
 
         const footballPlayerList_obj_wrong_id = {
             "4": {
@@ -61,7 +61,7 @@ describe("FootballPlayer validation", function () {
         done()
     })
 
-    it(`should be able to validate footballPlayerList with wrong name`, done => {
+    it(`validate footballPlayerList with WRONG NAME`, done => {
 
         const footballPlayerList_obj_wrong_name = {
             "4": {
@@ -81,7 +81,7 @@ describe("FootballPlayer validation", function () {
         done()
     })
 
-    it(`should be able to validate footballPlayerList with wrong team`, done => {
+    it(`validate footballPlayerList with WRONG TEAM`, done => {
 
         const footballPlayerList_obj_wrong_team = {
             "4": {
@@ -101,7 +101,7 @@ describe("FootballPlayer validation", function () {
         done()
     })
 
-    it(`should be able to validate footballPlayerList with wrong roleClassic`, done => {
+    it(`validate footballPlayerList with WRONG CLASSIC ROLE`, done => {
 
         const footballPlayerList_obj_wrong_roleClassic = {
             "4": {
@@ -121,7 +121,7 @@ describe("FootballPlayer validation", function () {
         done()
     })
     
-    it(`should be able to validate footballPlayerList with wrong roleMantra`, done => {
+    it(`validate footballPlayerList with WRONG MANTRA ROLE`, done => {
 
         const footballPlayerList_obj_wrong_roleMantra = {
             "4": {
@@ -141,7 +141,7 @@ describe("FootballPlayer validation", function () {
         done()
     })
 
-    it(`should be able to validate footballPlayerList with wrong actualPrice`, done => {
+    it(`validate footballPlayerList with WRONG ACTUAL PRICE`, done => {
 
         const footballPlayerList_obj_wrong_actualPrice = {
             "4": {
@@ -161,7 +161,7 @@ describe("FootballPlayer validation", function () {
         done()
     })
 
-    it(`should be able to validate footballPlayerList with wrong initialPrice`, done => {
+    it(`validate footballPlayerList with WRONG INITIAL PRICE`, done => {
 
         const footballPlayerList_obj_wrong_initialPrice = {
             "4": {
