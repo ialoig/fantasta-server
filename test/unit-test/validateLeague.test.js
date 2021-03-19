@@ -1,8 +1,7 @@
-import { Constants, leagueUtils } from "../../src/utils"
-import { expect } from 'chai'
-import _ from 'lodash'
+import { leagueUtils } from "../../src/utils"
+import { expect, } from 'chai'
 import { strict as assert } from 'assert'
-// import { printObject } from '../integration/index.js'
+import _ from 'lodash'
 
 const printObject = (msg, obj) => {
     console.log("---------------------------------------")
@@ -12,18 +11,34 @@ const printObject = (msg, obj) => {
 
 describe("LEAGUE VALIDATION", () => {
 
-    const userID = "1234567890"
+    const userID = "0123456789"
 
-    let leagueSettings = {
-        //admin: will be added by the validateLeague
-        name: "legadelcazzo",
-        password: "legadelcazzo",
+    let leagueSettingsClassic = {
+        name: "league_1",
+        password: "password_1",
         participants: 2,
         type: "classic",
         goalkeepers: 1,
         defenders: 4,
         midfielders: 4,
         strikers: 2,
+        players: 999,      // it will be set to 0 by the validateleague()
+        budget: 500,
+        countdown: 3,
+        auctionType: "random",
+        startPrice: "zero",
+        teamname: "squadradelcazzo"
+    }
+
+    let leagueSettingsMantra = {
+        name: "league_2",
+        password: "password_2",
+        participants: 2,
+        type: "mantra",
+        goalkeepers: 1,
+        defenders: 999,     // it will be set to 0 by the validateleague()
+        midfielders: 999,   // it will be set to 0 by the validateleague()
+        strikers: 999,      // it will be set to 0 by the validateleague()
         players: 10,
         budget: 500,
         countdown: 3,
@@ -32,102 +47,109 @@ describe("LEAGUE VALIDATION", () => {
         teamname: "squadradelcazzo"
     }
 
-    const expectException = (wrong_league_settings) => {
-        try {
-            leagueUtils.validateleague(wrong_league_settings, userID)
-        }
-        catch (error) {
-            assert.strictEqual(error, Constants.PARAMS_ERROR)
-        }
-    }
-
-
-    it(`VALIDATE leagueSettings`, async () => {
-
-        const validated_leagueSettings = leagueUtils.validateleague(leagueSettings, userID)
-        let expected_leagueSettings = _.clone(leagueSettings)
-        expected_leagueSettings["admin"] = userID
+    it(`VALIDATE leagueSettings CLASSIC`, async () => {
+        const validated_leagueSettings = leagueUtils.validateleague(leagueSettingsClassic, userID)
+        let expected_leagueSettings = _.clone(leagueSettingsClassic)
         delete expected_leagueSettings["teamname"]
+        expected_leagueSettings["admin"] = userID
+        expected_leagueSettings["players"] = 0
+        assert.strictEqual(_.isEqual(validated_leagueSettings, expected_leagueSettings), true)
+    })
+
+    it(`VALIDATE leagueSettings MANTRA`, async () => {
+        const validated_leagueSettings = leagueUtils.validateleague(leagueSettingsMantra, userID)
+        let expected_leagueSettings = _.clone(leagueSettingsMantra)
+        delete expected_leagueSettings["teamname"]
+        expected_leagueSettings["admin"] = userID
+        expected_leagueSettings["defenders"] = 0
+        expected_leagueSettings["midfielders"] = 0
+        expected_leagueSettings["strikers"] = 0
         assert.strictEqual(_.isEqual(validated_leagueSettings, expected_leagueSettings), true)
     })
 
     it(`VALIDATE leagueSettings with WRONG LEAGUE NAME`, async () => {
-        let leagueSettings_wrong_league_name = _.clone(leagueSettings)
+        let leagueSettings_wrong_league_name = _.clone(leagueSettingsClassic)
         leagueSettings_wrong_league_name.name = ""
-        expectException(leagueSettings_wrong_league_name)
+        expect(() => leagueUtils.validateleague(leagueSettings_wrong_league_name, userID)).to.throw();
     })
 
     it(`VALIDATE leagueSettings with WRONG LEAGUE PASSWORD`, async () => {
-        let leagueSettings_wrong_league_password = _.clone(leagueSettings)
+        let leagueSettings_wrong_league_password = _.clone(leagueSettingsClassic)
         leagueSettings_wrong_league_password.password = ""
-        expectException(leagueSettings_wrong_league_password)
+        expect(() => leagueUtils.validateleague(leagueSettings_wrong_league_password, userID)).to.throw();
     })
 
     it(`VALIDATE leagueSettings with WRONG TEAM NAME`, async () => {
-        let leagueSettings_wrong_team_name = _.clone(leagueSettings)
+        let leagueSettings_wrong_team_name = _.clone(leagueSettingsClassic)
         leagueSettings_wrong_team_name.teamname = ""
-        expectException(leagueSettings_wrong_team_name)
+        expect(() => leagueUtils.validateleague(leagueSettings_wrong_team_name, userID)).to.throw();
     })
 
     it(`VALIDATE leagueSettings with WRONG AUCTION TYPE`, async () => {
-        let leagueSettings_wrong_auction_type = _.clone(leagueSettings)
+        let leagueSettings_wrong_auction_type = _.clone(leagueSettingsClassic)
         leagueSettings_wrong_auction_type.auctionType = "alphabetic,call,random"
-        expectException(leagueSettings_wrong_auction_type)
+        expect(() => leagueUtils.validateleague(leagueSettings_wrong_auction_type, userID)).to.throw();
     })
 
     it(`VALIDATE leagueSettings with WRONG START PRICE`, async () => {
-        let leagueSettings_wrong_start_price = _.clone(leagueSettings)
+        let leagueSettings_wrong_start_price = _.clone(leagueSettingsClassic)
         leagueSettings_wrong_start_price.startPrice = "zero,listPrice"
-        expectException(leagueSettings_wrong_start_price)
+        expect(() => leagueUtils.validateleague(leagueSettings_wrong_start_price, userID)).to.throw();
     })
 
-
     it(`VALIDATE leagueSettings with WRONG PARTICIPANT`, async () => {
-        let leagueSettings_wrong_participants = _.clone(leagueSettings)
+        let leagueSettings_wrong_participants = _.clone(leagueSettingsClassic)
         leagueSettings_wrong_participants.participants = 1
-        expectException(leagueSettings_wrong_participants)
+        expect(() => leagueUtils.validateleague(leagueSettings_wrong_participants, userID)).to.throw();
     })
 
     it(`VALIDATE leagueSettings with WRONG TYPE`, async () => {
-        let leagueSettings_wrong_type = _.clone(leagueSettings)
+        let leagueSettings_wrong_type = _.clone(leagueSettingsClassic)
         leagueSettings_wrong_type.type = "mantra,classic"
-        expectException(leagueSettings_wrong_type)
+        expect(() => leagueUtils.validateleague(leagueSettings_wrong_type, userID)).to.throw();
     })
 
     it(`VALIDATE leagueSettings with WRONG DEFENDERS`, async () => {
-        let leagueSettings_wrong_defenders = _.clone(leagueSettings)
+        let leagueSettings_wrong_defenders = _.clone(leagueSettingsClassic)
         leagueSettings_wrong_defenders.defenders = 0
-        expectException(leagueSettings_wrong_defenders)
+        expect(() => leagueUtils.validateleague(leagueSettings_wrong_defenders, userID)).to.throw();
     })
 
     it(`VALIDATE leagueSettings with WRONG MIDFIELDERS`, async () => {
-        let leagueSettings_wrong_start_midfielders = _.clone(leagueSettings)
+        let leagueSettings_wrong_start_midfielders = _.clone(leagueSettingsClassic)
         leagueSettings_wrong_start_midfielders.midfielders = 0
-        expectException(leagueSettings_wrong_start_midfielders)
+        expect(() => leagueUtils.validateleague(leagueSettings_wrong_start_midfielders, userID)).to.throw();
     })
 
     it(`VALIDATE leagueSettings with WRONG STRIKERS`, async () => {
-        let leagueSettings_wrong_strikers = _.clone(leagueSettings)
-        leagueSettings_wrong_strikers.strikers = 1
-        expectException(leagueSettings_wrong_strikers)
+        let leagueSettings_wrong_strikers = _.clone(leagueSettingsClassic)
+        leagueSettings_wrong_strikers.strikers = 0
+        expect(() => leagueUtils.validateleague(leagueSettings_wrong_strikers, userID)).to.throw();
     })
 
-    it(`VALIDATE leagueSettings with WRONG PLAYERS`, async () => {
-        let leagueSettings_wrong_players = _.clone(leagueSettings)
+    it(`VALIDATE leagueSettings with WRONG TOTAL PLAYERS (CLASSIC)`, async () => {
+        let leagueSettings_wrong_total_players = _.clone(leagueSettingsClassic)
+        leagueSettings_wrong_total_players.defenders = 3
+        leagueSettings_wrong_total_players.midfielders = 3
+        leagueSettings_wrong_total_players.strikers = 1
+        expect(() => leagueUtils.validateleague(leagueSettings_wrong_total_players, userID)).to.throw();
+    })
+
+    it(`VALIDATE leagueSettings with WRONG PLAYERS (MANTRA)`, async () => {
+        let leagueSettings_wrong_players = _.clone(leagueSettingsMantra)
         leagueSettings_wrong_players.players = 0
-        expectException(leagueSettings_wrong_players)
+        expect(() => leagueUtils.validateleague(leagueSettings_wrong_players, userID)).to.throw();
     })
 
     it(`VALIDATE leagueSettings with WRONG BUDGET`, async () => {
-        let leagueSettings_wrong_budget = _.clone(leagueSettings)
+        let leagueSettings_wrong_budget = _.clone(leagueSettingsClassic)
         leagueSettings_wrong_budget.budget = 5
-        expectException(leagueSettings_wrong_budget)
+        expect(() => leagueUtils.validateleague(leagueSettings_wrong_budget, userID)).to.throw();
     })
 
     it(`VALIDATE leagueSettings with WRONG COUNTDOWN`, async () => {
-        let leagueSettings_wrong_countdown = _.clone(leagueSettings)
+        let leagueSettings_wrong_countdown = _.clone(leagueSettingsClassic)
         leagueSettings_wrong_countdown.countdown = 1
-        expectException(leagueSettings_wrong_countdown)
+        expect(() => leagueUtils.validateleague(leagueSettings_wrong_countdown, userID)).to.throw();
     })
-
 })

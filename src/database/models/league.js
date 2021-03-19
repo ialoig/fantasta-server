@@ -59,7 +59,7 @@ const leagueSchema = new Schema(
         defenders: {
             type: Schema.Types.Number,
             required: true,
-            min: 4,
+            min: 0,
             validate: {
                 validator: Number.isInteger,
                 message: "{VALUE} is not an integer value for defenders"
@@ -68,7 +68,7 @@ const leagueSchema = new Schema(
         midfielders: {
             type: Schema.Types.Number,
             required: true,
-            min: 4,
+            min: 0,
             validate: {
                 validator: Number.isInteger,
                 message: "{VALUE} is not an integer value for midfielders"
@@ -77,7 +77,7 @@ const leagueSchema = new Schema(
         strikers: {
             type: Schema.Types.Number,
             required: true,
-            min: 2,
+            min: 0,
             validate: {
                 validator: Number.isInteger,
                 message: "{VALUE} is not an integer value for strikers"
@@ -86,7 +86,7 @@ const leagueSchema = new Schema(
         players: {
             type: Schema.Types.Number,
             required: true,
-            min: 10,
+            min: 0,
             validate: {
                 validator: Number.isInteger,
                 message: "{VALUE} is not an integer value for players"

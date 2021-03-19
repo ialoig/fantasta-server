@@ -21,7 +21,7 @@ describe("LEAGUE.CREATE", () => {
     }
     const token_1 = tokenUtils.Create(config.token.kid, test_user_1.email, test_user_1.password, test_user_1.username)
 
-    const create_league_data = {
+    const classic_league_data = {
         name: "league_1",
         password: 'league_1_password',
         participants: 2,
@@ -30,12 +30,28 @@ describe("LEAGUE.CREATE", () => {
         defenders: 4,
         midfielders: 4,
         strikers: 2,
-        players: 10, // only for mantra
+        players: 10,      // it will be set to 0 by the validation
         budget: 11,
         countdown: 3,
         auctionType: "call",
         startPrice: "zero",
         teamname: 'team_name_1'
+    }
+    const mantra_league_data = {
+        name: "league_2",
+        password: 'league_2_password',
+        participants: 2,
+        type: "mantra",
+        goalkeepers: 1,
+        defenders: 4,     // it will be set to 0 by the validation
+        midfielders: 4,   // it will be set to 0 by the validation
+        strikers: 2,      // it will be set to 0 by the validation
+        players: 10,
+        budget: 11,
+        countdown: 3,
+        auctionType: "call",
+        startPrice: "zero",
+        teamname: 'team_name_2'
     }
 
     before(async () => {
@@ -99,7 +115,7 @@ describe("LEAGUE.CREATE", () => {
         const res = await requester
             .post(api)
             .set('Authorization', token_1)
-            .send(create_league_data)
+            .send(classic_league_data)
 
         expect(res).to.have.status(200)
         expect(res.body).to.be.a('object')
@@ -111,14 +127,14 @@ describe("LEAGUE.CREATE", () => {
         expect(res.body.user.username).to.equal(test_user_1.username)
         expect(res.body.user.leagues).to.have.length(1)
         expect(findPropertyValueInNestedObject(res.body.user.leagues, '_id', res.body.league._id)).to.be.true;
-        expect(findPropertyValueInNestedObject(res.body.user.leagues, 'name', create_league_data.name)).to.be.true;
+        expect(findPropertyValueInNestedObject(res.body.user.leagues, 'name', classic_league_data.name)).to.be.true;
         expect(findPropertyValueInNestedObject(res.body.user.leagues, '_id', res.body.team._id)).to.be.true;
-        expect(findPropertyValueInNestedObject(res.body.user.leagues, 'name', create_league_data.teamname)).to.be.true;
+        expect(findPropertyValueInNestedObject(res.body.user.leagues, 'name', classic_league_data.teamname)).to.be.true;
 
         // Check team object
         expect(res.body.team).to.be.a('object')
-        expect(res.body.team.name).to.equal(create_league_data.teamname)
-        expect(res.body.team.budget).to.equal(create_league_data.budget)
+        expect(res.body.team.name).to.equal(classic_league_data.teamname)
+        expect(res.body.team.budget).to.equal(classic_league_data.budget)
         expect(res.body.team.footballPlayers).to.have.length(0)
         expect(res.body.team.user._id).to.equal(test_user_1._id)
         expect(res.body.team.user.email).to.equal(test_user_1.email)
@@ -126,28 +142,28 @@ describe("LEAGUE.CREATE", () => {
 
         // Check league object
         expect(res.body.league).to.be.a('object')
-        expect(res.body.league.name).to.equal(create_league_data.name)
-        expect(res.body.league.password).to.equal(create_league_data.password)
-        expect(res.body.league.participants).to.equal(create_league_data.participants)
-        expect(res.body.league.type).to.equal(create_league_data.type)
-        expect(res.body.league.goalkeepers).to.equal(create_league_data.goalkeepers)
-        expect(res.body.league.defenders).to.equal(create_league_data.defenders)
-        expect(res.body.league.midfielders).to.equal(create_league_data.midfielders)
-        expect(res.body.league.strikers).to.equal(create_league_data.strikers)
-        expect(res.body.league.players).to.equal(create_league_data.players)
-        expect(res.body.league.budget).to.equal(create_league_data.budget)
-        expect(res.body.league.countdown).to.equal(create_league_data.countdown)
-        expect(res.body.league.auctionType).to.equal(create_league_data.auctionType)
-        expect(res.body.league.startPrice).to.equal(create_league_data.startPrice)
-        
+        expect(res.body.league.name).to.equal(classic_league_data.name)
+        expect(res.body.league.password).to.equal(classic_league_data.password)
+        expect(res.body.league.participants).to.equal(classic_league_data.participants)
+        expect(res.body.league.type).to.equal(classic_league_data.type)
+        expect(res.body.league.goalkeepers).to.equal(classic_league_data.goalkeepers)
+        expect(res.body.league.defenders).to.equal(classic_league_data.defenders)
+        expect(res.body.league.midfielders).to.equal(classic_league_data.midfielders)
+        expect(res.body.league.strikers).to.equal(classic_league_data.strikers)
+        expect(res.body.league.players).to.equal(0)
+        expect(res.body.league.budget).to.equal(classic_league_data.budget)
+        expect(res.body.league.countdown).to.equal(classic_league_data.countdown)
+        expect(res.body.league.auctionType).to.equal(classic_league_data.auctionType)
+        expect(res.body.league.startPrice).to.equal(classic_league_data.startPrice)
+
         expect(res.body.league.admin).to.be.a('object')
         expect(res.body.league.admin._id).to.equal(test_user_1._id)
         expect(res.body.league.admin.email).to.equal(test_user_1.email)
         expect(res.body.league.admin.name).to.equal(test_user_1.username)
-        
+
         expect(res.body.league.teams).to.have.length(1)
         expect(findPropertyValueInNestedObject(res.body.league.teams, '_id', res.body.team._id)).to.be.true;
-        expect(findPropertyValueInNestedObject(res.body.league.teams, 'name', create_league_data.teamname)).to.be.true;
+        expect(findPropertyValueInNestedObject(res.body.league.teams, 'name', classic_league_data.teamname)).to.be.true;
         expect(findPropertyValueInNestedObject(res.body.league.teams, '_id', test_user_1._id)).to.be.true;
         expect(findPropertyValueInNestedObject(res.body.league.teams, 'name', test_user_1.name)).to.be.true;
         expect(findPropertyValueInNestedObject(res.body.league.teams, 'email', test_user_1.email)).to.be.true;
@@ -157,7 +173,7 @@ describe("LEAGUE.CREATE", () => {
         const res = await requester
             .post(api)
             .set('Authorization', token_1)
-            .send(create_league_data)
+            .send(classic_league_data)
 
         expect(res).to.have.status(400);
         expect(res.body).to.be.a('object');
@@ -176,14 +192,10 @@ describe("LEAGUE.CREATE", () => {
     });
 
     it("user CREATE an other LEAGUE", async () => {
-
-        let create_league_data_2 = _.clone(create_league_data)
-        create_league_data_2.name = "league_2"
-
         const res = await requester
             .post(api)
             .set('Authorization', token_1)
-            .send(create_league_data_2)
+            .send(mantra_league_data)
 
         expect(res).to.have.status(200)
         expect(res.body).to.be.a('object')
@@ -195,16 +207,16 @@ describe("LEAGUE.CREATE", () => {
         expect(res.body.user.username).to.equal(test_user_1.username)
         expect(res.body.user.leagues).to.have.length(2)
         expect(findPropertyValueInNestedObject(res.body.user.leagues, '_id', res.body.league._id)).to.be.true;
-        expect(findPropertyValueInNestedObject(res.body.user.leagues, 'name', create_league_data.name)).to.be.true;
-        expect(findPropertyValueInNestedObject(res.body.user.leagues, 'name', create_league_data.teamname)).to.be.true;
+        expect(findPropertyValueInNestedObject(res.body.user.leagues, 'name', classic_league_data.name)).to.be.true;
+        expect(findPropertyValueInNestedObject(res.body.user.leagues, 'name', classic_league_data.teamname)).to.be.true;
         expect(findPropertyValueInNestedObject(res.body.user.leagues, '_id', res.body.league._id)).to.be.true;
-        expect(findPropertyValueInNestedObject(res.body.user.leagues, 'name', create_league_data_2.name)).to.be.true;
+        expect(findPropertyValueInNestedObject(res.body.user.leagues, 'name', mantra_league_data.name)).to.be.true;
         expect(findPropertyValueInNestedObject(res.body.user.leagues, '_id', res.body.team._id)).to.be.true;
-        expect(findPropertyValueInNestedObject(res.body.user.leagues, 'name', create_league_data_2.teamname)).to.be.true;
+        expect(findPropertyValueInNestedObject(res.body.user.leagues, 'name', mantra_league_data.teamname)).to.be.true;
 
         // Check team object
         expect(res.body.team).to.be.a('object')
-        expect(res.body.team.name).to.equal(create_league_data_2.teamname)
+        expect(res.body.team.name).to.equal(mantra_league_data.teamname)
         expect(res.body.team.budget).to.equal(res.body.league.budget)
         expect(res.body.team.footballPlayers).to.have.length(0)
         expect(res.body.team.user._id).to.equal(res.body.user._id)
@@ -213,19 +225,19 @@ describe("LEAGUE.CREATE", () => {
 
         // Check league object
         expect(res.body.league).to.be.a('object')
-        expect(res.body.league.name).to.equal(create_league_data_2.name)
-        expect(res.body.league.password).to.equal(create_league_data_2.password)
-        expect(res.body.league.participants).to.equal(create_league_data_2.participants)
-        expect(res.body.league.type).to.equal(create_league_data_2.type)
-        expect(res.body.league.goalkeepers).to.equal(create_league_data_2.goalkeepers)
-        expect(res.body.league.defenders).to.equal(create_league_data_2.defenders)
-        expect(res.body.league.midfielders).to.equal(create_league_data_2.midfielders)
-        expect(res.body.league.strikers).to.equal(create_league_data_2.strikers)
-        expect(res.body.league.players).to.equal(create_league_data_2.players)
-        expect(res.body.league.budget).to.equal(create_league_data_2.budget)
-        expect(res.body.league.countdown).to.equal(create_league_data_2.countdown)
-        expect(res.body.league.auctionType).to.equal(create_league_data_2.auctionType)
-        expect(res.body.league.startPrice).to.equal(create_league_data_2.startPrice)
+        expect(res.body.league.name).to.equal(mantra_league_data.name)
+        expect(res.body.league.password).to.equal(mantra_league_data.password)
+        expect(res.body.league.participants).to.equal(mantra_league_data.participants)
+        expect(res.body.league.type).to.equal(mantra_league_data.type)
+        expect(res.body.league.goalkeepers).to.equal(mantra_league_data.goalkeepers)
+        expect(res.body.league.defenders).to.equal(0)
+        expect(res.body.league.midfielders).to.equal(0)
+        expect(res.body.league.strikers).to.equal(0)
+        expect(res.body.league.players).to.equal(mantra_league_data.players)
+        expect(res.body.league.budget).to.equal(mantra_league_data.budget)
+        expect(res.body.league.countdown).to.equal(mantra_league_data.countdown)
+        expect(res.body.league.auctionType).to.equal(mantra_league_data.auctionType)
+        expect(res.body.league.startPrice).to.equal(mantra_league_data.startPrice)
 
         expect(res.body.league.admin).to.be.a('object')
         expect(res.body.league.admin._id).to.equal(res.body.user._id)
@@ -234,7 +246,7 @@ describe("LEAGUE.CREATE", () => {
 
         expect(res.body.league.teams).to.have.length(1)
         expect(findPropertyValueInNestedObject(res.body.league.teams, '_id', res.body.team._id)).to.be.true;
-        expect(findPropertyValueInNestedObject(res.body.league.teams, 'name', create_league_data_2.teamname)).to.be.true;
+        expect(findPropertyValueInNestedObject(res.body.league.teams, 'name', mantra_league_data.teamname)).to.be.true;
         expect(findPropertyValueInNestedObject(res.body.league.teams, '_id', test_user_1._id)).to.be.true;
         expect(findPropertyValueInNestedObject(res.body.league.teams, 'name', test_user_1.name)).to.be.true;
         expect(findPropertyValueInNestedObject(res.body.league.teams, 'email', test_user_1.email)).to.be.true;

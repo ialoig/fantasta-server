@@ -15,68 +15,55 @@ const errors = {
     LEAGUE_TYPE_ERROR: 'LEAGUE_TYPE_ERROR'
 }
 
-const validateleague = ( leagueData, userID ) =>
-{
+const validateleague = (leagueData, userID) => {
     let error = ''
 
-    if ( !leagueData.name )
-    {
+    if (!leagueData.name) {
         error = errors.LEAGUE_NAME_ERROR
     }
-    else if ( !leagueData.password )
-    {
+    else if (!leagueData.password) {
         error = errors.LEAGUE_PASSWORD_ERROR
     }
-    else if ( !leagueData.teamname )
-    {
+    else if (!leagueData.teamname) {
         error = errors.TEAM_ERROR
     }
-    else if ( ![ "alphabetic", "call", "random" ].includes(leagueData.auctionType) )
-    {
+    else if (!["alphabetic", "call", "random"].includes(leagueData.auctionType)) {
         error = errors.AUCTION_TYPE_ERROR
     }
-    else if ( ![ "zero", "listPrice" ].includes(leagueData.startPrice) )
-    {
+    else if (!["zero", "listPrice"].includes(leagueData.startPrice)) {
         error = errors.START_PRICE_ERROR
     }
-    else if ( parseInt(leagueData.participants)<2 )
-    {
+    else if (parseInt(leagueData.participants) < 2) {
         error = errors.ATTENDEES_ERROR
     }
-    else if ( ![ "mantra", "classic" ].includes(leagueData.type) )
-    {
+    else if (!["mantra", "classic"].includes(leagueData.type)) {
         error = errors.LEAGUE_TYPE_ERROR
     }
-    else if ( parseInt(leagueData.goalkeepers)<1 )
-    {
+    else if (parseInt(leagueData.goalkeepers) < 1) {
         error = errors.PLAYERS_NUMBER_ERROR
     }
-    else if ( parseInt(leagueData.defenders)<4 )
-    {
+    else if (leagueData.type == "classic" && parseInt(leagueData.defenders) < 3) {
         error = errors.PLAYERS_NUMBER_ERROR
     }
-    else if ( parseInt(leagueData.midfielders)<4 )
-    {
+    else if (leagueData.type == "classic" && parseInt(leagueData.midfielders) < 3) {
         error = errors.PLAYERS_NUMBER_ERROR
     }
-    else if ( parseInt(leagueData.strikers)<2 )
-    {
+    else if (leagueData.type == "classic" && parseInt(leagueData.strikers) < 1) {
         error = errors.PLAYERS_NUMBER_ERROR
     }
-    else if ( parseInt(leagueData.players)<10 )
-    {
+    else if (leagueData.type == "classic" && (parseInt(leagueData.defenders) + parseInt(leagueData.midfielders) + parseInt(leagueData.strikers)) < 10) {
         error = errors.PLAYERS_NUMBER_ERROR
     }
-    else if ( parseInt(leagueData.budget)<11 )
-    {
+    else if (leagueData.type == "mantra" && parseInt(leagueData.players) < 10) {
+        error = errors.PLAYERS_NUMBER_ERROR
+    }
+    else if (parseInt(leagueData.budget) < 11) {
         error = errors.BUDGET_ERROR
     }
-    else if ( parseInt(leagueData.countdown)<3 )
-    {
+    else if (parseInt(leagueData.countdown) < 3) {
         error = errors.COUNTDOWN_ERROR
     }
-    else
-    {
+    else {
         return {
             name: _.toString(leagueData.name),
             password: _.toString(leagueData.password),
@@ -85,20 +72,20 @@ const validateleague = ( leagueData, userID ) =>
             participants: parseInt(leagueData.participants),
             type: leagueData.type,
             goalkeepers: parseInt(leagueData.goalkeepers),
-            defenders: parseInt(leagueData.defenders),
-            midfielders: parseInt(leagueData.midfielders),
-            strikers: parseInt(leagueData.strikers),
-            players: parseInt(leagueData.players),
+            defenders: leagueData.type == "classic" ? parseInt(leagueData.defenders) : 0,
+            midfielders: leagueData.type == "classic" ? parseInt(leagueData.midfielders) : 0,
+            strikers: leagueData.type == "classic" ? parseInt(leagueData.strikers) : 0,
+            players: leagueData.type == "mantra" ? parseInt(leagueData.players) : 0,
             budget: parseInt(leagueData.budget),
             countdown: parseInt(leagueData.countdown),
             admin: userID
         }
     }
+    console.log(`[validateleague] error: ${error}`)
     throw Constants.PARAMS_ERROR // todo: la variabile 'error' a cosa serve? perche' non throw error?
 }
 
-const parseLeague = ( league ) =>
-{
+const parseLeague = (league) => {
     let leag = {
         _id: league._id,
         admin: {
@@ -124,18 +111,15 @@ const parseLeague = ( league ) =>
         teams: []
     }
 
-    for ( let i=0; i<league.teams.length; i++ )
-    {
-        leag.teams.push( parseTeam(league.teams[i]) )
+    for (let i = 0; i < league.teams.length; i++) {
+        leag.teams.push(parseTeam(league.teams[i]))
     }
 
     return leag
 }
 
-const createTeam = async ( teamName, budget, userId, leagueId ) =>
-{
-    try
-    {
+const createTeam = async (teamName, budget, userId, leagueId) => {
+    try {
         let team = await Team.create({
             name: teamName,
             budget: budget,
@@ -150,8 +134,7 @@ const createTeam = async ( teamName, budget, userId, leagueId ) =>
     }
 }
 
-const parseTeam = ( team ) =>
-{
+const parseTeam = (team) => {
     let tm = {
         _id: team._id,
         budget: team.budget,
@@ -170,16 +153,15 @@ const parseTeam = ( team ) =>
     return tm
 }
 
-const createLeagueResponse = async ( user, league, team ) =>
-{
-    let usr1 = await populate.user( user )
-    let lg1 = await populate.league( league )
-    let tm1 = await populate.team( team )
+const createLeagueResponse = async (user, league, team) => {
+    let usr1 = await populate.user(user)
+    let lg1 = await populate.league(league)
+    let tm1 = await populate.team(team)
 
     let response = {
-        user: userUtils.parseUser( usr1 ),
-        league: parseLeague( lg1 ),
-        team: parseTeam( tm1 ),
+        user: userUtils.parseUser(usr1),
+        league: parseLeague(lg1),
+        team: parseTeam(tm1),
     }
 
     return Promise.resolve(response)
