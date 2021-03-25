@@ -8,54 +8,54 @@ import { requester, findPropertyValueInNestedObject, printObject } from './index
 use(chaiHttp);
 should();
 
+const api = "/fantasta/league/join"
+
+const test_user_1 = {
+    //_id: it will be added once the user is created
+    email: 'test_1@test.com',
+    password: 'password_1',
+    username: 'username_1'
+}
+const token_1 = tokenUtils.Create(config.token.kid, test_user_1.email, test_user_1.password, test_user_1.username)
+const test_team_name_1 = "team_name_1"
+
+const test_user_2 = {
+    //_id: it will be added once the user is created
+    email: 'test_2@test.com',
+    password: 'password_2',
+    username: 'username_2'
+}
+const test_team_name_2 = "team_name_2"
+const token_2 = tokenUtils.Create(config.token.kid, test_user_2.email, test_user_2.password, test_user_2.username)
+
+const test_user_3 = {
+    //_id: will be added once the user is created
+    email: 'test_3@test.com',
+    password: 'password_3',
+    username: 'username_3'
+}
+const test_team_name_3 = "team_name_3"
+const token_3 = tokenUtils.Create(config.token.kid, test_user_3.email, test_user_3.password, test_user_3.username)
+
+let test_league = {
+    name: "test_league",
+    password: "test_league_password",
+    // admin: will be added once the User is created
+    participants: 2,
+    type: "classic",
+    goalkeepers: 1,
+    defenders: 4,
+    midfielders: 4,
+    strikers: 2,
+    players: 10,
+    budget: 11,
+    countdown: 3,
+    auctionType: "call",
+    startPrice: "zero",
+    teams: [] // will be added once the league.Join api is successful
+}
+
 describe("LEAGUE.JOIN", () => {
-
-    const api = "/fantasta/league/join"
-
-    const test_user_1 = {
-        //_id: it will be added once the user is created
-        email: 'test_1@test.com',
-        password: 'password_1',
-        username: 'username_1'
-    }
-    const token_1 = tokenUtils.Create(config.token.kid, test_user_1.email, test_user_1.password, test_user_1.username)
-    const test_team_name_1 = "team_name_1"
-
-    const test_user_2 = {
-        //_id: it will be added once the user is created
-        email: 'test_2@test.com',
-        password: 'password_2',
-        username: 'username_2'
-    }
-    const test_team_name_2 = "team_name_2"
-    const token_2 = tokenUtils.Create(config.token.kid, test_user_2.email, test_user_2.password, test_user_2.username)
-
-    const test_user_3 = {
-        //_id: will be added once the user is created
-        email: 'test_3@test.com',
-        password: 'password_3',
-        username: 'username_3'
-    }
-    const test_team_name_3 = "team_name_3"
-    const token_3 = tokenUtils.Create(config.token.kid, test_user_3.email, test_user_3.password, test_user_3.username)
-
-    let test_league = {
-        name: "test_league",
-        password: "test_league_password",
-        // admin: will be added once the User is created
-        participants: 2,
-        type: "classic",
-        goalkeepers: 1,
-        defenders: 4,
-        midfielders: 4,
-        strikers: 2,
-        players: 10,
-        budget: 11,
-        countdown: 3,
-        auctionType: "call",
-        startPrice: "zero",
-        teams: [] // will be added once the league.Join api is successful
-    }
 
     before(async () => {
 

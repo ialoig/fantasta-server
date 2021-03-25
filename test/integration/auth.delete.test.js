@@ -2,110 +2,210 @@
 import { expect, should, use } from 'chai';
 import chaiHttp from 'chai-http'
 import config from 'config'
-import { User } from '../../src/database/index.js'
+import { User, League, Team } from '../../src/database/index.js'
 import { tokenUtils } from '../../src/utils/index.js'
-import { requester } from './index.js'
+import { requester, findPropertyValueInNestedObject, printObject } from './index.js'
+import { userUtils } from '../../src/utils'
+import mongoose from 'mongoose'
 
 use(chaiHttp);
 should();
 
-describe( "DELETE", () =>
-{
-    beforeEach((done) => {
-        User.deleteMany({}, (err) => {
-            User.create({ email: 'test@test.com', password: '123456', username: 'username' }, (err) => {
-                done();           
-            })
-        });
-    });
+const api = "/fantasta/auth/deleteAccount"
+
+let user_1 = {
+    // _id            // it will added once the user is created
+    email: "user1@email.com",
+    password: "user1_password",
+    username: "username1",
+    leagues: []       // it will added once the league is created
+}
+
+let user_2 = {
+    // _id            // it will added once the user is created
+    email: "user2@email.com",
+    password: "user2_password",
+    username: "username1",
+    leagues: []       // it will added once the league is created
+}
+
+const token_1 = tokenUtils.Create(config.token.kid, user_1.email, user_1.password, user_1.username)
+const token_2 = tokenUtils.Create(config.token.kid, user_2.email, user_2.password, user_2.username)
+
+let team_1 = {
+    // _id            // it will added once the team is created
+    name: "team_1",
+    footballPlayers: [],
+    budget: 100,
+    user: null,       // it will added once the user is created
+    league: null      // it will added once the league is created
+}
+
+let team_2 = {
+    // _id            // it will added once the team is created
+    name: "team_2",
+    footballPlayers: [],
+    budget: 100,
+    user: null,       // it will added once the user is created
+    league: null      // it will added once the league is created
+}
+
+let league_1 = {
+    name: "league1",
+    password: "league1_password",
+    admin: null,      // it will added once the user is created
+    participants: 3,
+    type: "classic",
+    goalkeepers: 1,
+    defenders: 8,
+    midfielders: 8,
+    strikers: 4,
+    players: 0,
+    budget: 100,
+    countdown: 3,
+    auctionType: "call",
+    startPrice: "zero",
+    teams: []         // it will added later once team is created
+}
+
+describe("DELETE", () => {
+
+    before(async () => {
+
+        // Clean DB
+        await User.deleteMany()
+        await League.deleteMany()
+        await Team.deleteMany()
+
+        // Create Users
+        let user_1_db = await User.create(user_1)
+        user_1["_id"] = user_1_db._id
+
+        let user_2_db = await User.create(user_2)
+        user_2["_id"] = user_2_db._id
+
+        // Create Teams
+        team_1.user = user_1_db._id
+        let team_1_db = await Team.create(team_1)
+        team_1["_id"] = team_1_db._id
+
+        team_2.user = user_2_db._id
+        let team_2_db = await Team.create(team_2)
+        team_2["_id"] = team_2_db._id
+
+        // Create League
+        league_1.admin = user_1_db._id
+        league_1.teams.push(team_1_db)
+        league_1.teams.push(team_2_db)
+        let league_1_db = await League.create(league_1)
+
+        // Update User and Team
+        team_1_db.league = league_1_db._id
+        user_1_db.leagues.push(league_1_db._id)
+        await user_1_db.save()
+        await team_1_db.save()
+        team_2_db.league = league_1_db._id
+        user_2_db.leagues.push(league_1_db._id)
+        await user_2_db.save()
+        await team_2_db.save()
+    })
 
     after(() => {
         requester.close()
-    });
+    })
 
-    it("Body is undefined", (done) =>
-    {
-        requester.delete('/fantasta/auth/deleteAccount')
-        .send(undefined)
-        .end( (err, res) =>
-        {
-            expect(res).to.have.status(400);
-            expect(res.body).to.be.a('object');
-            expect(res.body.code).to.equal(400);
-            expect(res.body.status).to.equal('Bad Request');
-            expect(res.body.info).to.be.a('object');
-            expect(res.body.info.title).to.be.a('string');
-            expect(res.body.info.message).to.be.a('string');
-            done();
-        });
-    });
+    it("Body is undefined", async () => {
+        const res = await requester
+            .delete(api)
+            .send(undefined)
 
-    it("Body is empty", (done) =>
-    {
-        requester.delete('/fantasta/auth/deleteAccount')
-        .send({})
-        .end( (err, res) =>
-        {
-            expect(res).to.have.status(400);
-            expect(res.body).to.be.a('object');
-            expect(res.body.code).to.equal(400);
-            expect(res.body.status).to.equal('Bad Request');
-            expect(res.body.info).to.be.a('object');
-            expect(res.body.info.title).to.be.a('string');
-            expect(res.body.info.message).to.be.a('string');
-            done();
-        });
-    });
+        expect(res).to.have.status(400);
+        expect(res.body).to.be.a('object');
+        expect(res.body.code).to.equal(400);
+        expect(res.body.status).to.equal('Bad Request');
+        expect(res.body.info).to.be.a('object');
+        expect(res.body.info.title).to.be.a('string');
+        expect(res.body.info.message).to.be.a('string');
+    })
 
-    it("Password is NULL", (done) =>
-    {
-        requester.delete('/fantasta/auth/deleteAccount')
-        .send({ password: null })
-        .end( (err, res) =>
-        {
-            expect(res).to.have.status(400);
-            expect(res.body).to.be.a('object');
-            expect(res.body.code).to.equal(400);
-            expect(res.body.status).to.equal('Bad Request');
-            expect(res.body.info).to.be.a('object');
-            expect(res.body.info.title).to.be.a('string');
-            expect(res.body.info.message).to.be.a('string');
-            done();
-        });
-    });
+    it("Body is empty", async () => {
+        const res = await requester
+            .delete(api)
+            .send({})
 
-    it("Password is NOT CORRECT", (done) =>
-    {
-        const token = tokenUtils.Create( config.token.kid, 'test@test.com', '123456', 'username' )
+        expect(res).to.have.status(400);
+        expect(res.body).to.be.a('object');
+        expect(res.body.code).to.equal(400);
+        expect(res.body.status).to.equal('Bad Request');
+        expect(res.body.info).to.be.a('object');
+        expect(res.body.info.title).to.be.a('string');
+        expect(res.body.info.message).to.be.a('string');
+    })
 
-        requester.delete('/fantasta/auth/deleteAccount')
-        .set('Authorization', token)
-        .send({ password: '654321' })
-        .end( (err, res) =>
-        {
-            expect(res).to.have.status(400);
-            expect(res.body).to.be.a('object');
-            expect(res.body.code).to.equal(400);
-            expect(res.body.status).to.equal('Bad Request');
-            expect(res.body.info).to.be.a('object');
-            expect(res.body.info.title).to.be.a('string');
-            expect(res.body.info.message).to.be.a('string');
-            done();
-        });
-    });
+    it("Password is NULL", async () => {
+        const res = await requester
+            .delete(api)
+            .send({ password: null })
 
-    it("Password is CORRECT", (done) =>
-    {
-        const token = tokenUtils.Create( config.token.kid, 'test@test.com', '123456', 'username' )
+        expect(res).to.have.status(400);
+        expect(res.body).to.be.a('object');
+        expect(res.body.code).to.equal(400);
+        expect(res.body.status).to.equal('Bad Request');
+        expect(res.body.info).to.be.a('object');
+        expect(res.body.info.title).to.be.a('string');
+        expect(res.body.info.message).to.be.a('string');
+    })
 
-        requester.delete('/fantasta/auth/deleteAccount')
-        .set('Authorization', token)
-        .send({ password: '123456' })
-        .end( (err, res) =>
-        {
-            expect(res).to.have.status(200);
-            expect(res.body).to.equal(true);
-            done();
-        });
-    });
-});
+    it("Password is NOT CORRECT", async () => {
+        const res = await requester.delete(api)
+            .set('Authorization', token_1)
+            .send({ password: '654321' })
+
+        expect(res).to.have.status(400);
+        expect(res.body).to.be.a('object');
+        expect(res.body.code).to.equal(400);
+        expect(res.body.status).to.equal('Bad Request');
+        expect(res.body.info).to.be.a('object');
+        expect(res.body.info.title).to.be.a('string');
+        expect(res.body.info.message).to.be.a('string');
+    })
+
+    it("DELETE admin USER", async () => {
+        const res = await requester
+            .delete(api)
+            .set('Authorization', token_1)
+            .send({ password: user_1.password })
+
+        expect(res).to.have.status(200);
+        expect(res.body).to.equal(true);
+
+        const user_1_after_removal = await User.findOne({ email: user_1.email })
+        const team_1_after_removal = await Team.findOne({ name: team_1.name })
+        const league_1_after_removal = await League.findOne({ name: league_1.name })
+
+        expect(user_1_after_removal).to.be.null
+        expect(team_1_after_removal).to.be.null
+        expect(league_1_after_removal.admin.toString()).to.equal(user_2._id.toString())
+        expect(league_1_after_removal.teams).to.have.length(1)
+        expect(league_1_after_removal.teams[0].toString()).to.equal, team_2._id.toString()
+    })
+
+    it("DELETE last USER of league ", async () => {
+        const res = await requester
+            .delete(api)
+            .set('Authorization', token_2)
+            .send({ password: user_2.password })
+
+        expect(res).to.have.status(200);
+        expect(res.body).to.equal(true);
+
+        const user_2_after_removal = await User.findOne({ email: user_2.email })
+        const team_2_after_removal = await Team.findOne({ name: team_2.name })
+        const league_1_after_removal = await League.findOne({ name: league_1.name })
+
+        expect(user_2_after_removal).to.be.null
+        expect(team_2_after_removal).to.be.null
+        expect(league_1_after_removal).to.be.null
+    })
+
+})

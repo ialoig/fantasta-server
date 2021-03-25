@@ -9,50 +9,50 @@ import _ from 'lodash'
 use(chaiHttp);
 should();
 
+const api = "/fantasta/league/create"
+
+const test_user_1 = {
+    //_id: will be added once the user is created
+    email: 'test_1@test.com',
+    password: 'password_1',
+    username: 'username_1'
+}
+const token_1 = tokenUtils.Create(config.token.kid, test_user_1.email, test_user_1.password, test_user_1.username)
+
+const classic_league_data = {
+    name: "league_1",
+    password: 'league_1_password',
+    participants: 2,
+    type: "classic",
+    goalkeepers: 1,
+    defenders: 4,
+    midfielders: 4,
+    strikers: 2,
+    players: 10,      // it will be set to 0 by the validation
+    budget: 11,
+    countdown: 3,
+    auctionType: "call",
+    startPrice: "zero",
+    teamname: 'team_name_1'
+}
+const mantra_league_data = {
+    name: "league_2",
+    password: 'league_2_password',
+    participants: 2,
+    type: "mantra",
+    goalkeepers: 1,
+    defenders: 4,     // it will be set to 0 by the validation
+    midfielders: 4,   // it will be set to 0 by the validation
+    strikers: 2,      // it will be set to 0 by the validation
+    players: 10,
+    budget: 11,
+    countdown: 3,
+    auctionType: "call",
+    startPrice: "zero",
+    teamname: 'team_name_2'
+}
+
 describe("LEAGUE.CREATE", () => {
-
-    const api = "/fantasta/league/create"
-
-    const test_user_1 = {
-        //_id: will be added once the user is created
-        email: 'test_1@test.com',
-        password: 'password_1',
-        username: 'username_1'
-    }
-    const token_1 = tokenUtils.Create(config.token.kid, test_user_1.email, test_user_1.password, test_user_1.username)
-
-    const classic_league_data = {
-        name: "league_1",
-        password: 'league_1_password',
-        participants: 2,
-        type: "classic",
-        goalkeepers: 1,
-        defenders: 4,
-        midfielders: 4,
-        strikers: 2,
-        players: 10,      // it will be set to 0 by the validation
-        budget: 11,
-        countdown: 3,
-        auctionType: "call",
-        startPrice: "zero",
-        teamname: 'team_name_1'
-    }
-    const mantra_league_data = {
-        name: "league_2",
-        password: 'league_2_password',
-        participants: 2,
-        type: "mantra",
-        goalkeepers: 1,
-        defenders: 4,     // it will be set to 0 by the validation
-        midfielders: 4,   // it will be set to 0 by the validation
-        strikers: 2,      // it will be set to 0 by the validation
-        players: 10,
-        budget: 11,
-        countdown: 3,
-        auctionType: "call",
-        startPrice: "zero",
-        teamname: 'team_name_2'
-    }
 
     before(async () => {
 

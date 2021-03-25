@@ -21,7 +21,8 @@ const deleteAccount = async (req, res, next) => {
             }
             else {
                 metricApiSuccess("auth.delete", '', duration_start)
-                //user.remove();
+                const removeUserAndReferencesResult = await userUtils.removeUserAndReferences(user)
+                // console.log(`removeUserAndReferencesResult: ${JSON.stringify(removeUserAndReferencesResult, null, 2)}`)
                 res.json(Response.resolve(Constants.OK, true))
             }
         }

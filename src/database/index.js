@@ -22,8 +22,8 @@ const mongoConnectionParams = {
 
 const initMongoConnection = async (trigger_download = true) => {
 
-    console.log( `[mongodb] endpoint: ${mongodbConnection}`)
-    
+    console.log(`[mongodb] endpoint: ${mongodbConnection}`)
+
     // connect to mongo
     mongoose.connect(mongodbConnection, mongoConnectionParams)
 
@@ -68,19 +68,19 @@ const initMongoConnection = async (trigger_download = true) => {
         console.log("[mongodb] status: open")
         mongodb_connection_status_counter.inc({ status: "open" });
 
-        if(trigger_download)
+        if (trigger_download)
             downloadPlayers()
-        
+
         // Seed database with fake data
-        if(process.env.NODE_ENV == "dev"){
+        if (process.env.NODE_ENV == "dev") {
             seed()
         }
     })
 }
 
-process.on( 'SIGINT', () => {
-    connection.close( () => {
-        console.log( "Mongoose default connection is disconnected due to application termination" )
+process.on('SIGINT', () => {
+    connection.close(() => {
+        console.log("Mongoose default connection is disconnected due to application termination")
         process.exit(0)
     })
 })
