@@ -123,7 +123,7 @@ describe("LEAGUE.CREATE", () => {
         // Check user object
         expect(res.body.user).to.be.a('object')
         expect(res.body.user._id).to.equal(test_user_1._id)
-        expect(res.body.user.email).to.equal(test_user_1.email)
+        expect(res.body.user.email).to.equal(test_user_1.email) // todo: why email?
         expect(res.body.user.username).to.equal(test_user_1.username)
         expect(res.body.user.leagues).to.have.length(1)
         expect(findPropertyValueInNestedObject(res.body.user.leagues, '_id', res.body.league._id)).to.be.true;
@@ -137,8 +137,8 @@ describe("LEAGUE.CREATE", () => {
         expect(res.body.team.budget).to.equal(classic_league_data.budget)
         expect(res.body.team.footballPlayers).to.have.length(0)
         expect(res.body.team.user._id).to.equal(test_user_1._id)
-        expect(res.body.team.user.email).to.equal(test_user_1.email)
-        expect(res.body.team.user.name).to.equal(test_user_1.username) // todo: why no user.name??
+        expect(res.body.team.user.email).to.equal(test_user_1.email) // todo: why email?
+        expect(res.body.team.user.name).to.equal(test_user_1.username)
 
         // Check league object
         expect(res.body.league).to.be.a('object')
@@ -158,7 +158,7 @@ describe("LEAGUE.CREATE", () => {
 
         expect(res.body.league.admin).to.be.a('object')
         expect(res.body.league.admin._id).to.equal(test_user_1._id)
-        expect(res.body.league.admin.email).to.equal(test_user_1.email)
+        expect(res.body.league.admin.email).to.equal(test_user_1.email) // todo: why email?
         expect(res.body.league.admin.name).to.equal(test_user_1.username)
 
         expect(res.body.league.teams).to.have.length(1)
@@ -203,7 +203,7 @@ describe("LEAGUE.CREATE", () => {
         // Check user object
         expect(res.body.user).to.be.a('object')
         expect(res.body.user._id).to.equal(test_user_1._id)
-        expect(res.body.user.email).to.equal(test_user_1.email)
+        expect(res.body.user.email).to.equal(test_user_1.email) // todo: why email?
         expect(res.body.user.username).to.equal(test_user_1.username)
         expect(res.body.user.leagues).to.have.length(2)
         expect(findPropertyValueInNestedObject(res.body.user.leagues, '_id', res.body.league._id)).to.be.true;
@@ -220,8 +220,8 @@ describe("LEAGUE.CREATE", () => {
         expect(res.body.team.budget).to.equal(res.body.league.budget)
         expect(res.body.team.footballPlayers).to.have.length(0)
         expect(res.body.team.user._id).to.equal(res.body.user._id)
-        expect(res.body.team.user.email).to.equal(res.body.user.email)
-        // expect(res.body.team.user.name).to.equal(test_user_1.username) // todo: why no user.name??
+        expect(res.body.team.user.email).to.equal(res.body.user.email) // todo: why email?
+        expect(res.body.team.user.name).to.equal(test_user_1.username)
 
         // Check league object
         expect(res.body.league).to.be.a('object')
@@ -241,7 +241,7 @@ describe("LEAGUE.CREATE", () => {
 
         expect(res.body.league.admin).to.be.a('object')
         expect(res.body.league.admin._id).to.equal(res.body.user._id)
-        expect(res.body.league.admin.email).to.equal(res.body.user.email)
+        expect(res.body.league.admin.email).to.equal(res.body.user.email) // todo: why email?
         expect(res.body.league.admin.name).to.equal(res.body.user.username)
 
         expect(res.body.league.teams).to.have.length(1)
@@ -249,7 +249,7 @@ describe("LEAGUE.CREATE", () => {
         expect(findPropertyValueInNestedObject(res.body.league.teams, 'name', mantra_league_data.teamname)).to.be.true;
         expect(findPropertyValueInNestedObject(res.body.league.teams, '_id', test_user_1._id)).to.be.true;
         expect(findPropertyValueInNestedObject(res.body.league.teams, 'name', test_user_1.name)).to.be.true;
-        expect(findPropertyValueInNestedObject(res.body.league.teams, 'email', test_user_1.email)).to.be.true;
+        expect(findPropertyValueInNestedObject(res.body.league.teams, 'email', test_user_1.email)).to.be.true; // todo: why email?
     });
 
 });

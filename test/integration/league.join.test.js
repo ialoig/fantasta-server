@@ -299,7 +299,7 @@ describe("LEAGUE.JOIN", () => {
         // Check user object
         expect(res.body.user).to.be.a('object')
         expect(res.body.user._id).to.equal(test_user_1._id)
-        expect(res.body.user.email).to.equal(test_user_1.email)
+        expect(res.body.user.email).to.equal(test_user_1.email) // todo: why email?
         expect(res.body.user.username).to.equal(test_user_1.username)
         expect(res.body.user.leagues).to.have.length(1)
         expect(findPropertyValueInNestedObject(res.body.user.leagues, '_id', test_league._id)).to.be.true;
@@ -313,7 +313,7 @@ describe("LEAGUE.JOIN", () => {
         expect(res.body.team.budget).to.equal(test_league.budget)
         expect(res.body.team.footballPlayers).to.have.length(0)
         expect(res.body.team.user._id).to.equal(test_user_1._id)
-        expect(res.body.team.user.email).to.equal(test_user_1.email)
+        expect(res.body.team.user.email).to.equal(test_user_1.email) // todo: why email?
         expect(res.body.team.user.name).to.equal(test_user_1.username)
 
         // Check league object
@@ -334,15 +334,15 @@ describe("LEAGUE.JOIN", () => {
 
         expect(res.body.league.admin).to.be.a('object')
         expect(res.body.league.admin._id).to.equal(test_user_1._id)
-        expect(res.body.league.admin.email).to.equal(test_user_1.email)
-        // expect(res.body.league.admin.name).to.equal(test_user_1.username) // TODO: why admin.name = email??
+        expect(res.body.league.admin.email).to.equal(test_user_1.email) // todo: why email?
+        expect(res.body.league.admin.name).to.equal(test_user_1.username)
 
         expect(res.body.league.teams).to.have.length(1)
         expect(findPropertyValueInNestedObject(res.body.league.teams, '_id', res.body.team._id)).to.be.true;
         expect(findPropertyValueInNestedObject(res.body.league.teams, 'name', test_team_name_1)).to.be.true;
         expect(findPropertyValueInNestedObject(res.body.league.teams, '_id', test_user_1._id)).to.be.true;
         expect(findPropertyValueInNestedObject(res.body.league.teams, 'name', test_user_1.username)).to.be.true;
-        expect(findPropertyValueInNestedObject(res.body.league.teams, 'email', test_user_1.email)).to.be.true;
+        expect(findPropertyValueInNestedObject(res.body.league.teams, 'email', test_user_1.email)).to.be.true; // todo: why email?
     });
 
     it("First user is JOINING the LEAGUE but USER ALREADY PRESENT", async () => {
@@ -402,7 +402,7 @@ describe("LEAGUE.JOIN", () => {
         // Check user object
         expect(res.body.user).to.be.a('object')
         expect(res.body.user._id).to.equal(test_user_2._id)
-        expect(res.body.user.email).to.equal(test_user_2.email)
+        expect(res.body.user.email).to.equal(test_user_2.email) // todo: why email?
         expect(res.body.user.username).to.equal(test_user_2.username)
         expect(res.body.user.leagues).to.have.length(1)
         expect(findPropertyValueInNestedObject(res.body.user.leagues, '_id', test_league._id)).to.be.true;
@@ -416,7 +416,7 @@ describe("LEAGUE.JOIN", () => {
         expect(res.body.team.budget).to.equal(test_league.budget)
         expect(res.body.team.footballPlayers).to.have.length(0)
         expect(res.body.team.user._id).to.equal(test_user_2._id)
-        expect(res.body.team.user.email).to.equal(test_user_2.email)
+        expect(res.body.team.user.email).to.equal(test_user_2.email) // todo: why email?
         expect(res.body.team.user.name).to.equal(test_user_2.username)
 
         // Check league object
@@ -437,20 +437,20 @@ describe("LEAGUE.JOIN", () => {
 
         expect(res.body.league.admin).to.be.a('object')
         expect(res.body.league.admin._id).to.equal(test_user_1._id)
-        expect(res.body.league.admin.email).to.equal(test_user_1.email)
-        // expect(res.body.league.admin.name).to.equal(test_user_1.username) // TODO: why admin.name = email??
+        expect(res.body.league.admin.email).to.equal(test_user_1.email) // todo: why email?
+        expect(res.body.league.admin.name).to.equal(test_user_1.username)
 
         expect(res.body.league.teams).to.have.length(2)
         expect(findPropertyValueInNestedObject(res.body.league.teams, 'name', test_team_name_1)).to.be.true;
         expect(findPropertyValueInNestedObject(res.body.league.teams, '_id', test_user_1._id)).to.be.true;
-        // expect(findPropertyValueInNestedObject(res.body.league.teams, 'name', test_user_1.username)).to.be.true; // TODO: why admin.name = email??
-        expect(findPropertyValueInNestedObject(res.body.league.teams, 'email', test_user_1.email)).to.be.true;
+        expect(findPropertyValueInNestedObject(res.body.league.teams, 'name', test_user_1.username)).to.be.true;
+        expect(findPropertyValueInNestedObject(res.body.league.teams, 'email', test_user_1.email)).to.be.true; // TODO: why admin.name = email??
 
         expect(findPropertyValueInNestedObject(res.body.league.teams, '_id', res.body.team._id)).to.be.true;
         expect(findPropertyValueInNestedObject(res.body.league.teams, 'name', test_team_name_2)).to.be.true;
         expect(findPropertyValueInNestedObject(res.body.league.teams, '_id', test_user_2._id)).to.be.true;
-        // expect(findPropertyValueInNestedObject(res.body.league.teams, 'name', test_user_2.username)).to.be.true; // TODO: why admin.name = email??
-        expect(findPropertyValueInNestedObject(res.body.league.teams, 'email', test_user_2.email)).to.be.true;
+        expect(findPropertyValueInNestedObject(res.body.league.teams, 'name', test_user_2.username)).to.be.true;
+        expect(findPropertyValueInNestedObject(res.body.league.teams, 'email', test_user_2.email)).to.be.true; // TODO: why admin.name = email??
     });
 
     it("Third user is JOINING the LEAGUE but LEAGUE IS FULL", async () => {
