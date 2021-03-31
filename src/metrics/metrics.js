@@ -1,4 +1,5 @@
 import * as prometheusClient from 'prom-client'
+import { Errors } from '../utils'
 
 export const prometheusRegister = prometheusClient.register
 
@@ -87,15 +88,15 @@ export const metricApiSuccess = (name, msg, duration_start) => {
 /**
  * 
  * @param {*} name : API name
- * @param {*} msg : metric message
+ * @param {*} error : from which extract metric message
  * @param {*} duration_start : timer start duration
  */
-export const metricApiError = (name, msg, duration_start) => {
+export const metricApiError = (name, error, duration_start) => {
     api_duration_seconds.observe(
         {
             name: name,
             status: METRIC_STATUS.ERROR,
-            msg: msg
+            msg: error.status && Errors[error.status] || error // try to extract status from custom error
         },
         secondsFrom(duration_start))
 }

@@ -89,7 +89,7 @@ describe("LEAGUE.JOIN", () => {
         expect(res.body).to.be.a('object');
         expect(res.body.code).to.equal(400);
         expect(res.body.status).to.equal('Bad Request');
-        // expect(res.body.status).to.equal(Constants.BAD_REQUEST);                   // todo: something like this
+        // expect(res.body.status).to.equal(Errors.BAD_REQUEST);                   // todo: something like this
         expect(res.body.info).to.be.a('object');
         expect(res.body.info.title).to.be.a('string');
         expect(res.body.info.message).to.be.a('string');
@@ -97,8 +97,8 @@ describe("LEAGUE.JOIN", () => {
         expect(res.body.info.status).to.be.a('string');
         // expect(res.body.info.title).to.equal(ErrorMessages.PARAMS_ERROR.title);    // todo: something like this
         // expect(res.body.info.message).toequal(ErrorMessages.PARAMS_ERROR.message); // todo: something like this
-        // expect(res.body.info.code).to.equal(Constants.PARAMS_ERROR);               // todo: something like this
-        // expect(res.body.info.status).toequal(Constants.PARAMS_ERROR);              // todo: something like this
+        // expect(res.body.info.code).to.equal(Errors.PARAMS_ERROR);               // todo: something like this
+        // expect(res.body.info.status).toequal(Errors.PARAMS_ERROR);              // todo: something like this
     });
 
     it("Body is empty", async () => {
@@ -110,7 +110,7 @@ describe("LEAGUE.JOIN", () => {
         expect(res.body).to.be.a('object');
         expect(res.body.code).to.equal(400);
         expect(res.body.status).to.equal('Bad Request');
-        // expect(res.body.status).to.equal(Constants.BAD_REQUEST); // todo: something like this
+        // expect(res.body.status).to.equal(Errors.BAD_REQUEST); // todo: something like this
         expect(res.body.info).to.be.a('object');
         expect(res.body.info.title).to.be.a('string');
         expect(res.body.info.message).to.be.a('string');
@@ -118,8 +118,8 @@ describe("LEAGUE.JOIN", () => {
         expect(res.body.info.status).to.be.a('string');
         // expect(res.body.info.title).to.equal(ErrorMessages.PARAMS_ERROR.title);    // todo: something like this
         // expect(res.body.info.message).toequal(ErrorMessages.PARAMS_ERROR.message); // todo: something like this
-        // expect(res.body.info.code).to.equal(Constants.PARAMS_ERROR);               // todo: something like this
-        // expect(res.body.info.status).toequal(Constants.PARAMS_ERROR);              // todo: something like this
+        // expect(res.body.info.code).to.equal(Errors.PARAMS_ERROR);               // todo: something like this
+        // expect(res.body.info.status).toequal(Errors.PARAMS_ERROR);              // todo: something like this
     });
 
     it("League_id and League_name is NULL", async () => {
@@ -137,7 +137,7 @@ describe("LEAGUE.JOIN", () => {
         expect(res.body).to.be.a('object');
         expect(res.body.code).to.equal(400);
         expect(res.body.status).to.equal('Bad Request');
-        // expect(res.body.status).to.equal(Constants.BAD_REQUEST); // todo: something like this
+        // expect(res.body.status).to.equal(Errors.BAD_REQUEST); // todo: something like this
         expect(res.body.info).to.be.a('object');
         expect(res.body.info.title).to.be.a('string');
         expect(res.body.info.message).to.be.a('string');
@@ -145,8 +145,8 @@ describe("LEAGUE.JOIN", () => {
         expect(res.body.info.status).to.be.a('string');
         // expect(res.body.info.title).to.equal(ErrorMessages.PARAMS_ERROR.title);    // todo: something like this
         // expect(res.body.info.message).toequal(ErrorMessages.PARAMS_ERROR.message); // todo: something like this
-        // expect(res.body.info.code).to.equal(Constants.PARAMS_ERROR);               // todo: something like this
-        // expect(res.body.info.status).toequal(Constants.PARAMS_ERROR);              // todo: something like this
+        // expect(res.body.info.code).to.equal(Errors.PARAMS_ERROR);               // todo: something like this
+        // expect(res.body.info.status).toequal(Errors.PARAMS_ERROR);              // todo: something like this
     });
 
     it("League_name is NULL", async () => {
@@ -164,7 +164,7 @@ describe("LEAGUE.JOIN", () => {
         expect(res.body).to.be.a('object');
         expect(res.body.code).to.equal(400);
         expect(res.body.status).to.equal('Bad Request');
-        // expect(res.body.status).to.equal(Constants.BAD_REQUEST); // todo: do something like this
+        // expect(res.body.status).to.equal(Errors.BAD_REQUEST); // todo: do something like this
         expect(res.body.info).to.be.a('object');
         expect(res.body.info.title).to.be.a('string');
         expect(res.body.info.message).to.be.a('string');
@@ -172,8 +172,8 @@ describe("LEAGUE.JOIN", () => {
         expect(res.body.info.status).to.be.a('string');
         // expect(res.body.info.title).to.equal(ErrorMessages.PARAMS_ERROR.title);    // todo: something like this
         // expect(res.body.info.message).toequal(ErrorMessages.PARAMS_ERROR.message); // todo: something like this
-        // expect(res.body.info.code).to.equal(Constants.PARAMS_ERROR);               // todo: something like this
-        // expect(res.body.info.status).toequal(Constants.PARAMS_ERROR);              // todo: something like this
+        // expect(res.body.info.code).to.equal(Errors.PARAMS_ERROR);               // todo: something like this
+        // expect(res.body.info.status).toequal(Errors.PARAMS_ERROR);              // todo: something like this
     });
 
     it("League_password is NULL", async () => {
@@ -191,14 +191,14 @@ describe("LEAGUE.JOIN", () => {
         expect(res.body).to.be.a('object');
         expect(res.body.code).to.equal(400);
         expect(res.body.status).to.equal('Bad Request');
-        // expect(res.body.status).to.equal(Constants.BAD_REQUEST); // todo: do something like this
+        // expect(res.body.status).to.equal(Errors.BAD_REQUEST); // todo: do something like this
         expect(res.body.info).to.be.a('object');
         expect(res.body.info.code).to.be.a('string');
         expect(res.body.info.status).to.be.a('string');
         // expect(res.body.info.title).to.equal(ErrorMessages.PARAMS_ERROR.title);    // todo: something like this
         // expect(res.body.info.message).toequal(ErrorMessages.PARAMS_ERROR.message); // todo: something like this
-        // expect(res.body.info.code).to.equal(Constants.PARAMS_ERROR);               // todo: something like this
-        // expect(res.body.info.status).toequal(Constants.PARAMS_ERROR);              // todo: something like this
+        // expect(res.body.info.code).to.equal(Errors.PARAMS_ERROR);               // todo: something like this
+        // expect(res.body.info.status).toequal(Errors.PARAMS_ERROR);              // todo: something like this
     });
 
     it("Team_name is NULL", async () => {
@@ -216,14 +216,14 @@ describe("LEAGUE.JOIN", () => {
         expect(res.body).to.be.a('object');
         expect(res.body.code).to.equal(400);
         expect(res.body.status).to.equal('Bad Request');
-        // expect(res.body.status).to.equal(Constants.BAD_REQUEST); // todo: do something like this
+        // expect(res.body.status).to.equal(Errors.BAD_REQUEST); // todo: do something like this
         expect(res.body.info).to.be.a('object');
         expect(res.body.info.code).to.be.a('string');
         expect(res.body.info.status).to.be.a('string');
         // expect(res.body.info.title).to.equal(ErrorMessages.PARAMS_ERROR.title);    // todo: something like this
         // expect(res.body.info.message).toequal(ErrorMessages.PARAMS_ERROR.message); // todo: something like this
-        // expect(res.body.info.code).to.equal(Constants.PARAMS_ERROR);               // todo: something like this
-        // expect(res.body.info.status).toequal(Constants.PARAMS_ERROR);              // todo: something like this
+        // expect(res.body.info.code).to.equal(Errors.PARAMS_ERROR);               // todo: something like this
+        // expect(res.body.info.status).toequal(Errors.PARAMS_ERROR);              // todo: something like this
     });
 
     it("League_name does NOT EXIST", async () => {
@@ -241,7 +241,7 @@ describe("LEAGUE.JOIN", () => {
         expect(res.body).to.be.a('object');
         expect(res.body.code).to.equal(400);
         expect(res.body.status).to.equal('Bad Request');
-        // expect(res.body.status).to.equal(Constants.BAD_REQUEST); // todo: do something like this
+        // expect(res.body.status).to.equal(Errors.BAD_REQUEST); // todo: do something like this
         expect(res.body.info).to.be.a('object');
         expect(res.body.info.title).to.be.a('string');
         expect(res.body.info.message).to.be.a('string');
@@ -249,8 +249,8 @@ describe("LEAGUE.JOIN", () => {
         expect(res.body.info.status).to.be.a('string');
         // expect(res.body.info.title).to.equal(ErrorMessages.LEAGUE_NOT_FOUND.title);    // todo: something like this
         // expect(res.body.info.message).toequal(ErrorMessages.LEAGUE_NOT_FOUND.message); // todo: something like this
-        // expect(res.body.info.code).to.equal(Constants.LEAGUE_NOT_FOUND);               // todo: something like this
-        // expect(res.body.info.status).toequal(Constants.LEAGUE_NOT_FOUND);              // todo: something like this
+        // expect(res.body.info.code).to.equal(Errors.LEAGUE_NOT_FOUND);               // todo: something like this
+        // expect(res.body.info.status).toequal(Errors.LEAGUE_NOT_FOUND);              // todo: something like this
         expect(res.body.data).to.equal('LEAGUE_NOT_FOUND');
     });
 
@@ -269,7 +269,7 @@ describe("LEAGUE.JOIN", () => {
         expect(res.body).to.be.a('object');
         expect(res.body.code).to.equal(400);
         expect(res.body.status).to.equal('Bad Request');
-        // expect(res.body.status).to.equal(Constants.BAD_REQUEST); // todo: do something like this
+        // expect(res.body.status).to.equal(Errors.BAD_REQUEST); // todo: do something like this
         expect(res.body.info).to.be.a('object');
         expect(res.body.info.title).to.be.a('string');
         expect(res.body.info.message).to.be.a('string');
@@ -277,8 +277,8 @@ describe("LEAGUE.JOIN", () => {
         expect(res.body.info.status).to.be.a('string');
         // expect(res.body.info.title).to.equal(ErrorMessages.WRONG_PASSWORD.title);    // todo: something like this
         // expect(res.body.info.message).toequal(ErrorMessages.WRONG_PASSWORD.message); // todo: something like this
-        // expect(res.body.info.code).to.equal(Constants.WRONG_PASSWORD);               // todo: something like this
-        // expect(res.body.info.status).toequal(Constants.WRONG_PASSWORD);              // todo: something like this
+        // expect(res.body.info.code).to.equal(Errors.WRONG_PASSWORD);               // todo: something like this
+        // expect(res.body.info.status).toequal(Errors.WRONG_PASSWORD);              // todo: something like this
         expect(res.body.data).to.equal('WRONG_PASSWORD');
     });
 
@@ -470,7 +470,7 @@ describe("LEAGUE.JOIN", () => {
         expect(res.body.info).to.be.a('object');
         expect(res.body.info.title).to.be.a('string');
         expect(res.body.info.message).to.be.a('string');
-        // expect(res.body.data).toequal(Constants.FULL_LEAGUE);      // todo: something like this
+        // expect(res.body.data).toequal(Errors.FULL_LEAGUE);      // todo: something like this
         expect(res.body.data).to.equal('FULL_LEAGUE');
     });
 

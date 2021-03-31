@@ -78,7 +78,7 @@ describe("LEAGUE.CREATE", () => {
         expect(res.body).to.be.a('object');
         expect(res.body.code).to.equal(400);
         expect(res.body.status).to.equal('Bad Request');
-        // expect(res.body.status).to.equal(Constants.BAD_REQUEST);                   // todo: something like this
+        // expect(res.body.status).to.equal(Errors.BAD_REQUEST);                   // todo: something like this
         expect(res.body.info).to.be.a('object');
         expect(res.body.info.title).to.be.a('string');
         expect(res.body.info.message).to.be.a('string');
@@ -86,8 +86,8 @@ describe("LEAGUE.CREATE", () => {
         expect(res.body.info.status).to.be.a('string');
         // expect(res.body.info.title).to.equal(ErrorMessages.PARAMS_ERROR.title);    // todo: something like this
         // expect(res.body.info.message).toequal(ErrorMessages.PARAMS_ERROR.message); // todo: something like this
-        // expect(res.body.info.code).to.equal(Constants.PARAMS_ERROR);               // todo: something like this
-        // expect(res.body.info.status).toequal(Constants.PARAMS_ERROR);              // todo: something like this
+        // expect(res.body.info.code).to.equal(Errors.PARAMS_ERROR);               // todo: something like this
+        // expect(res.body.info.status).toequal(Errors.PARAMS_ERROR);              // todo: something like this
     });
 
     it("Body is empty", async () => {
@@ -99,7 +99,7 @@ describe("LEAGUE.CREATE", () => {
         expect(res.body).to.be.a('object');
         expect(res.body.code).to.equal(400);
         expect(res.body.status).to.equal('Bad Request');
-        // expect(res.body.status).to.equal(Constants.BAD_REQUEST);                   // todo: something like this
+        // expect(res.body.status).to.equal(Errors.BAD_REQUEST);                   // todo: something like this
         expect(res.body.info).to.be.a('object');
         expect(res.body.info.title).to.be.a('string');
         expect(res.body.info.message).to.be.a('string');
@@ -107,8 +107,8 @@ describe("LEAGUE.CREATE", () => {
         expect(res.body.info.status).to.be.a('string');
         // expect(res.body.info.title).to.equal(ErrorMessages.PARAMS_ERROR.title);    // todo: something like this
         // expect(res.body.info.message).toequal(ErrorMessages.PARAMS_ERROR.message); // todo: something like this
-        // expect(res.body.info.code).to.equal(Constants.PARAMS_ERROR);               // todo: something like this
-        // expect(res.body.info.status).toequal(Constants.PARAMS_ERROR);              // todo: something like this
+        // expect(res.body.info.code).to.equal(Errors.PARAMS_ERROR);               // todo: something like this
+        // expect(res.body.info.status).toequal(Errors.PARAMS_ERROR);              // todo: something like this
     });
 
     it("user CREATE a LEAGUE", async () => {
@@ -179,7 +179,7 @@ describe("LEAGUE.CREATE", () => {
         expect(res.body).to.be.a('object');
         expect(res.body.code).to.equal(400);
         expect(res.body.status).to.equal('Bad Request');
-        // expect(res.body.status).to.equal(Constants.BAD_REQUEST);                   // todo: something like this
+        // expect(res.body.status).to.equal(Errors.BAD_REQUEST);                   // todo: something like this
         expect(res.body.info).to.be.a('object');
         expect(res.body.info.title).to.be.a('string');
         expect(res.body.info.message).to.be.a('string');
@@ -187,8 +187,8 @@ describe("LEAGUE.CREATE", () => {
         expect(res.body.info.status).to.be.a('string');
         // expect(res.body.info.title).to.equal(ErrorMessages.PARAMS_ERROR.title);    // todo: something like this
         // expect(res.body.info.message).toequal(ErrorMessages.PARAMS_ERROR.message); // todo: something like this
-        // expect(res.body.info.code).to.equal(Constants.PARAMS_ERROR);               // todo: something like this
-        // expect(res.body.info.status).toequal(Constants.PARAMS_ERROR);              // todo: something like this
+        // expect(res.body.info.code).to.equal(Errors.PARAMS_ERROR);               // todo: something like this
+        // expect(res.body.info.status).toequal(Errors.PARAMS_ERROR);              // todo: something like this
     });
 
     it("user CREATE an other LEAGUE", async () => {

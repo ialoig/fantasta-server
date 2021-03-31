@@ -1,6 +1,6 @@
 
 import { FootballPlayer } from '../../../database'
-import { Constants, Response } from '../../../utils'
+import { Errors, Response } from '../../../utils'
 import { metricApiError, metricApiSuccess, metricApiPayloadSize } from '../../../metrics'
 
 const get = async (req, res, next) => {
@@ -16,9 +16,9 @@ const get = async (req, res, next) => {
         }
 
         if (!footballPlayers) {
-            console.error("FootballPlayer object is empty")
+            console.error(`[api] footballPlayer.get: object is empty`)
             metricApiError("footballPlayer.get", "EMPTY_OBJECT", duration_start)
-            res.json(Response.resolve(Constants.OK, response))
+            res.json(Response.resolve(response))
         }
         else {
             let dbVersion = footballPlayers.version ? parseInt(footballPlayers.version) : 0
@@ -32,13 +32,13 @@ const get = async (req, res, next) => {
 
             metricApiSuccess("footballPlayer.get", '', duration_start)
             metricApiPayloadSize("footballPlayer.get", response)
-            res.json(Response.resolve(Constants.OK, response))
+            res.json(Response.resolve(response))
         }
     }
     catch (error) {
-        console.error('Get FootballPlayers: ', error)
+        console.error(`[api] footballPlayer.get: ${error}`)
         metricApiError("footballPlayer.get", error, duration_start)
-        res.status(400).send(Response.reject(Constants.BAD_REQUEST, Constants[error] || Constants.BAD_REQUEST, error, req.headers.language))
+        res.status(400).send(Response.reject(error, req.headers.language))
     }
 }
 

@@ -1,7 +1,7 @@
 import Validator from 'validator'
 import { User } from '../../../database'
 import { metricApiError, metricApiSuccess } from '../../../metrics'
-import { Constants, Response } from '../../../utils'
+import { Errors, Response } from '../../../utils'
 import { sendEmail } from '../../../utils'
 
 const forgot = async (req, res, next) => {
@@ -13,37 +13,37 @@ const forgot = async (req, res, next) => {
             let user = await User.findOne({ email })
 
             if (!user || !user.$isValid() || user.$isEmpty()) {
-                console.error('Auth Forgot: ', Constants.NOT_FOUND)
-                metricApiError("auth.forgot", Constants.NOT_FOUND, duration_start)
-                res.status(404).send(Response.reject(Constants.NOT_FOUND, Constants.USER_NOT_FOUND, null, req.headers.language))
+                console.error(`[api] auth.forgot: ${Errors.EMAIL_NOT_FOUND.status}`)
+                metricApiError("auth.forgot", Errors.EMAIL_NOT_FOUND, duration_start)
+                res.status(404).send(Response.reject(Errors.EMAIL_NOT_FOUND, req.headers.language))
             }
             else if (user.email == email) {
 
                 let newPassword = '123456'
-                let _text = 'Nova password: ' + newPassword
+                let _text = 'Nuova password: ' + newPassword
 
                 sendEmail(email, 'Cambio password', _text)
-                
+
                 metricApiSuccess("auth.forgot", '', duration_start)
 
-                res.json(Response.resolve(Constants.OK, {}))
+                res.json(Response.resolve({}))
             }
             else {
-                console.error('Auth Forgot: ', Constants.BAD_REQUEST)
-                metricApiError("auth.forgot", Constants.WRONG_PASSWORD, duration_start)
-                res.status(400).send(Response.reject(Constants.BAD_REQUEST, Constants.WRONG_PASSWORD, null, req.headers.language))
+                console.error(`[api] auth.forgot: ${Errors.BAD_REQUEST.status}`)
+                metricApiError("auth.forgot", Errors.WRONG_PASSWORD, duration_start)
+                res.status(400).send(Response.reject(Errors.WRONG_PASSWORD, req.headers.language))
             }
         }
         catch (error) {
-            console.error('Auth Forgot: ', error)
-            metricApiError("auth.forgot", Constants[error] || Constants.BAD_REQUEST, duration_start)
-            res.status(404).send(Response.reject(Constants.NOT_FOUND, Constants[error] || Constants.BAD_REQUEST, error, req.headers.language))
+            console.error(`[api] auth.forgot: ${error}`)
+            metricApiError("auth.forgot", error, duration_start)
+            res.status(404).send(Response.reject(error, req.headers.language))
         }
     }
     else {
-        console.error('Auth Forgot: PARAMS_ERROR')
-        metricApiError("auth.forgot", Constants.PARAMS_ERROR, duration_start)
-        res.status(400).send(Response.reject(Constants.BAD_REQUEST, Constants.PARAMS_ERROR, null, req.headers.language))
+        console.error(`[api] auth.forgot: ${Errors.PARAMS_ERROR.status}`)
+        metricApiError("auth.forgot", Errors.PARAMS_ERROR, duration_start)
+        res.status(400).send(Response.reject(Errors.PARAMS_ERROR, req.headers.language))
     }
 }
 

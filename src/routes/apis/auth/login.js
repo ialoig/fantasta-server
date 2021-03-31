@@ -1,7 +1,7 @@
 import Validator from 'validator'
 import { User } from '../../../database'
 import { metricApiError, metricApiSuccess } from '../../../metrics'
-import { Constants, PASSWORD_OPT, Response, userUtils } from '../../../utils'
+import { Errors, PASSWORD_OPT, Response, userUtils } from '../../../utils'
 
 const login = async (req, res, next) => {
     const duration_start = process.hrtime()
@@ -12,31 +12,31 @@ const login = async (req, res, next) => {
             let user = await User.findOne({ email })
 
             if (!user || !user.$isValid() || user.$isEmpty()) {
-                console.error('Auth Login: ', Constants.NOT_FOUND)
-                metricApiError("auth.login", Constants.NOT_FOUND, duration_start)
-                res.status(404).send(Response.reject(Constants.NOT_FOUND, Constants.USER_NOT_FOUND, null, req.headers.language))
+                console.error(`[api] auth.login: ${Errors.USER_NOT_FOUND.status}`)
+                metricApiError("auth.login", Errors.USER_NOT_FOUND, duration_start)
+                res.status(404).send(Response.reject(Errors.USER_NOT_FOUND, req.headers.language))
             }
             else if (user.password == password) {
                 let response = await userUtils.createAuthResponse(user, password)
                 metricApiSuccess("auth.login", '', duration_start)
-                res.json(Response.resolve(Constants.OK, response))
+                res.json(Response.resolve(response))
             }
             else {
-                console.error('Auth Login: ', Constants.BAD_REQUEST)
-                metricApiError("auth.login", Constants.WRONG_PASSWORD, duration_start)
-                res.status(400).send(Response.reject(Constants.BAD_REQUEST, Constants.WRONG_PASSWORD, null, req.headers.language))
+                console.error(`[api] auth.login: ${Errors.WRONG_PASSWORD.status}`)
+                metricApiError("auth.login", Errors.WRONG_PASSWORD, duration_start)
+                res.status(400).send(Response.reject(Errors.WRONG_PASSWORD, req.headers.language))
             }
         }
         catch (error) {
-            console.error('Auth Login: ', error)
-            metricApiError("auth.login", Constants[error] || Constants.BAD_REQUEST, duration_start)
-            res.status(404).send(Response.reject(Constants.NOT_FOUND, Constants[error] || Constants.BAD_REQUEST, error, req.headers.language))
+            console.error(`[api] auth.login: ${error}`)
+            metricApiError("auth.login", error, duration_start)
+            res.status(404).send(Response.reject(error, req.headers.language))
         }
     }
     else {
-        console.error('Auth Login: PARAMS_ERROR')
-        metricApiError("auth.login", Constants.PARAMS_ERROR, duration_start)
-        res.status(400).send(Response.reject(Constants.BAD_REQUEST, Constants.PARAMS_ERROR, null, req.headers.language))
+        console.error(`[api] auth.login: ${Errors.PARAMS_ERROR.status}`)
+        metricApiError("auth.login", Errors.PARAMS_ERROR, duration_start)
+        res.status(400).send(Response.reject(Errors.PARAMS_ERROR, req.headers.language))
     }
 }
 

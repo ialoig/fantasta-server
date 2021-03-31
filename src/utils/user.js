@@ -1,7 +1,7 @@
 import config from 'config'
 import { populate, User, League, Team } from '../database'
 import { default as Token } from './token.js'
-import { Constants, tokenUtils } from '../utils'
+import { Errors, tokenUtils } from '../utils'
 import mongoose from 'mongoose'
 
 const userFromToken = async (req) => {
@@ -11,13 +11,13 @@ const userFromToken = async (req) => {
         let auth = Token.Verify(token, config.token.kid)
 
         if (auth.error) {
-            throw Constants.TOKEN_NOT_VALID
+            throw Errors.TOKEN_NOT_VALID
         }
         else {
             let user = await User.findOne({ email: auth.email })
 
             if (!user || user.$isEmpty() || !user.$isValid()) {
-                throw Constants.USER_NOT_FOUND
+                throw Errors.USER_NOT_FOUND
             }
             else if (user.password && user.password == auth.password) {
                 let data = {
@@ -27,7 +27,7 @@ const userFromToken = async (req) => {
                 return Promise.resolve(data)
             }
             else {
-                throw Constants.WRONG_USER
+                throw Errors.WRONG_USER
             }
         }
     }

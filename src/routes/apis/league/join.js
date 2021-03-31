@@ -1,5 +1,5 @@
 import { League, populate } from '../../../database'
-import { Constants, Response, leagueUtils, userUtils } from '../../../utils'
+import { Errors, Response, leagueUtils, userUtils } from '../../../utils'
 import { metricApiError, metricApiSuccess, metricApiPayloadSize } from '../../../metrics'
 import * as Socket from 'socket.io'
 
@@ -20,7 +20,10 @@ const join = async (req, res, next) => {
             let league = await getLeague(user, id, name)
 
             if (!league || !league.$isValid() || league.$isEmpty()) {
-                throw Constants.LEAGUE_NOT_FOUND
+                throw Errors.LEAGUE_NOT_FOUND // todo: e' l'unica API che non ci stampa l'errore corretto nella catch perche' fa un throw
+                // console.error(`[api] league.join: ${Errors.LEAGUE_NOT_FOUND.status}`)
+                // metricApiError("league.join", Errors.LEAGUE_NOT_FOUND, duration_start)
+                // res.status(400).send(Response.reject(Errors.LEAGUE_NOT_FOUND))
             }
 
             let team = null
@@ -30,16 +33,28 @@ const join = async (req, res, next) => {
             }
             else if (name) {
                 if (league.participants && league.teams && league.teams.length >= league.participants) {
-                    throw Constants.FULL_LEAGUE
+                    throw Errors.FULL_LEAGUE // todo: e' l'unica API che non ci stampa l'errore corretto nella catch perche' fa un throw
+                    // console.error(`[api] league.join: ${Errors.FULL_LEAGUE.status}`)
+                    // metricApiError("league.join", Errors.FULL_LEAGUE, duration_start)
+                    // res.status(400).send(Response.reject(Errors.FULL_LEAGUE))
                 }
                 else if (league.teams.find((t) => t.user._id.toString() == userId.toString())) {
-                    throw Constants.USER_TEAM_PRESENT
+                    throw Errors.USER_PRESENT_IN_LEAGUE // todo: e' l'unica API che non ci stampa l'errore corretto nella catch perche' fa un throw
+                    // console.error(`[api] league.join: ${Errors.USER_PRESENT_IN_LEAGUE.status}`)
+                    // metricApiError("league.join", Errors.USER_PRESENT_IN_LEAGUE, duration_start)
+                    // res.status(400).send(Response.reject(Errors.USER_PRESENT_IN_LEAGUE))
                 }
                 else if (league.teams.find((t) => t.name.toLowerCase() == teamname.toLowerCase())) {
-                    throw Constants.TEAM_PRESENT
+                    throw Errors.TEAM_PRESENT_IN_LEAGUE // todo: e' l'unica API che non ci stampa l'errore corretto nella catch perche' fa un throw
+                    // console.error(`[api] league.join: ${Errors.TEAM_PRESENT_IN_LEAGUE.status}`)
+                    // metricApiError("league.join", Errors.TEAM_PRESENT_IN_LEAGUE, duration_start)
+                    // res.status(400).send(Response.reject(Errors.TEAM_PRESENT_IN_LEAGUE))
                 }
                 else if (league.password != password) {
-                    throw Constants.WRONG_PASSWORD
+                    throw Errors.WRONG_PASSWORD // todo: e' l'unica API che non ci stampa l'errore corretto nella catch perche' fa un throw
+                    // console.error(`[api] league.join: ${Errors.WRONG_PASSWORD.status}`)
+                    // metricApiError("league.join", Errors.WRONG_PASSWORD, duration_start)
+                    // res.status(400).send(Response.reject(Errors.WRONG_PASSWORD))
                 }
 
                 team = await leagueUtils.createTeam(teamname, league.budget, userId, league._id)
@@ -51,7 +66,10 @@ const join = async (req, res, next) => {
                 await user.save()
             }
             if (!team || !team.$isValid() || team.$isEmpty()) {
-                throw Constants.TEAM_NOT_FOUND
+                throw Errors.TEAM_NOT_FOUND // todo: e' l'unica API che non ci stampa l'errore corretto nella catch perche' fa un throw
+                // console.error(`[api] league.join: ${Errors.TEAM_NOT_FOUND.status}`)
+                // metricApiError("league.join", Errors.TEAM_NOT_FOUND, duration_start)
+                // res.status(400).send(Response.reject(Errors.TEAM_NOT_FOUND))
             }
 
             let response = await leagueUtils.createLeagueResponse(user, league, team)
@@ -62,18 +80,18 @@ const join = async (req, res, next) => {
 
             metricApiSuccess("league.join", '', duration_start)
             metricApiPayloadSize("league.join", response)
-            res.json(Response.resolve(Constants.OK, response))
+            res.json(Response.resolve(response))
         }
         catch (error) {
             console.error(`[api] league.join: ${error}`)
-            metricApiError("league.join", Constants[error] || Constants.BAD_REQUEST, duration_start)
-            res.status(400).send(Response.reject(Constants.BAD_REQUEST, Constants[error] || Constants.BAD_REQUEST, error, req.headers.language))
+            metricApiError("league.join", error, duration_start)
+            res.status(400).send(Response.reject(error, req.headers.language))
         }
     }
     else {
-        console.error(`[api] league.join: ${Constants.PARAMS_ERROR}`)
-        metricApiError("league.join", Constants.PARAMS_ERROR, duration_start)
-        res.status(400).send(Response.reject(Constants.BAD_REQUEST, Constants.PARAMS_ERROR, null, req.headers.language))
+        console.error(`[api] league.join: ${Errors.PARAMS_ERROR.status}`)
+        metricApiError("league.join", Errors.PARAMS_ERROR.status, duration_start)
+        res.status(400).send(Response.reject(Errors.PARAMS_ERROR, req.headers.language))
     }
 }
 
@@ -97,7 +115,6 @@ const getLeague = async (user, id, name) => {
     }
     catch (error) {
         console.error(`[api] league.join -> getLeague: ${error}`)
-
         return Promise.reject(error)
     }
 }

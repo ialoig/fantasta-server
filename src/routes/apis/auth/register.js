@@ -1,7 +1,7 @@
 import Validator from 'validator'
 import { User } from '../../../database'
 import { metricApiError, metricApiSuccess } from '../../../metrics'
-import { Constants, PASSWORD_OPT, Response, userUtils } from '../../../utils'
+import { Errors, PASSWORD_OPT, Response, userUtils } from '../../../utils'
 
 const register = async (req, res, next) => {
     const duration_start = process.hrtime()
@@ -16,19 +16,19 @@ const register = async (req, res, next) => {
 
             metricApiSuccess("auth.register", '', duration_start)
 
-            res.json(Response.resolve(Constants.OK, response))
+            res.json(Response.resolve(response))
         }
         catch (error) {
-            let code = error.code && Constants[error.code] ? Constants[error.code] : Constants[error] || Constants.BAD_REQUEST
-            console.error('Auth Register: ', error)
+            let code = error.code && Errors[error.code] ? Errors[error.code] : Errors[error] || Errors.BAD_REQUEST
+            console.error(`[api] auth.register: ${error}`)
             metricApiError("auth.register", code, duration_start)
-            res.status(400).send(Response.reject(code, code, error, req.headers.language))
+            res.status(400).send(Response.reject(error, req.headers.language))
         }
     }
     else {
-        console.error('Auth Register: PARAMS_ERROR')
-        metricApiError("auth.register", Constants.PARAMS_ERROR, duration_start)
-        res.status(400).send(Response.reject(Constants.BAD_REQUEST, Constants.PARAMS_ERROR, null, req.headers.language))
+        console.error(`[api] auth.register: ${Errors.PARAMS_ERROR.status}`)
+        metricApiError("auth.register", Errors.PARAMS_ERROR, duration_start)
+        res.status(400).send(Response.reject(Errors.PARAMS_ERROR, req.headers.language))
     }
 }
 

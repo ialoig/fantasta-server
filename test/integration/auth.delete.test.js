@@ -3,7 +3,7 @@ import { expect, should, use } from 'chai';
 import chaiHttp from 'chai-http'
 import config from 'config'
 import { User, League, Team } from '../../src/database/index.js'
-import { tokenUtils } from '../../src/utils/index.js'
+import { Errors, tokenUtils } from '../../src/utils/index.js'
 import { requester, findPropertyValueInNestedObject, printObject } from './index.js'
 import { userUtils } from '../../src/utils'
 import mongoose from 'mongoose'
@@ -121,11 +121,8 @@ describe("DELETE", () => {
 
         expect(res).to.have.status(400);
         expect(res.body).to.be.a('object');
-        expect(res.body.code).to.equal(400);
-        expect(res.body.status).to.equal('Bad Request');
-        expect(res.body.info).to.be.a('object');
-        expect(res.body.info.title).to.be.a('string');
-        expect(res.body.info.message).to.be.a('string');
+        expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
+        expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
     })
 
     it("Body is empty", async () => {
@@ -135,11 +132,8 @@ describe("DELETE", () => {
 
         expect(res).to.have.status(400);
         expect(res.body).to.be.a('object');
-        expect(res.body.code).to.equal(400);
-        expect(res.body.status).to.equal('Bad Request');
-        expect(res.body.info).to.be.a('object');
-        expect(res.body.info.title).to.be.a('string');
-        expect(res.body.info.message).to.be.a('string');
+        expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
+        expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
     })
 
     it("Password is NULL", async () => {
@@ -149,11 +143,8 @@ describe("DELETE", () => {
 
         expect(res).to.have.status(400);
         expect(res.body).to.be.a('object');
-        expect(res.body.code).to.equal(400);
-        expect(res.body.status).to.equal('Bad Request');
-        expect(res.body.info).to.be.a('object');
-        expect(res.body.info.title).to.be.a('string');
-        expect(res.body.info.message).to.be.a('string');
+        expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
+        expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
     })
 
     it("Password is NOT CORRECT", async () => {
@@ -163,11 +154,8 @@ describe("DELETE", () => {
 
         expect(res).to.have.status(400);
         expect(res.body).to.be.a('object');
-        expect(res.body.code).to.equal(400);
-        expect(res.body.status).to.equal('Bad Request');
-        expect(res.body.info).to.be.a('object');
-        expect(res.body.info.title).to.be.a('string');
-        expect(res.body.info.message).to.be.a('string');
+        expect(res.body.code).to.equal(Errors.WRONG_PASSWORD.code)
+        expect(res.body.status).to.equal(Errors.WRONG_PASSWORD.status)
     })
 
     it("DELETE admin USER", async () => {

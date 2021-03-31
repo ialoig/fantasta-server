@@ -1,7 +1,7 @@
 import Validator from 'validator'
 import { User } from '../../../database'
 import { metricApiError, metricApiSuccess } from '../../../metrics'
-import { Constants, PASSWORD_OPT, Response, userUtils } from '../../../utils'
+import { Errors, PASSWORD_OPT, Response, userUtils } from '../../../utils'
 
 const update = async (req, res, next) => {
     const duration_start = process.hrtime()
@@ -25,23 +25,21 @@ const update = async (req, res, next) => {
             }
 
             let updatedUser = await User.findByIdAndUpdate({ _id: userID }, newValues, { new: true, useFindAndModify: false });
-
             let response = await userUtils.createAuthResponse(updatedUser, updatedUser.password)
-
             metricApiSuccess("auth.update", '', duration_start)
 
-            res.json(Response.resolve(Constants.OK, response))
+            res.json(Response.resolve(response))
         }
         catch (error) {
-            console.error('Auth Update: ', error)
-            metricApiError("auth.update", Constants[error] || Constants.BAD_REQUEST, duration_start)
-            res.status(400).send(Response.reject(Constants.BAD_REQUEST, Constants[error] || Constants.BAD_REQUEST, error, req.headers.language))
+            console.error(`[api] auth.update: ${error}`)
+            metricApiError("auth.update", error, duration_start)
+            res.status(400).send(Response.reject(error, req.headers.language))
         }
     }
     else {
-        console.error('Auth Update: PARAMS_ERROR')
-        metricApiError("auth.update", Constants.PARAMS_ERROR, duration_start)
-        res.status(400).send(Response.reject(Constants.BAD_REQUEST, Constants.PARAMS_ERROR, null, req.headers.language))
+        console.error(`[api] auth.update: ${Errors.PARAMS_ERROR.status}`)
+        metricApiError("auth.update", Errors.PARAMS_ERROR, duration_start)
+        res.status(400).send(Response.reject(Errors.PARAMS_ERROR, req.headers.language))
     }
 }
 

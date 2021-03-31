@@ -1,5 +1,5 @@
 import { League } from '../../../database'
-import { Constants, Response, leagueUtils, userUtils } from '../../../utils'
+import { Errors, Response, leagueUtils, userUtils } from '../../../utils'
 import { metricApiError, metricApiSuccess, metricApiPayloadSize } from '../../../metrics'
 import * as Socket from 'socket.io'
 
@@ -31,12 +31,12 @@ const create = async (req, res, next) => {
 
         metricApiSuccess("league.create", '', duration_start)
         metricApiPayloadSize("league.create", response)
-        res.json(Response.resolve(Constants.OK, response))
+        res.json(Response.resolve(response))
     }
     catch (error) {
         console.error(`[api] league.create: ${error}`)
-        metricApiError("league.create", Constants[error] || Constants.BAD_REQUEST, duration_start)
-        res.status(400).send(Response.reject(Constants.BAD_REQUEST, Constants[error] || Constants.BAD_REQUEST, error, req.headers.language))
+        metricApiError("league.create", error, duration_start)
+        res.status(400).send(Response.reject(error, req.headers.language))
     }
 }
 

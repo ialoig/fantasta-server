@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import { populate, Team } from '../database'
-import { Constants, userUtils } from '../utils'
+import { Errors, userUtils } from '../utils'
 
 const errors = {
     LEAGUE_NAME_ERROR: 'LEAGUE_NAME_ERROR',
@@ -82,7 +82,7 @@ const validateleague = (leagueData, userID) => {
         }
     }
     console.log(`[validateleague] error: ${error}`)
-    throw Constants.PARAMS_ERROR // todo: la variabile 'error' a cosa serve? perche' non throw error?
+    throw Errors.PARAMS_ERROR // todo: la variabile 'error' a cosa serve? perche' non throw error?
 }
 
 const parseLeague = (league) => {
