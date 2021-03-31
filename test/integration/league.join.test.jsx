@@ -2,7 +2,7 @@ import { expect, should, use } from 'chai'
 import chaiHttp from 'chai-http'
 import { User, League, Team, populate } from '../../src/database/index.js'
 import config from 'config'
-import { tokenUtils } from '../../src/utils/index.js'
+import { tokenUtils, Errors } from '../../src/utils/index.js'
 import { requester, findPropertyValueInNestedObject, printObject } from './index.js'
 
 use(chaiHttp);

@@ -12,9 +12,9 @@ const login = async (req, res, next) => {
             let user = await User.findOne({ email })
 
             if (!user || !user.$isValid() || user.$isEmpty()) {
-                console.error(`[api] auth.login: ${Errors.USER_NOT_FOUND.status}`)
-                metricApiError("auth.login", Errors.USER_NOT_FOUND, duration_start)
-                res.status(404).send(Response.reject(Errors.USER_NOT_FOUND, req.headers.language))
+                console.error(`[api] auth.login: ${Errors.EMAIL_NOT_FOUND.status}`)
+                metricApiError("auth.login", Errors.EMAIL_NOT_FOUND, duration_start)
+                res.status(404).send(Response.reject(Errors.EMAIL_NOT_FOUND, req.headers.language))
             }
             else if (user.password == password) {
                 let response = await userUtils.createAuthResponse(user, password)
