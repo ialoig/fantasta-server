@@ -19,10 +19,17 @@ const register = async (req, res, next) => {
             res.json(Response.resolve(response))
         }
         catch (error) {
-            let code = error.code && Errors[error.code] ? Errors[error.code] : Errors[error] || Errors.BAD_REQUEST
-            console.error(`[api] auth.register: ${error}`)
-            metricApiError("auth.register", code, duration_start)
-            res.status(400).send(Response.reject(error, req.headers.language))
+            // Mongo duplicate key Error
+            if (error.name === "MongoError" && error.code === 11000) {
+                console.error(`[api] auth.register: ${Errors.EMAIL_ALREADY_IN_USE.status}`)
+                metricApiError("auth.register", Errors.EMAIL_ALREADY_IN_USE, duration_start)
+                res.status(400).send(Response.reject(Errors.EMAIL_ALREADY_IN_USE, req.headers.language))
+            }
+            else {
+                console.error(`[api] auth.register: ${error}`)
+                metricApiError("auth.register", error, duration_start)
+                res.status(400).send(Response.reject(error, req.headers.language))
+            }
         }
     }
     else {

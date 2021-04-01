@@ -29,9 +29,9 @@ const forgot = async (req, res, next) => {
                 res.json(Response.resolve({}))
             }
             else {
-                console.error(`[api] auth.forgot: ${Errors.BAD_REQUEST.status}`)
-                metricApiError("auth.forgot", Errors.WRONG_PASSWORD, duration_start)
-                res.status(400).send(Response.reject(Errors.WRONG_PASSWORD, req.headers.language))
+                console.error(`[api] auth.forgot: ${Errors.EMAIL_NOT_FOUND.status}`)
+                metricApiError("auth.forgot", Errors.EMAIL_NOT_FOUND, duration_start)
+                res.status(400).send(Response.reject(Errors.EMAIL_NOT_FOUND, req.headers.language))
             }
         }
         catch (error) {

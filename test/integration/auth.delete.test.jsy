@@ -158,6 +158,8 @@ describe("DELETE", () => {
         expect(res.body.status).to.equal(Errors.WRONG_PASSWORD.status)
     })
 
+    // todo: delete normal user
+
     it("DELETE admin USER", async () => {
         const res = await requester
             .delete(api)

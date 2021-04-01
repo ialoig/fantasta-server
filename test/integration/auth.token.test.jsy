@@ -26,10 +26,8 @@ describe("TOKEN", () => {
             .end((err, res) => {
                 expect(res).to.have.status(400);
                 expect(res.body).to.be.a('object');
-                expect(res.body.code).to.equal(400);
-                expect(res.body.info).to.be.a('object');
-                expect(res.body.info.title).to.be.a('string');
-                expect(res.body.info.message).to.be.a('string');
+                expect(res.body.code).to.equal(Errors.TOKEN_NOT_VALID.code)
+                expect(res.body.status).to.equal(Errors.TOKEN_NOT_VALID.status)
                 done();
             });
     });
@@ -42,10 +40,8 @@ describe("TOKEN", () => {
             .end((err, res) => {
                 expect(res).to.have.status(400);
                 expect(res.body).to.be.a('object');
-                expect(res.body.code).to.equal(400);
-                expect(res.body.info).to.be.a('object');
-                expect(res.body.info.title).to.be.a('string');
-                expect(res.body.info.message).to.be.a('string');
+                expect(res.body.code).to.equal(Errors.TOKEN_NOT_VALID.code)
+                expect(res.body.status).to.equal(Errors.TOKEN_NOT_VALID.status)
                 done();
             });
     });
@@ -58,10 +54,8 @@ describe("TOKEN", () => {
                 .end((err, res) => {
                     expect(res).to.have.status(400);
                     expect(res.body).to.be.a('object');
-                    expect(res.body.code).to.equal(400);
-                    expect(res.body.info).to.be.a('object');
-                    expect(res.body.info.title).to.be.a('string');
-                    expect(res.body.info.message).to.be.a('string');
+                    expect(res.body.code).to.equal(Errors.EMAIL_NOT_FOUND.code)
+                    expect(res.body.status).to.equal(Errors.EMAIL_NOT_FOUND.status)
                     done();
                 });
         });
@@ -96,10 +90,8 @@ describe("TOKEN", () => {
                     .end((err, res) => {
                         expect(res).to.have.status(400);
                         expect(res.body).to.be.a('object');
-                        expect(res.body.code).to.equal(400);
-                        expect(res.body.info).to.be.a('object');
-                        expect(res.body.info.title).to.be.a('string');
-                        expect(res.body.info.message).to.be.a('string');
+                        expect(res.body.code).to.equal(Errors.TOKEN_NOT_VALID.code)    //todo: why not WRONG_PASSWORD?
+                        expect(res.body.status).to.equal(Errors.TOKEN_NOT_VALID.status) //todo: why not WRONG_PASSWORD?
                         done();
                     });
             });

@@ -104,7 +104,7 @@ describe("LOGIN", () => {
                 });
         });
 
-        it("USER IS PRESENT --> Email is CORRECT and password is INCORRECT", (done) => {
+        it("USER IS PRESENT --> Email is CORRECT but password is INCORRECT", (done) => {
             User.create({ email: 'test@test.com', password: '123456' }, () => {
                 requester.put('/fantasta/auth/login')
                     .send({ email: 'test@test.com', password: '654321' })

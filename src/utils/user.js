@@ -17,7 +17,7 @@ const userFromToken = async (req) => {
             let user = await User.findOne({ email: auth.email })
 
             if (!user || user.$isEmpty() || !user.$isValid()) {
-                throw Errors.USER_NOT_FOUND
+                throw Errors.EMAIL_NOT_FOUND
             }
             else if (user.password && user.password == auth.password) {
                 let data = {
@@ -27,12 +27,13 @@ const userFromToken = async (req) => {
                 return Promise.resolve(data)
             }
             else {
-                throw Errors.WRONG_USER
+                throw Errors.WRONG_PASSWORD
             }
         }
     }
     catch (error) {
         console.error(`[api] UserFromToken: ${error}`)
+        console.error(`[api] UserFromToken (obj): ${JSON.stringify(error, null, 2)}`)
 
         return Promise.reject(error)
     }

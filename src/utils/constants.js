@@ -55,12 +55,12 @@ const Errors = {
         }
     },
 
-    USER_PRESENT: {
-        status: "USER_PRESENT",
+    EMAIL_ALREADY_IN_USE: {
+        status: "EMAIL_ALREADY_IN_USE",
         cose: 700,
         info: {
-            title: 'user_present',
-            message: 'try_other_email'
+            title: 'email_already_in_use',
+            message: 'change_email'
         }
     },
 

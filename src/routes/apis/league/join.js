@@ -20,7 +20,7 @@ const join = async (req, res, next) => {
             let league = await getLeague(user, id, name)
 
             if (!league || !league.$isValid() || league.$isEmpty()) {
-                throw Errors.LEAGUE_NOT_FOUND // todo: e' l'unica API che non ci stampa l'errore corretto nella catch perche' fa un throw
+                throw Errors.LEAGUE_NOT_FOUND // todo: non ci stampa l'errore corretto nella catch perche' fa un throw di object
                 // console.error(`[api] league.join: ${Errors.LEAGUE_NOT_FOUND.status}`)
                 // metricApiError("league.join", Errors.LEAGUE_NOT_FOUND, duration_start)
                 // res.status(400).send(Response.reject(Errors.LEAGUE_NOT_FOUND))
@@ -33,25 +33,25 @@ const join = async (req, res, next) => {
             }
             else if (name) {
                 if (league.participants && league.teams && league.teams.length >= league.participants) {
-                    throw Errors.FULL_LEAGUE // todo: e' l'unica API che non ci stampa l'errore corretto nella catch perche' fa un throw
+                    throw Errors.FULL_LEAGUE // todo: non ci stampa l'errore corretto nella catch perche' fa un throw di object
                     // console.error(`[api] league.join: ${Errors.FULL_LEAGUE.status}`)
                     // metricApiError("league.join", Errors.FULL_LEAGUE, duration_start)
                     // res.status(400).send(Response.reject(Errors.FULL_LEAGUE))
                 }
                 else if (league.teams.find((t) => t.user._id.toString() == userId.toString())) {
-                    throw Errors.USER_PRESENT_IN_LEAGUE // todo: e' l'unica API che non ci stampa l'errore corretto nella catch perche' fa un throw
+                    throw Errors.USER_PRESENT_IN_LEAGUE // todo: non ci stampa l'errore corretto nella catch perche' fa un throw di object
                     // console.error(`[api] league.join: ${Errors.USER_PRESENT_IN_LEAGUE.status}`)
                     // metricApiError("league.join", Errors.USER_PRESENT_IN_LEAGUE, duration_start)
                     // res.status(400).send(Response.reject(Errors.USER_PRESENT_IN_LEAGUE))
                 }
                 else if (league.teams.find((t) => t.name.toLowerCase() == teamname.toLowerCase())) {
-                    throw Errors.TEAM_PRESENT_IN_LEAGUE // todo: e' l'unica API che non ci stampa l'errore corretto nella catch perche' fa un throw
+                    throw Errors.TEAM_PRESENT_IN_LEAGUE // todo: non ci stampa l'errore corretto nella catch perche' fa un throw di object
                     // console.error(`[api] league.join: ${Errors.TEAM_PRESENT_IN_LEAGUE.status}`)
                     // metricApiError("league.join", Errors.TEAM_PRESENT_IN_LEAGUE, duration_start)
                     // res.status(400).send(Response.reject(Errors.TEAM_PRESENT_IN_LEAGUE))
                 }
                 else if (league.password != password) {
-                    throw Errors.WRONG_PASSWORD // todo: e' l'unica API che non ci stampa l'errore corretto nella catch perche' fa un throw
+                    throw Errors.WRONG_PASSWORD // todo: non ci stampa l'errore corretto nella catch perche' fa un throw di object
                     // console.error(`[api] league.join: ${Errors.WRONG_PASSWORD.status}`)
                     // metricApiError("league.join", Errors.WRONG_PASSWORD, duration_start)
                     // res.status(400).send(Response.reject(Errors.WRONG_PASSWORD))
@@ -66,7 +66,7 @@ const join = async (req, res, next) => {
                 await user.save()
             }
             if (!team || !team.$isValid() || team.$isEmpty()) {
-                throw Errors.TEAM_NOT_FOUND // todo: e' l'unica API che non ci stampa l'errore corretto nella catch perche' fa un throw
+                throw Errors.TEAM_NOT_FOUND // todo: non ci stampa l'errore corretto nella catch perche' fa un throw di object
                 // console.error(`[api] league.join: ${Errors.TEAM_NOT_FOUND.status}`)
                 // metricApiError("league.join", Errors.TEAM_NOT_FOUND, duration_start)
                 // res.status(400).send(Response.reject(Errors.TEAM_NOT_FOUND))

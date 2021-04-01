@@ -30,16 +30,16 @@ export const printObject = (msg, obj) => {
  * @param {*} value    : expected value for property
  */
 export const findPropertyValueInNestedObject = (obj, property, value) => {
-    if( obj[property] === value ){
-      return true;
+    if (obj[property] === value) {
+        return true;
     }
-    
+
     let found = false
-    let prop; 
+    let prop;
     for (prop in obj) {
-        if( obj.hasOwnProperty(prop) && typeof obj[prop] === 'object' ) {
+        if (obj.hasOwnProperty(prop) && typeof obj[prop] === 'object') {
             found = findPropertyValueInNestedObject(obj[prop], property, value);
-            if(found){
+            if (found) {
                 return found;
             }
         }

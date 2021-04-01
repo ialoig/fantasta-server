@@ -6,15 +6,13 @@ const token = async (req, res, next) => {
 
     try {
         let auth = await userUtils.userFromToken(req)
-
         let response = await userUtils.createAuthResponse(auth.user, auth.user.password)
-
         metricApiSuccess("auth.token", '', duration_start)
-
         res.json(Response.resolve(response))
     }
     catch (error) {
         console.error(`[api] auth.token: ${error}`)
+        console.error(`[api] auth.token (obj): ${JSON.stringify(error, null, 2)}`)
         metricApiError("auth.token", error, duration_start)
         res.status(400).send(Response.reject(error, req.headers.language))
     }
