@@ -82,7 +82,7 @@ const validateleague = (leagueData, userID) => {
         }
     }
     console.log(`[validateleague] error: ${error}`)
-    throw Errors.PARAMS_ERROR // todo: la variabile 'error' a cosa serve? perche' non throw error?
+    throw Errors.PARAMS_ERROR // todo: perche' non throw error? non ci stampa l'errore corretto nella catch perche' fa un throw di object
 }
 
 const parseLeague = (league) => {
@@ -90,7 +90,6 @@ const parseLeague = (league) => {
         _id: league._id,
         admin: {
             _id: league.admin._id,
-            email: league.admin.email, // TODO: forse dobbiamo toglierlo
             name: league.admin.username
         },
         auctionType: league.auctionType,
@@ -145,7 +144,6 @@ const parseTeam = (team) => {
         footballPlayers: [],
         user: {
             _id: team.user._id,
-            email: team.user.email, // TODO: forse dobbiamo toglierlo
             name: team.user.username
         }
     }

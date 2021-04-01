@@ -24,7 +24,7 @@ const Errors = {
         code: 703,
         info: {
             title: 'wrong_password',
-            message: 'try_change_password'
+            message: 'change_password'
         }
     },
 
@@ -78,7 +78,7 @@ const Errors = {
         code: 709,
         info: {
             title: 'user_already_present_in_league',
-            message: ''
+            message: 'join_league_from_home'
         }
     },
 

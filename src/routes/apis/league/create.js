@@ -40,9 +40,11 @@ const create = async (req, res, next) => {
             metricApiError("league.create", Errors.LEAGUE_ALREADY_EXISTS, duration_start)
             res.status(400).send(Response.reject(Errors.LEAGUE_ALREADY_EXISTS, req.headers.language))
         }
-        console.error(`[api] league.create: ${error}`)
-        metricApiError("league.create", error, duration_start)
-        res.status(400).send(Response.reject(error, req.headers.language))
+        else {
+            console.error(`[api] league.create: ${error}`)
+            metricApiError("league.create", error, duration_start)
+            res.status(400).send(Response.reject(error, req.headers.language))
+        }
     }
 }
 

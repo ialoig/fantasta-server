@@ -12,7 +12,6 @@ const token = async (req, res, next) => {
     }
     catch (error) {
         console.error(`[api] auth.token: ${error}`)
-        console.error(`[api] auth.token (obj): ${JSON.stringify(error, null, 2)}`)
         metricApiError("auth.token", error, duration_start)
         res.status(400).send(Response.reject(error, req.headers.language))
     }
