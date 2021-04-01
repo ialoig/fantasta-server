@@ -92,11 +92,12 @@ export const metricApiSuccess = (name, msg, duration_start) => {
  * @param {*} duration_start : timer start duration
  */
 export const metricApiError = (name, error, duration_start) => {
+
     api_duration_seconds.observe(
         {
             name: name,
             status: METRIC_STATUS.ERROR,
-            msg: error.status && Errors[error.status] || error // try to extract status from custom error
+            msg: error.status && Errors[error.status] ? error.status : error // try to extract custom error message
         },
         secondsFrom(duration_start))
 }

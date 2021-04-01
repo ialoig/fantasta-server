@@ -10,7 +10,7 @@ const reject = (error, locale) => {
     let lang = getLanguage(locale)
 
     // Translate to custom error
-    error = error.status && Errors[error.status] || Errors.INT_SERV_ERR
+    error = error.status && Errors[error.status] ? error : Errors.INT_SERV_ERR
     error.info.title = I18n.t(error.info.title, { locale: lang })
     error.info.message = I18n.t(error.info.message, { locale: lang })
 
