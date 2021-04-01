@@ -34,6 +34,12 @@ const create = async (req, res, next) => {
         res.json(Response.resolve(response))
     }
     catch (error) {
+        // Mongo duplicate key Error
+        if (error.name === "MongoError" && error.code === 11000) {
+            console.error(`[api] league.create: ${Errors.LEAGUE_ALREADY_EXISTS.status}`)
+            metricApiError("league.create", Errors.LEAGUE_ALREADY_EXISTS, duration_start)
+            res.status(400).send(Response.reject(Errors.LEAGUE_ALREADY_EXISTS, req.headers.language))
+        }
         console.error(`[api] league.create: ${error}`)
         metricApiError("league.create", error, duration_start)
         res.status(400).send(Response.reject(error, req.headers.language))

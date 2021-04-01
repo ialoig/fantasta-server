@@ -21,9 +21,9 @@ const register = async (req, res, next) => {
         catch (error) {
             // Mongo duplicate key Error
             if (error.name === "MongoError" && error.code === 11000) {
-                console.error(`[api] auth.register: ${Errors.EMAIL_ALREADY_IN_USE.status}`)
-                metricApiError("auth.register", Errors.EMAIL_ALREADY_IN_USE, duration_start)
-                res.status(400).send(Response.reject(Errors.EMAIL_ALREADY_IN_USE, req.headers.language))
+                console.error(`[api] auth.register: ${Errors.EMAIL_ALREADY_EXISTS.status}`)
+                metricApiError("auth.register", Errors.EMAIL_ALREADY_EXISTS, duration_start)
+                res.status(400).send(Response.reject(Errors.EMAIL_ALREADY_EXISTS, req.headers.language))
             }
             else {
                 console.error(`[api] auth.register: ${error}`)

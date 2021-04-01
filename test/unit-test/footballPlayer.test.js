@@ -2,7 +2,7 @@ import { containsCorrectData } from "../../src/footballPlayers/saveFootballPlaye
 import { strict as assert } from 'assert'
 
 describe("FOOTBALLPLAYER VALIDATION", function () {
-   
+
     it(`validate footballPlayerList`, done => {
 
         const footballPlayerList_obj = {
@@ -94,7 +94,7 @@ describe("FOOTBALLPLAYER VALIDATION", function () {
                 initialPrice: 26
             }
         }
-        
+
         for (const [footballPlayerId, footballPlayer_obj] of Object.entries(footballPlayerList_obj_wrong_team)) {
             assert.strictEqual(containsCorrectData(footballPlayer_obj), false)
         }
@@ -120,7 +120,7 @@ describe("FOOTBALLPLAYER VALIDATION", function () {
         }
         done()
     })
-    
+
     it(`validate footballPlayerList with WRONG MANTRA ROLE`, done => {
 
         const footballPlayerList_obj_wrong_roleMantra = {

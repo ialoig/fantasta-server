@@ -87,18 +87,8 @@ describe("LEAGUE.JOIN", () => {
 
         expect(res).to.have.status(400);
         expect(res.body).to.be.a('object');
-        expect(res.body.code).to.equal(400);
-        expect(res.body.status).to.equal('Bad Request');
-        // expect(res.body.status).to.equal(Errors.BAD_REQUEST);                   // todo: something like this
-        expect(res.body.info).to.be.a('object');
-        expect(res.body.info.title).to.be.a('string');
-        expect(res.body.info.message).to.be.a('string');
-        expect(res.body.info.code).to.be.a('string');
-        expect(res.body.info.status).to.be.a('string');
-        // expect(res.body.info.title).to.equal(ErrorMessages.PARAMS_ERROR.title);    // todo: something like this
-        // expect(res.body.info.message).toequal(ErrorMessages.PARAMS_ERROR.message); // todo: something like this
-        // expect(res.body.info.code).to.equal(Errors.PARAMS_ERROR);               // todo: something like this
-        // expect(res.body.info.status).toequal(Errors.PARAMS_ERROR);              // todo: something like this
+        expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
+        expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
     });
 
     it("Body is empty", async () => {
@@ -108,18 +98,8 @@ describe("LEAGUE.JOIN", () => {
 
         expect(res).to.have.status(400);
         expect(res.body).to.be.a('object');
-        expect(res.body.code).to.equal(400);
-        expect(res.body.status).to.equal('Bad Request');
-        // expect(res.body.status).to.equal(Errors.BAD_REQUEST); // todo: something like this
-        expect(res.body.info).to.be.a('object');
-        expect(res.body.info.title).to.be.a('string');
-        expect(res.body.info.message).to.be.a('string');
-        expect(res.body.info.code).to.be.a('string');
-        expect(res.body.info.status).to.be.a('string');
-        // expect(res.body.info.title).to.equal(ErrorMessages.PARAMS_ERROR.title);    // todo: something like this
-        // expect(res.body.info.message).toequal(ErrorMessages.PARAMS_ERROR.message); // todo: something like this
-        // expect(res.body.info.code).to.equal(Errors.PARAMS_ERROR);               // todo: something like this
-        // expect(res.body.info.status).toequal(Errors.PARAMS_ERROR);              // todo: something like this
+        expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
+        expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
     });
 
     it("League_id and League_name is NULL", async () => {
@@ -135,21 +115,11 @@ describe("LEAGUE.JOIN", () => {
 
         expect(res).to.have.status(400);
         expect(res.body).to.be.a('object');
-        expect(res.body.code).to.equal(400);
-        expect(res.body.status).to.equal('Bad Request');
-        // expect(res.body.status).to.equal(Errors.BAD_REQUEST); // todo: something like this
-        expect(res.body.info).to.be.a('object');
-        expect(res.body.info.title).to.be.a('string');
-        expect(res.body.info.message).to.be.a('string');
-        expect(res.body.info.code).to.be.a('string');
-        expect(res.body.info.status).to.be.a('string');
-        // expect(res.body.info.title).to.equal(ErrorMessages.PARAMS_ERROR.title);    // todo: something like this
-        // expect(res.body.info.message).toequal(ErrorMessages.PARAMS_ERROR.message); // todo: something like this
-        // expect(res.body.info.code).to.equal(Errors.PARAMS_ERROR);               // todo: something like this
-        // expect(res.body.info.status).toequal(Errors.PARAMS_ERROR);              // todo: something like this
+        expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
+        expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
     });
 
-    it("League_name is NULL", async () => {
+    it("League_id and EMPTY and League_name is NULL", async () => {
         const res = await requester
             .put(api)
             .set('Authorization', token_1)
@@ -162,18 +132,8 @@ describe("LEAGUE.JOIN", () => {
 
         expect(res).to.have.status(400);
         expect(res.body).to.be.a('object');
-        expect(res.body.code).to.equal(400);
-        expect(res.body.status).to.equal('Bad Request');
-        // expect(res.body.status).to.equal(Errors.BAD_REQUEST); // todo: do something like this
-        expect(res.body.info).to.be.a('object');
-        expect(res.body.info.title).to.be.a('string');
-        expect(res.body.info.message).to.be.a('string');
-        expect(res.body.info.code).to.be.a('string');
-        expect(res.body.info.status).to.be.a('string');
-        // expect(res.body.info.title).to.equal(ErrorMessages.PARAMS_ERROR.title);    // todo: something like this
-        // expect(res.body.info.message).toequal(ErrorMessages.PARAMS_ERROR.message); // todo: something like this
-        // expect(res.body.info.code).to.equal(Errors.PARAMS_ERROR);               // todo: something like this
-        // expect(res.body.info.status).toequal(Errors.PARAMS_ERROR);              // todo: something like this
+        expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
+        expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
     });
 
     it("League_password is NULL", async () => {
@@ -189,16 +149,25 @@ describe("LEAGUE.JOIN", () => {
 
         expect(res).to.have.status(400);
         expect(res.body).to.be.a('object');
-        expect(res.body.code).to.equal(400);
-        expect(res.body.status).to.equal('Bad Request');
-        // expect(res.body.status).to.equal(Errors.BAD_REQUEST); // todo: do something like this
-        expect(res.body.info).to.be.a('object');
-        expect(res.body.info.code).to.be.a('string');
-        expect(res.body.info.status).to.be.a('string');
-        // expect(res.body.info.title).to.equal(ErrorMessages.PARAMS_ERROR.title);    // todo: something like this
-        // expect(res.body.info.message).toequal(ErrorMessages.PARAMS_ERROR.message); // todo: something like this
-        // expect(res.body.info.code).to.equal(Errors.PARAMS_ERROR);               // todo: something like this
-        // expect(res.body.info.status).toequal(Errors.PARAMS_ERROR);              // todo: something like this
+        expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
+        expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
+    });
+
+    it("League_password is EMPTY", async () => {
+        const res = await requester
+            .put(api)
+            .set('Authorization', token_1)
+            .send({
+                id: '',
+                name: test_league.name,
+                password: '',
+                teamname: test_team_name_1
+            })
+
+        expect(res).to.have.status(400);
+        expect(res.body).to.be.a('object');
+        expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
+        expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
     });
 
     it("Team_name is NULL", async () => {
@@ -214,16 +183,25 @@ describe("LEAGUE.JOIN", () => {
 
         expect(res).to.have.status(400);
         expect(res.body).to.be.a('object');
-        expect(res.body.code).to.equal(400);
-        expect(res.body.status).to.equal('Bad Request');
-        // expect(res.body.status).to.equal(Errors.BAD_REQUEST); // todo: do something like this
-        expect(res.body.info).to.be.a('object');
-        expect(res.body.info.code).to.be.a('string');
-        expect(res.body.info.status).to.be.a('string');
-        // expect(res.body.info.title).to.equal(ErrorMessages.PARAMS_ERROR.title);    // todo: something like this
-        // expect(res.body.info.message).toequal(ErrorMessages.PARAMS_ERROR.message); // todo: something like this
-        // expect(res.body.info.code).to.equal(Errors.PARAMS_ERROR);               // todo: something like this
-        // expect(res.body.info.status).toequal(Errors.PARAMS_ERROR);              // todo: something like this
+        expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
+        expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
+    });
+
+    it("Team_name is EMPTY", async () => {
+        const res = await requester
+            .put(api)
+            .set('Authorization', token_1)
+            .send({
+                id: '',
+                name: test_league.name,
+                password: test_league.password,
+                teamname: ''
+            })
+
+        expect(res).to.have.status(400);
+        expect(res.body).to.be.a('object');
+        expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
+        expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
     });
 
     it("League_name does NOT EXIST", async () => {
@@ -239,19 +217,8 @@ describe("LEAGUE.JOIN", () => {
 
         expect(res).to.have.status(400);
         expect(res.body).to.be.a('object');
-        expect(res.body.code).to.equal(400);
-        expect(res.body.status).to.equal('Bad Request');
-        // expect(res.body.status).to.equal(Errors.BAD_REQUEST); // todo: do something like this
-        expect(res.body.info).to.be.a('object');
-        expect(res.body.info.title).to.be.a('string');
-        expect(res.body.info.message).to.be.a('string');
-        expect(res.body.info.code).to.be.a('string');
-        expect(res.body.info.status).to.be.a('string');
-        // expect(res.body.info.title).to.equal(ErrorMessages.LEAGUE_NOT_FOUND.title);    // todo: something like this
-        // expect(res.body.info.message).toequal(ErrorMessages.LEAGUE_NOT_FOUND.message); // todo: something like this
-        // expect(res.body.info.code).to.equal(Errors.LEAGUE_NOT_FOUND);               // todo: something like this
-        // expect(res.body.info.status).toequal(Errors.LEAGUE_NOT_FOUND);              // todo: something like this
-        expect(res.body.data).to.equal('LEAGUE_NOT_FOUND');
+        expect(res.body.code).to.equal(Errors.LEAGUE_NOT_FOUND.code)
+        expect(res.body.status).to.equal(Errors.LEAGUE_NOT_FOUND.status)
     });
 
     it("League_password is NOT CORRECT", async () => {
@@ -267,19 +234,8 @@ describe("LEAGUE.JOIN", () => {
 
         expect(res).to.have.status(400);
         expect(res.body).to.be.a('object');
-        expect(res.body.code).to.equal(400);
-        expect(res.body.status).to.equal('Bad Request');
-        // expect(res.body.status).to.equal(Errors.BAD_REQUEST); // todo: do something like this
-        expect(res.body.info).to.be.a('object');
-        expect(res.body.info.title).to.be.a('string');
-        expect(res.body.info.message).to.be.a('string');
-        expect(res.body.info.code).to.be.a('string');
-        expect(res.body.info.status).to.be.a('string');
-        // expect(res.body.info.title).to.equal(ErrorMessages.WRONG_PASSWORD.title);    // todo: something like this
-        // expect(res.body.info.message).toequal(ErrorMessages.WRONG_PASSWORD.message); // todo: something like this
-        // expect(res.body.info.code).to.equal(Errors.WRONG_PASSWORD);               // todo: something like this
-        // expect(res.body.info.status).toequal(Errors.WRONG_PASSWORD);              // todo: something like this
-        expect(res.body.data).to.equal('WRONG_PASSWORD');
+        expect(res.body.code).to.equal(Errors.WRONG_PASSWORD.code)
+        expect(res.body.status).to.equal(Errors.WRONG_PASSWORD.status)
     });
 
     it("First user is JOINING the LEAGUE", async () => {
@@ -299,7 +255,6 @@ describe("LEAGUE.JOIN", () => {
         // Check user object
         expect(res.body.user).to.be.a('object')
         expect(res.body.user._id).to.equal(test_user_1._id)
-        expect(res.body.user.email).to.equal(test_user_1.email) // todo: why email?
         expect(res.body.user.username).to.equal(test_user_1.username)
         expect(res.body.user.leagues).to.have.length(1)
         expect(findPropertyValueInNestedObject(res.body.user.leagues, '_id', test_league._id)).to.be.true;
@@ -313,7 +268,6 @@ describe("LEAGUE.JOIN", () => {
         expect(res.body.team.budget).to.equal(test_league.budget)
         expect(res.body.team.footballPlayers).to.have.length(0)
         expect(res.body.team.user._id).to.equal(test_user_1._id)
-        expect(res.body.team.user.email).to.equal(test_user_1.email) // todo: why email?
         expect(res.body.team.user.name).to.equal(test_user_1.username)
 
         // Check league object
@@ -334,7 +288,6 @@ describe("LEAGUE.JOIN", () => {
 
         expect(res.body.league.admin).to.be.a('object')
         expect(res.body.league.admin._id).to.equal(test_user_1._id)
-        expect(res.body.league.admin.email).to.equal(test_user_1.email) // todo: why email?
         expect(res.body.league.admin.name).to.equal(test_user_1.username)
 
         expect(res.body.league.teams).to.have.length(1)
@@ -342,7 +295,6 @@ describe("LEAGUE.JOIN", () => {
         expect(findPropertyValueInNestedObject(res.body.league.teams, 'name', test_team_name_1)).to.be.true;
         expect(findPropertyValueInNestedObject(res.body.league.teams, '_id', test_user_1._id)).to.be.true;
         expect(findPropertyValueInNestedObject(res.body.league.teams, 'name', test_user_1.username)).to.be.true;
-        expect(findPropertyValueInNestedObject(res.body.league.teams, 'email', test_user_1.email)).to.be.true; // todo: why email?
     });
 
     it("First user is JOINING the LEAGUE but USER ALREADY PRESENT", async () => {
@@ -358,11 +310,8 @@ describe("LEAGUE.JOIN", () => {
 
         expect(res).to.have.status(400);
         expect(res.body).to.be.a('object');
-        expect(res.body.code).to.equal(400);
-        expect(res.body.info).to.be.a('object');
-        expect(res.body.info.title).to.be.a('string');
-        expect(res.body.info.message).to.be.a('string');
-        expect(res.body.data).to.equal('USER_TEAM_PRESENT'); //todo: it should be USER_PRESENT
+        expect(res.body.code).to.equal(Errors.USER_PRESENT_IN_LEAGUE.code)
+        expect(res.body.status).to.equal(Errors.USER_PRESENT_IN_LEAGUE.status)
     });
 
     it("Second user is JOINING the LEAGUE but TEAM NAME ALREADY PRESENT", async () => {
@@ -378,11 +327,8 @@ describe("LEAGUE.JOIN", () => {
 
         expect(res).to.have.status(400);
         expect(res.body).to.be.a('object');
-        expect(res.body.code).to.equal(400);
-        expect(res.body.info).to.be.a('object');
-        expect(res.body.info.title).to.be.a('string');
-        expect(res.body.info.message).to.be.a('string');
-        expect(res.body.data).to.equal('TEAM_PRESENT');
+        expect(res.body.code).to.equal(Errors.TEAM_PRESENT_IN_LEAGUE.code)
+        expect(res.body.status).to.equal(Errors.TEAM_PRESENT_IN_LEAGUE.status)
     });
 
     it("Second user is JOINING the LEAGUE", async () => {
@@ -402,7 +348,6 @@ describe("LEAGUE.JOIN", () => {
         // Check user object
         expect(res.body.user).to.be.a('object')
         expect(res.body.user._id).to.equal(test_user_2._id)
-        expect(res.body.user.email).to.equal(test_user_2.email) // todo: why email?
         expect(res.body.user.username).to.equal(test_user_2.username)
         expect(res.body.user.leagues).to.have.length(1)
         expect(findPropertyValueInNestedObject(res.body.user.leagues, '_id', test_league._id)).to.be.true;
@@ -416,7 +361,6 @@ describe("LEAGUE.JOIN", () => {
         expect(res.body.team.budget).to.equal(test_league.budget)
         expect(res.body.team.footballPlayers).to.have.length(0)
         expect(res.body.team.user._id).to.equal(test_user_2._id)
-        expect(res.body.team.user.email).to.equal(test_user_2.email) // todo: why email?
         expect(res.body.team.user.name).to.equal(test_user_2.username)
 
         // Check league object
@@ -437,20 +381,17 @@ describe("LEAGUE.JOIN", () => {
 
         expect(res.body.league.admin).to.be.a('object')
         expect(res.body.league.admin._id).to.equal(test_user_1._id)
-        expect(res.body.league.admin.email).to.equal(test_user_1.email) // todo: why email?
         expect(res.body.league.admin.name).to.equal(test_user_1.username)
 
         expect(res.body.league.teams).to.have.length(2)
         expect(findPropertyValueInNestedObject(res.body.league.teams, 'name', test_team_name_1)).to.be.true;
         expect(findPropertyValueInNestedObject(res.body.league.teams, '_id', test_user_1._id)).to.be.true;
         expect(findPropertyValueInNestedObject(res.body.league.teams, 'name', test_user_1.username)).to.be.true;
-        expect(findPropertyValueInNestedObject(res.body.league.teams, 'email', test_user_1.email)).to.be.true; // TODO: why admin.name = email??
 
         expect(findPropertyValueInNestedObject(res.body.league.teams, '_id', res.body.team._id)).to.be.true;
         expect(findPropertyValueInNestedObject(res.body.league.teams, 'name', test_team_name_2)).to.be.true;
         expect(findPropertyValueInNestedObject(res.body.league.teams, '_id', test_user_2._id)).to.be.true;
         expect(findPropertyValueInNestedObject(res.body.league.teams, 'name', test_user_2.username)).to.be.true;
-        expect(findPropertyValueInNestedObject(res.body.league.teams, 'email', test_user_2.email)).to.be.true; // TODO: why admin.name = email??
     });
 
     it("Third user is JOINING the LEAGUE but LEAGUE IS FULL", async () => {
@@ -466,12 +407,8 @@ describe("LEAGUE.JOIN", () => {
 
         expect(res).to.have.status(400);
         expect(res.body).to.be.a('object');
-        expect(res.body.code).to.equal(400);
-        expect(res.body.info).to.be.a('object');
-        expect(res.body.info.title).to.be.a('string');
-        expect(res.body.info.message).to.be.a('string');
-        // expect(res.body.data).toequal(Errors.FULL_LEAGUE);      // todo: something like this
-        expect(res.body.data).to.equal('FULL_LEAGUE');
+        expect(res.body.code).to.equal(Errors.FULL_LEAGUE.code)
+        expect(res.body.status).to.equal(Errors.FULL_LEAGUE.status)
     });
 
 });

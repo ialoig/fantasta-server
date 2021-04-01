@@ -100,8 +100,8 @@ describe("REGISTER", () => {
                     .end((err, res) => {
                         expect(res).to.have.status(400);
                         expect(res.body).to.be.a('object');
-                        expect(res.body.code).to.equal(Errors.EMAIL_ALREADY_IN_USE.code)
-                        expect(res.body.status).to.equal(Errors.EMAIL_ALREADY_IN_USE.status)
+                        expect(res.body.code).to.equal(Errors.EMAIL_ALREADY_EXISTS.code)
+                        expect(res.body.status).to.equal(Errors.EMAIL_ALREADY_EXISTS.status)
                         done();
                     });
             });
