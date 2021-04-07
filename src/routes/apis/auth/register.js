@@ -32,7 +32,20 @@ const register = async (req, res, next) => {
             }
         }
     }
-    else {
+    else if ( !email || !Validator.isEmail(email) )
+    {
+        console.error(`[api] auth.register: ${Errors.EMAIL_ERROR.status}`)
+        metricApiError("auth.register", Errors.EMAIL_ERROR, duration_start)
+        res.status(400).send(Response.reject(Errors.EMAIL_ERROR, req.headers.language))
+    }
+    else if ( !password || !Validator.isStrongPassword(password, PASSWORD_OPT) )
+    {
+        console.error(`[api] auth.register: ${Errors.PASSWORD_ERROR.status}`)
+        metricApiError("auth.register", Errors.PASSWORD_ERROR, duration_start)
+        res.status(400).send(Response.reject(Errors.PASSWORD_ERROR, req.headers.language))
+    }
+    else
+    {
         console.error(`[api] auth.register: ${Errors.PARAMS_ERROR.status}`)
         metricApiError("auth.register", Errors.PARAMS_ERROR, duration_start)
         res.status(400).send(Response.reject(Errors.PARAMS_ERROR, req.headers.language))

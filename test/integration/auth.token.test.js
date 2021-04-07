@@ -90,8 +90,8 @@ describe("TOKEN", () => {
                     .end((err, res) => {
                         expect(res).to.have.status(400);
                         expect(res.body).to.be.a('object');
-                        expect(res.body.code).to.equal(Errors.TOKEN_NOT_VALID.code)    //todo: why not WRONG_PASSWORD?
-                        expect(res.body.status).to.equal(Errors.TOKEN_NOT_VALID.status) //todo: why not WRONG_PASSWORD?
+                        expect(res.body.code).to.equal(Errors.TOKEN_NOT_VALID.code)    //todo: why not PASSWORD_ERROR?
+                        expect(res.body.status).to.equal(Errors.TOKEN_NOT_VALID.status) //todo: why not PASSWORD_ERROR?
                         done();
                     });
             });

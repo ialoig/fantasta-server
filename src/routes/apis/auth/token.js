@@ -1,4 +1,4 @@
-import { Errors, Response, userUtils } from '../../../utils'
+import { Response, userUtils } from '../../../utils'
 import { metricApiError, metricApiSuccess } from '../../../metrics'
 
 const token = async (req, res, next) => {

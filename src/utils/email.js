@@ -32,16 +32,16 @@ export const sendEmail = async (_to, _subject, _text) => {
         text: _text
       })
 
-      console.log(`[email]: info.envelope: ${JSON.stringify(info.envelope, null, 2)}`)
-      console.log(`[email]: info.messageId: ${info.messageId}`)
-      console.log(`[email]: info.response: ${info.response}`)
+      // console.log(`[email]: info.envelope: ${JSON.stringify(info.envelope, null, 2)}`)
+      // console.log(`[email]: info.messageId: ${info.messageId}`)
+      // console.log(`[email]: info.response: ${info.response}`)
 
       email_status_counter.inc({ status: METRIC_STATUS.SUCCESS });
-      return Promise.resolve(true)
   }
-  catch(error){
+  catch ( error )
+  {
     console.error(`[email]: error. ${error}`);
-    email_status_counter.inc({ status: METRIC_STATUS.ERROR });
-    return Promise.resolve(false)
+    email_status_counter.inc({ status: METRIC_STATUS.ERROR }); 
   }
+  return Promise.resolve()
 }

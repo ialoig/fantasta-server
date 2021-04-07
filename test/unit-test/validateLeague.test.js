@@ -27,7 +27,9 @@ describe("LEAGUE VALIDATION", () => {
         countdown: 3,
         auctionType: "random",
         startPrice: "zero",
-        teamname: "squadradelcazzo"
+        teamname: "squadradelcazzo",
+        status: 'new',
+        isDeleted: false
     }
 
     let leagueSettingsMantra = {
@@ -44,7 +46,9 @@ describe("LEAGUE VALIDATION", () => {
         countdown: 3,
         auctionType: "random",
         startPrice: "zero",
-        teamname: "squadradelcazzo"
+        teamname: "squadradelcazzo",
+        status: 'new',
+        isDeleted: false
     }
 
     it(`VALIDATE leagueSettings CLASSIC`, async () => {
@@ -53,7 +57,7 @@ describe("LEAGUE VALIDATION", () => {
         delete expected_leagueSettings["teamname"]
         expected_leagueSettings["admin"] = userID
         expected_leagueSettings["players"] = 0
-        assert.strictEqual(_.isEqual(validated_leagueSettings, expected_leagueSettings), true)
+        expect(validated_leagueSettings).to.deep.equal(expected_leagueSettings)
     })
 
     it(`VALIDATE leagueSettings MANTRA`, async () => {
@@ -64,7 +68,7 @@ describe("LEAGUE VALIDATION", () => {
         expected_leagueSettings["defenders"] = 0
         expected_leagueSettings["midfielders"] = 0
         expected_leagueSettings["strikers"] = 0
-        assert.strictEqual(_.isEqual(validated_leagueSettings, expected_leagueSettings), true)
+        expect(validated_leagueSettings).to.deep.equal(expected_leagueSettings)
     })
 
     it(`VALIDATE leagueSettings with WRONG LEAGUE NAME`, async () => {

@@ -25,8 +25,8 @@ describe("REGISTER", () => {
             .end((err, res) => {
                 expect(res).to.have.status(400);
                 expect(res.body).to.be.a('object');
-                expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
-                expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
+                expect(res.body.code).to.equal(Errors.EMAIL_ERROR.code)
+                expect(res.body.status).to.equal(Errors.EMAIL_ERROR.status)
                 done();
             });
     });
@@ -37,8 +37,8 @@ describe("REGISTER", () => {
             .end((err, res) => {
                 expect(res).to.have.status(400);
                 expect(res.body).to.be.a('object');
-                expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
-                expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
+                expect(res.body.code).to.equal(Errors.EMAIL_ERROR.code)
+                expect(res.body.status).to.equal(Errors.EMAIL_ERROR.status)
                 done();
             });
     });
@@ -49,8 +49,8 @@ describe("REGISTER", () => {
             .end((err, res) => {
                 expect(res).to.have.status(400);
                 expect(res.body).to.be.a('object');
-                expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
-                expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
+                expect(res.body.code).to.equal(Errors.EMAIL_ERROR.code)
+                expect(res.body.status).to.equal(Errors.EMAIL_ERROR.status)
                 done();
             });
     });
@@ -61,8 +61,8 @@ describe("REGISTER", () => {
             .end((err, res) => {
                 expect(res).to.have.status(400);
                 expect(res.body).to.be.a('object');
-                expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
-                expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
+                expect(res.body.code).to.equal(Errors.EMAIL_ERROR.code)
+                expect(res.body.status).to.equal(Errors.EMAIL_ERROR.status)
                 done();
             });
     });
@@ -73,8 +73,8 @@ describe("REGISTER", () => {
             .end((err, res) => {
                 expect(res).to.have.status(400);
                 expect(res.body).to.be.a('object');
-                expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
-                expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
+                expect(res.body.code).to.equal(Errors.PASSWORD_ERROR.code)
+                expect(res.body.status).to.equal(Errors.PASSWORD_ERROR.status)
                 done();
             });
     });
@@ -85,8 +85,8 @@ describe("REGISTER", () => {
             .end((err, res) => {
                 expect(res).to.have.status(400);
                 expect(res.body).to.be.a('object');
-                expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
-                expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
+                expect(res.body.code).to.equal(Errors.PASSWORD_ERROR.code)
+                expect(res.body.status).to.equal(Errors.PASSWORD_ERROR.status)
                 done();
             });
     });

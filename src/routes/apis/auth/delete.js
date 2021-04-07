@@ -33,9 +33,9 @@ const deleteAccount = async (req, res, next) => {
         }
     }
     else {
-        console.error(`[api] auth.delete: ${Errors.PARAMS_ERROR.status}`)
-        metricApiError("auth.delete", Errors.PARAMS_ERROR, duration_start)
-        res.status(400).send(Response.reject(Errors.PARAMS_ERROR, req.headers.language))
+        console.error(`[api] auth.delete: ${Errors.PASSWORD_ERROR.status}`)
+        metricApiError("auth.delete", Errors.PASSWORD_ERROR, duration_start)
+        res.status(400).send(Response.reject(Errors.PASSWORD_ERROR, req.headers.language))
     }
 }
 

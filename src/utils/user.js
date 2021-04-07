@@ -5,19 +5,24 @@ import { Errors, tokenUtils } from '../utils'
 import mongoose from 'mongoose'
 
 const userFromToken = async (req) => {
-    try {
 
+    let ret = {}
+
+    try
+    {
         const token = Token.Get(req) || ''
         let auth = Token.Verify(token, config.token.kid)
 
-        if (auth.error) {
-            throw Errors.TOKEN_NOT_VALID // todo: non ci stampa l'errore corretto nella catch perche' fa un throw di object
+        if ( auth.error )
+        {
+            return Promise.reject(Errors.TOKEN_NOT_VALID)
         }
         else {
             let user = await User.findOne({ email: auth.email })
 
-            if (!user || user.$isEmpty() || !user.$isValid()) {
-                throw Errors.EMAIL_NOT_FOUND // todo: non ci stampa l'errore corretto nella catch perche' fa un throw di object
+            if (!user || user.$isEmpty() || !user.$isValid())
+            {
+                return Promise.reject(Errors.EMAIL_NOT_FOUND)
             }
             else if (user.password && user.password == auth.password) {
                 let data = {
@@ -27,7 +32,7 @@ const userFromToken = async (req) => {
                 return Promise.resolve(data)
             }
             else {
-                throw Errors.WRONG_PASSWORD // todo: non ci stampa l'errore corretto nella catch perche' fa un throw di object
+                return Promise.reject(Errors.WRONG_PASSWORD)
             }
         }
     }

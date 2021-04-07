@@ -83,7 +83,9 @@ let league_1 = {
     countdown: 3,
     auctionType: "call",
     startPrice: "zero",
-    teams: []         // it will added later once team is created
+    teams: [],         // it will added later once team is created
+    status: 'new',
+    isDeleted: false
 }
 
 describe("DELETE", () => {
@@ -91,9 +93,9 @@ describe("DELETE", () => {
     before(async () => {
 
         // Clean DB
-        await User.deleteMany()
-        await League.deleteMany()
-        await Team.deleteMany()
+        await User.deleteMany({})
+        await League.deleteMany({})
+        await Team.deleteMany({})
 
         // Create Users
         let user_1_db = await User.create(user_1)
@@ -151,8 +153,8 @@ describe("DELETE", () => {
 
         expect(res).to.have.status(400);
         expect(res.body).to.be.a('object');
-        expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
-        expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
+        expect(res.body.code).to.equal(Errors.PASSWORD_ERROR.code)
+        expect(res.body.status).to.equal(Errors.PASSWORD_ERROR.status)
     })
 
     it("Body is empty", async () => {
@@ -162,8 +164,8 @@ describe("DELETE", () => {
 
         expect(res).to.have.status(400);
         expect(res.body).to.be.a('object');
-        expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
-        expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
+        expect(res.body.code).to.equal(Errors.PASSWORD_ERROR.code)
+        expect(res.body.status).to.equal(Errors.PASSWORD_ERROR.status)
     })
 
     it("Password is NULL", async () => {
@@ -173,8 +175,8 @@ describe("DELETE", () => {
 
         expect(res).to.have.status(400);
         expect(res.body).to.be.a('object');
-        expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
-        expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
+        expect(res.body.code).to.equal(Errors.PASSWORD_ERROR.code)
+        expect(res.body.status).to.equal(Errors.PASSWORD_ERROR.status)
     })
 
     it("Password is NOT CORRECT", async () => {

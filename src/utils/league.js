@@ -78,11 +78,13 @@ const validateleague = (leagueData, userID) => {
             players: leagueData.type == "mantra" ? parseInt(leagueData.players) : 0,
             budget: parseInt(leagueData.budget),
             countdown: parseInt(leagueData.countdown),
-            admin: userID
+            admin: userID,
+            status: 'new',
+            isDeleted: false
         }
     }
     console.log(`[validateleague] error: ${error}`)
-    throw Errors.PARAMS_ERROR // todo: perche' non throw error? non ci stampa l'errore corretto nella catch perche' fa un throw di object
+    throw error // todo: perche' non throw error? non ci stampa l'errore corretto nella catch perche' fa un throw di object
 }
 
 const parseLeague = (league) => {
