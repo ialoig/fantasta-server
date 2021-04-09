@@ -52,7 +52,7 @@ const mantra_league_data = {
     teamname: 'team_name_2'
 }
 
-describe("LEAGUE.CREATE", () => {
+xdescribe("LEAGUE.CREATE", () => {
 
     before(async () => {
 
