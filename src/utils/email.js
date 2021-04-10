@@ -23,25 +23,27 @@ const transporter = createTransport({
  * @param {*} _text : email content
  */
 export const sendEmail = async (_to, _subject, _text) => {
-  try
-  {
-      let info = await transporter.sendMail({
-        from: email_user,
-        to: _to,
-        subject: _subject,
-        text: _text
-      })
 
-      // console.log(`[email]: info.envelope: ${JSON.stringify(info.envelope, null, 2)}`)
-      // console.log(`[email]: info.messageId: ${info.messageId}`)
-      // console.log(`[email]: info.response: ${info.response}`)
+  console.log(`sending email _to:${_to}, _subject:${_subject}, _text:${_text}`)
 
-      email_status_counter.inc({ status: METRIC_STATUS.SUCCESS });
+  try {
+    // let info = await transporter.sendMail({
+    //   from: email_user,
+    //   to: _to,
+    //   subject: _subject,
+    //   text: _text
+    // })
+
+    // console.log(`[email]: info.envelope: ${JSON.stringify(info.envelope, null, 2)}`)
+    // console.log(`[email]: info.messageId: ${info.messageId}`)
+    // console.log(`[email]: info.response: ${info.response}`)
+
+    email_status_counter.inc({ status: METRIC_STATUS.SUCCESS });
+    return Promise.resolve(true) //todo: info.response?
   }
-  catch ( error )
-  {
+  catch (error) {
     console.error(`[email]: error. ${error}`);
-    email_status_counter.inc({ status: METRIC_STATUS.ERROR }); 
+    email_status_counter.inc({ status: METRIC_STATUS.ERROR });
+    return Promise.reject(error)
   }
-  return Promise.resolve()
 }

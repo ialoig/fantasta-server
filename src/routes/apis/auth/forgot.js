@@ -10,14 +10,11 @@ const forgot = async (req, res, next) => {
     const duration_start = process.hrtime()
 
     const { email = '' } = req.body
-    if (email && Validator.isEmail(email))
-    {
-        try
-        {
+    if (email && Validator.isEmail(email)) {
+        try {
             let user = await User.findOne({ email })
 
-            if ( user && user.$isValid() && user.email == email )
-            {
+            if (user && user.$isValid() && user.email == email) {
                 let newPassword = generator.generate({
                     length: 10,
                     numbers: true
@@ -26,8 +23,9 @@ const forgot = async (req, res, next) => {
                 let subject = 'Cambio password'
                 let _text = 'Nuova password: ' + newPassword
 
-                sendEmail(email, subject, _text)
-
+                // todo: update password for user
+                let emailStatus = await sendEmail(email, subject, _text)
+                console.log(`[api] auth.forgot: emailStatus: ${emailStatus}`)
                 metricApiSuccess("auth.forgot", '', duration_start)
             }
             else {
@@ -38,6 +36,7 @@ const forgot = async (req, res, next) => {
         catch (error) {
             console.error(`[api] auth.forgot: ${error}`)
             metricApiError("auth.forgot", error, duration_start)
+            res.status(400).send(Response.reject(error, req.headers.language))
         }
         res.json(Response.resolve())
     }
