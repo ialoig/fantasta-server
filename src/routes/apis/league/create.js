@@ -6,7 +6,7 @@ import * as Socket from 'socket.io'
 const create = async (req, res, next) => {
     const duration_start = process.hrtime()
 
-    const { leagueBody } = req.body
+    const leagueBody = req.body || {}
 
     let leagueData = leagueUtils.validateleague( leagueBody )
 

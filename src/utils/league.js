@@ -9,7 +9,10 @@ const validateleague = ( leagueData ) => {
         valid: false
     }
 
-    if (!leagueData.name) {
+    if ( !leagueData || _.isEmpty(leagueData) ) {
+        resp.error = Errors.LEAGUE_ERROR
+    }
+    else if (!leagueData.name) {
         resp.error = Errors.LEAGUE_NAME_ERROR
     }
     else if (!leagueData.password) {
