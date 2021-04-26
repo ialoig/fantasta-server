@@ -64,6 +64,14 @@ const Errors = {
             message: 'change_email'
         }
     },
+    IMAGE_NOT_FOUND: {
+        status: "IMAGE_NOT_FOUND",
+        code: 723,
+        info: {
+            title: 'image_not_found',
+            message: 'change_email'
+        }
+    },
     WRONG_PASSWORD: {
         status: "WRONG_PASSWORD",
         code: 731,

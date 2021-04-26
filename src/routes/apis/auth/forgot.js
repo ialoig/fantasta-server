@@ -1,7 +1,7 @@
 import Validator from 'validator'
-import generator from 'generate-password'
+import config from 'config'
 
-import { User } from '../../../database'
+import { Reset, User } from '../../../database'
 import { metricApiError, metricApiSuccess } from '../../../metrics'
 import { Errors, Response } from '../../../utils'
 import { sendEmail } from '../../../utils'
@@ -16,15 +16,37 @@ const forgot = async (req, res, next) => {
         {
             let user = await User.findOne({ email })
 
-            if ( user && user.$isValid() && user.email == email )
+            if ( user && user.$isValid() )
             {
-                let newPassword = generator.generate({
-                    length: 10,
-                    numbers: true
-                })
+                let reset = await Reset.findOne({ email })
+
+                if ( reset && reset.$isValid() )
+                {
+                    await reset.remove()
+                }
+                
+                reset = await Reset.create({ email, user: user._id }, )
+
+                let link = `${config.server.url}/fantasta/auth/redirect?id=${reset._id}`
 
                 let subject = 'Cambio password'
-                let _text = 'Nuova password: ' + newPassword
+                let _html = `<!DOCTYPE html>
+                    <html>
+                        <head>
+                            <title>Recupero password</title>
+                        </head>
+                        <body>
+                            <div>
+                                <img src="${config.server.url}/fantasta/images/logo.png" alt="" width="160" />
+                                <p>Ciao ${user.username}</p>
+                                <p>Ecco il link per cambiare la password del tuo account:</p>
+                                <p><a href="${link}" data-applink="${link}">link</a></p>
+                                <p>Il link sarà valido per 24 ore dopo di che dovrai provvedere a crearne uno nuovo per recuperare la tua password.</p>
+                                <p>Grazie</p>
+                                <p>Fantasta Team.</p>
+                            </div>
+                        </body>
+                    </html>`
 
                 sendEmail(email, subject, _text)
 
