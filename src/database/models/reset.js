@@ -4,12 +4,6 @@ const { Schema, model } = mongoose
 
 const resetSchema = new Schema(
     {
-        email: {
-            type: Schema.Types.String,
-            required: true,
-            unique: true,
-            index: true
-        },
         user: {
             type: Schema.Types.ObjectId,
             ref: "User"

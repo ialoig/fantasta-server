@@ -18,14 +18,14 @@ const forgot = async (req, res, next) => {
 
             if ( user && user.$isValid() )
             {
-                let reset = await Reset.findOne({ email })
+                let reset = await Reset.findOne({ user: user._id })
 
                 if ( reset && reset.$isValid() )
                 {
                     await reset.remove()
                 }
                 
-                reset = await Reset.create({ email, user: user._id }, )
+                reset = await Reset.create({ user: user._id }, )
 
                 let link = `${config.server.url}/fantasta/auth/redirect?id=${reset._id}`
 
