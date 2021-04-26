@@ -39,8 +39,9 @@ const forgot = async (req, res, next) => {
                             <div>
                                 <img src="${config.server.url}/fantasta/images/logo.png" alt="" width="160" />
                                 <p>Ciao ${user.username}</p>
-                                <p>Ecco il link per cambiare la password del tuo account:</p>
-                                <p><a href="${link}" data-applink="${link}">link</a></p>
+                                <p>
+                                    Ecco il link per cambiare la password del tuo account: <a href="${link}" data-applink="${link}">link</a>
+                                </p>
                                 <p>Il link sarà valido per 24 ore dopo di che dovrai provvedere a crearne uno nuovo per recuperare la tua password.</p>
                                 <p>Grazie</p>
                                 <p>Fantasta Team.</p>
