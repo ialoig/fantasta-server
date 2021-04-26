@@ -48,7 +48,7 @@ const forgot = async (req, res, next) => {
                         </body>
                     </html>`
 
-                sendEmail(email, subject, _text)
+                sendEmail(email, subject, null, _html)
 
                 metricApiSuccess("auth.forgot", '', duration_start)
             }
