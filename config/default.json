@@ -1,6 +1,10 @@
 
 {
     "port": 3000,
+    "server": {
+        "url": "http://localhost:3000",
+        "port": 3000
+    },
     "schedule": {
         "hour": 3,
         "excelFilenameClassic" : "./src/xls/footballPlayerListClassic.xls",
@@ -8,6 +12,25 @@
         "classicUrl": "http://www.fantacalcio.it//Servizi/Excel.ashx?type=0&r=1&t=",
         "mantraUrl": "http://www.fantacalcio.it//Servizi/Excel.ashx?type=0&r=3&t=",
         "statistiche": "https://www.fantacalcio.it/Servizi/Excel.ashx?type=2&r=1&t="
+    },
+    "email": "fantasta@gmail.com",
+    "transporter": {
+        "outlook": {
+            "host": "smtp-mail.outlook.com",
+            "secureConnection": false,
+            "port": 587,
+            "tls": {
+                "ciphers": "SSLv3"
+            }
+        },
+        "gmail": {
+            "host": "smtp.gmail.com",
+            "secure": true,
+            "port": 465
+        }
+    },
+    "app": {
+        "prefix": "exp://localhost:19000/--/"
     },
     "token": {
         "kty": "oct",

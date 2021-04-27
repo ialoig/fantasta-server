@@ -2,69 +2,65 @@ import _ from 'lodash'
 import { populate, Team } from '../database'
 import { Errors, userUtils } from '../utils'
 
-const errors = {
-    LEAGUE_NAME_ERROR: 'LEAGUE_NAME_ERROR',
-    TEAM_ERROR: 'TEAM_ERROR',
-    LEAGUE_PASSWORD_ERROR: 'LEAGUE_PASSWORD_EMPTY',
-    ATTENDEES_ERROR: 'ATTENDEES_ERROR',
-    PLAYERS_NUMBER_ERROR: 'PLAYERS_NUMBER_ERROR',
-    START_PRICE_ERROR: 'START_PRICE_ERROR',
-    AUCTION_TYPE_ERROR: 'AUCTION_TYPE_ERROR',
-    BUDGET_ERROR: 'BUDGET_ERROR',
-    COUNTDOWN_ERROR: 'COUNTDOWN_ERROR',
-    LEAGUE_TYPE_ERROR: 'LEAGUE_TYPE_ERROR'
-}
+const validateleague = ( leagueData ) => {
+    let resp = {
+        league: {},
+        error: Errors.LEAGUE_ERROR,
+        valid: false
+    }
 
-const validateleague = (leagueData, userID) => {
-    let error = ''
-
-    if (!leagueData.name) {
-        error = errors.LEAGUE_NAME_ERROR
+    if ( !leagueData || _.isEmpty(leagueData) ) {
+        resp.error = Errors.LEAGUE_ERROR
+    }
+    else if (!leagueData.name) {
+        resp.error = Errors.LEAGUE_NAME_ERROR
     }
     else if (!leagueData.password) {
-        error = errors.LEAGUE_PASSWORD_ERROR
+        resp.error = Errors.LEAGUE_PASSWORD_ERROR
     }
     else if (!leagueData.teamname) {
-        error = errors.TEAM_ERROR
+        resp.error = Errors.TEAM_ERROR
     }
     else if (!["alphabetic", "call", "random"].includes(leagueData.auctionType)) {
-        error = errors.AUCTION_TYPE_ERROR
+        resp.error = Errors.AUCTION_TYPE_ERROR
     }
     else if (!["zero", "listPrice"].includes(leagueData.startPrice)) {
-        error = errors.START_PRICE_ERROR
+        resp.error = Errors.START_PRICE_ERROR
     }
     else if (parseInt(leagueData.participants) < 2) {
-        error = errors.ATTENDEES_ERROR
+        resp.error = Errors.ATTENDEES_ERROR
     }
     else if (!["mantra", "classic"].includes(leagueData.type)) {
-        error = errors.LEAGUE_TYPE_ERROR
+        resp.error = Errors.LEAGUE_TYPE_ERROR
     }
     else if (parseInt(leagueData.goalkeepers) < 1) {
-        error = errors.PLAYERS_NUMBER_ERROR
+        resp.error = Errors.GOALKEEPERS_NUMBER_ERROR
     }
     else if (leagueData.type == "classic" && parseInt(leagueData.defenders) < 3) {
-        error = errors.PLAYERS_NUMBER_ERROR
+        resp.error = Errors.DEFENDERS_NUMBER_ERROR
     }
     else if (leagueData.type == "classic" && parseInt(leagueData.midfielders) < 3) {
-        error = errors.PLAYERS_NUMBER_ERROR
+        resp.error = Errors.MIDFIELDERS_NUMBER_ERROR
     }
     else if (leagueData.type == "classic" && parseInt(leagueData.strikers) < 1) {
-        error = errors.PLAYERS_NUMBER_ERROR
+        resp.error = Errors.STRIKERS_NUMBER_ERROR
     }
     else if (leagueData.type == "classic" && (parseInt(leagueData.defenders) + parseInt(leagueData.midfielders) + parseInt(leagueData.strikers)) < 10) {
-        error = errors.PLAYERS_NUMBER_ERROR
+        resp.error = Errors.PLAYERS_NUMBER_ERROR
     }
     else if (leagueData.type == "mantra" && parseInt(leagueData.players) < 10) {
-        error = errors.PLAYERS_NUMBER_ERROR
+        resp.error = Errors.PLAYERS_NUMBER_ERROR
     }
     else if (parseInt(leagueData.budget) < 11) {
-        error = errors.BUDGET_ERROR
+        resp.error = Errors.BUDGET_ERROR
     }
     else if (parseInt(leagueData.countdown) < 3) {
-        error = errors.COUNTDOWN_ERROR
+        resp.error = Errors.COUNTDOWN_ERROR
     }
     else {
-        return {
+        resp.valid = true
+
+        resp.league = {
             name: _.toString(leagueData.name),
             password: _.toString(leagueData.password),
             auctionType: leagueData.auctionType,
@@ -78,13 +74,12 @@ const validateleague = (leagueData, userID) => {
             players: leagueData.type == "mantra" ? parseInt(leagueData.players) : 0,
             budget: parseInt(leagueData.budget),
             countdown: parseInt(leagueData.countdown),
-            admin: userID,
             status: 'new',
             isDeleted: false
         }
     }
-    console.log(`[validateleague] error: ${error}`)
-    throw error // todo: perche' non throw error? non ci stampa l'errore corretto nella catch perche' fa un throw di object
+
+    return resp
 }
 
 const parseLeague = (league) => {

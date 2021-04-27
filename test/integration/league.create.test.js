@@ -71,31 +71,25 @@ describe("LEAGUE.CREATE", () => {
     })
 
     it("Body is undefined", async () => {
-        const res = await requester
-            .post(api)
+        const res = await requester.post(api)
 
         expect(res).to.have.status(400);
         expect(res.body).to.be.a('object');
-        expect(res.body.code).to.equal(Errors.TOKEN_NOT_VALID.code)     // todo: why not PARAMS_ERROR?
-        expect(res.body.status).to.equal(Errors.TOKEN_NOT_VALID.status) // todo: why not PARAMS_ERROR?
+        expect(res.body.code).to.equal(Errors.LEAGUE_ERROR.code)     // todo: why not PARAMS_ERROR?
+        expect(res.body.status).to.equal(Errors.LEAGUE_ERROR.status) // todo: why not PARAMS_ERROR?
     });
 
     it("Body is empty", async () => {
-        const res = await requester
-            .post(api)
-            .send({})
+        const res = await requester.post(api).send({})
 
         expect(res).to.have.status(400);
         expect(res.body).to.be.a('object');
-        expect(res.body.code).to.equal(Errors.TOKEN_NOT_VALID.code)     // todo: why not PARAMS_ERROR?
-        expect(res.body.status).to.equal(Errors.TOKEN_NOT_VALID.status) // todo: why not PARAMS_ERROR?
+        expect(res.body.code).to.equal(Errors.LEAGUE_ERROR.code)     // todo: why not PARAMS_ERROR?
+        expect(res.body.status).to.equal(Errors.LEAGUE_ERROR.status) // todo: why not PARAMS_ERROR?
     });
 
     it("user CREATE a LEAGUE", async () => {
-        const res = await requester
-            .post(api)
-            .set('Authorization', token_1)
-            .send(classic_league_data)
+        const res = await requester.post(api).set('Authorization', token_1).send(classic_league_data)
 
         expect(res).to.have.status(200)
         expect(res.body).to.be.a('object')
@@ -146,10 +140,7 @@ describe("LEAGUE.CREATE", () => {
     });
 
     it("user CREATE a LEAGUE with an EXISTING NAME", async () => {
-        const res = await requester
-            .post(api)
-            .set('Authorization', token_1)
-            .send(classic_league_data)
+        const res = await requester.post(api).set('Authorization', token_1).send(classic_league_data)
 
         expect(res).to.have.status(400);
         expect(res.body).to.be.a('object');
@@ -158,10 +149,7 @@ describe("LEAGUE.CREATE", () => {
     });
 
     it("user CREATE an other LEAGUE", async () => {
-        const res = await requester
-            .post(api)
-            .set('Authorization', token_1)
-            .send(mantra_league_data)
+        const res = await requester.post(api).set('Authorization', token_1).send(mantra_league_data)
 
         expect(res).to.have.status(200)
         expect(res.body).to.be.a('object')

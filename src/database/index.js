@@ -85,5 +85,5 @@ process.on('SIGINT', () => {
     })
 })
 
-export { League, FootballPlayer, Team, User } from './models'
+export { League, FootballPlayer, Team, User, Reset } from './models'
 export { initMongoConnection, populate }

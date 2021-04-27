@@ -23,4 +23,7 @@ routing.route("/footballPlayers").get(apis.footballPlayers.get)
 //----- METRICS APIS -----//
 routing.route("/metrics").get(apis.metrics.get)
 
+//----- IMAGES APIS -----//
+routing.route("/images/:image").get(apis.images.get)
+
 export default routing
