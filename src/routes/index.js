@@ -10,6 +10,7 @@ routing.route("/auth/token").put(apis.auth.token)
 routing.route("/auth/update").put(apis.auth.update)
 routing.route("/auth/deleteAccount").delete(apis.auth.deleteAccount)
 routing.route("/auth/forgot").put(apis.auth.forgot)
+routing.route("/auth/resetPassword").put(apis.auth.resetPassword)
 
 //----- LEAGUE APIS -----//
 routing.route("/league/create").post(apis.league.create)

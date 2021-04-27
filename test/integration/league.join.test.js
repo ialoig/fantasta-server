@@ -275,7 +275,7 @@ describe("LEAGUE.JOIN", () => {
         // Check league object
         expect(res.body.league).to.be.a('object')
         expect(res.body.league.name).to.equal(test_league.name)
-        expect(res.body.league.password).to.equal(test_league.password)
+        expect(res.body.league.password).to.equal(test_league.password) // todo: remove password from the response
         expect(res.body.league.participants).to.equal(test_league.participants)
         expect(res.body.league.type).to.equal(test_league.type)
         expect(res.body.league.goalkeepers).to.equal(test_league.goalkeepers)
@@ -368,7 +368,7 @@ describe("LEAGUE.JOIN", () => {
         // Check league object
         expect(res.body.league).to.be.a('object')
         expect(res.body.league.name).to.equal(test_league.name)
-        expect(res.body.league.password).to.equal(test_league.password)
+        expect(res.body.league.password).to.equal(test_league.password) // todo: remove password from the response
         expect(res.body.league.participants).to.equal(test_league.participants)
         expect(res.body.league.type).to.equal(test_league.type)
         expect(res.body.league.goalkeepers).to.equal(test_league.goalkeepers)

@@ -29,23 +29,23 @@ const { Schema, model } = mongoose
 */
 
 const footballPlayersSchema = new Schema(
-    {
-        footballPlayers: {
-            type: Object,
-            required: true,
-        },
-        statistics: {
-          type: Object,
-          required: true,
-        },
-        version: {
-            type: Number,
-            required: true,
-        },
+  {
+    footballPlayers: {
+      type: Object,
+      required: true,
     },
-    {
-        timestamps: true, // createdAt, updatedAt automatically added by mongoose
-    }
+    statistics: {
+      type: Object,
+      required: true,
+    },
+    version: {
+      type: Number,
+      required: true,
+    },
+  },
+  {
+    timestamps: true, // createdAt, updatedAt automatically added by mongoose
+  }
 );
 
 const FootballPlayers = model("FootballPlayers", footballPlayersSchema);
