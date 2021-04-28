@@ -23,4 +23,6 @@ export const en = {
     change_team_name: "Cambia il nome della squadra e prova ancora",
     league_full: "Lega completa",
     cannot_join_league: "Impossibile partecipare alla lega",
+    reset_expired: "Link expired",
+    reset_expired_msg: "The used link is expired. Renew it by clicking again on 'forgot password'"
 }

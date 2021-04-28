@@ -136,9 +136,6 @@ const Errors = {
             message: 'cannot_join_league'
         }
     },
-
-
-
     LEAGUE_ERROR: {
         status: "LEAGUE_ERROR",
         code: 800,
@@ -257,6 +254,14 @@ const Errors = {
         info: {
             title: 'COUNTDOWN_ERROR',
             message: 'COUNTDOWN_ERROR'
+        }
+    },
+    RESET_EXPIRED: {
+        status: "RESET_EXPIRED",
+        code: 815,
+        info: {
+            title: 'reset_expired',
+            message: 'reset_expired_msg'
         }
     }
 }

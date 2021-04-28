@@ -1,6 +1,5 @@
 import Validator from 'validator'
 import config from 'config'
-
 import { Reset, User } from '../../../database'
 import { metricApiError, metricApiSuccess } from '../../../metrics'
 import { Errors, Response } from '../../../utils'
@@ -21,7 +20,7 @@ const forgot = async (req, res, next) => {
                     await reset.remove()
                 }
 
-                reset = await Reset.create({ user: user._id },)
+                reset = await Reset.create({ user: user._id })
 
                 let link = `${config.server.url}/fantasta/auth/redirect?id=${reset._id}`
                 let subject = 'Cambio password'

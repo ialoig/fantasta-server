@@ -11,6 +11,7 @@ routing.route("/auth/update").put(apis.auth.update)
 routing.route("/auth/deleteAccount").delete(apis.auth.deleteAccount)
 routing.route("/auth/forgot").put(apis.auth.forgot)
 routing.route("/auth/resetPassword").put(apis.auth.resetPassword)
+routing.route("/auth/redirect").get(apis.auth.redirect)
 
 //----- LEAGUE APIS -----//
 routing.route("/league/create").post(apis.league.create)

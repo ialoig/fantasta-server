@@ -33,7 +33,6 @@ describe("AUTH.RESET", () => {
         requester.close()
     })
 
-    /*
     it("Body is undefined", async () => {
         const res = await requester
             .put(api)
@@ -55,18 +54,18 @@ describe("AUTH.RESET", () => {
         expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
     });
 
-    it("User EMAIL does NOT EXIST", async () => {
+    it("User EMAIL IS NOT VALID", async () => {
         const res = await requester
             .put(api)
             .send({
-                email: "non_existing_email",
+                email: "non_valid_email_address",
                 password: test_user.password,
             })
 
         expect(res).to.have.status(400);
         expect(res.body).to.be.a('object');
-        expect(res.body.code).to.equal(Errors.EMAIL_NOT_FOUND.code)
-        expect(res.body.status).to.equal(Errors.EMAIL_NOT_FOUND.status)
+        expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
+        expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
     });
 
     it("User PASSWORD is NOT VALID", async () => {
@@ -82,7 +81,20 @@ describe("AUTH.RESET", () => {
         expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
         expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
     });
-    */
+
+    it("User EMAIL does NOT EXIST", async () => {
+        const res = await requester
+            .put(api)
+            .send({
+                email: "non_existing_email@email.com",
+                password: test_user.password,
+            })
+
+        expect(res).to.have.status(400);
+        expect(res.body).to.be.a('object');
+        expect(res.body.code).to.equal(Errors.EMAIL_NOT_FOUND.code)
+        expect(res.body.status).to.equal(Errors.EMAIL_NOT_FOUND.status)
+    });
 
     it("User RESET his PASSWORD", async () => {
         const newPassword = test_user.password + "_new"

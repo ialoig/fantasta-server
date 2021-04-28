@@ -9,13 +9,9 @@ const resetPassword = async (req, res, next) => {
     const { email = '', password = '' } = req.body
 
     if (email && Validator.isEmail(email) && password && Validator.isStrongPassword(password, PASSWORD_OPT)) {
-
-        console.log(`email = ${email}, password = ${password}`)
-
         try {
             let updatedUser = await User.findOneAndUpdate({ email: email }, { password: password }, { new: true, useFindAndModify: false });
             if (updatedUser) {
-                console.log(`updatedUser = ${JSON.stringify(updatedUser, null, 2)}`)
                 let response = await userUtils.createAuthResponse(updatedUser, updatedUser.password) //todo: why accept password?
                 metricApiSuccess("auth.resetPassword", '', duration_start)
                 res.json(Response.resolve(response))
