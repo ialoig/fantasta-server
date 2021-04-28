@@ -39,9 +39,7 @@ const forgot = async (req, res, next) => {
                             <div>
                                 <img src="${config.server.url}/fantasta/images/logo.png" alt="" width="160" />
                                 <p>Ciao ${user.username}</p>
-                                <p>
-                                    Ecco il link per cambiare la password del tuo account: <a href="${link}" data-applink="${link}">link</a>
-                                </p>
+                                <p>Ecco il link per cambiare la password del tuo account: <a href="${link}" data-applink="${link}">link</a></p>
                                 <p>Il link sarà valido per 24 ore dopo di che dovrai provvedere a crearne uno nuovo per recuperare la tua password.</p>
                                 <p>Grazie</p>
                                 <p>Fantasta Team.</p>
@@ -54,15 +52,17 @@ const forgot = async (req, res, next) => {
                 metricApiSuccess("auth.forgot", '', duration_start)
             }
             else {
-                console.error(`[api] auth.forgot: ${Errors.EMAIL_NOT_FOUND.status}`)
-                metricApiError("auth.forgot", Errors.EMAIL_NOT_FOUND, duration_start)
+                console.error(`[api] auth.forgot: ${Errors.USER_NOT_FOUND.status}`)
+                metricApiError("auth.forgot", Errors.USER_NOT_FOUND, duration_start)
             }
+            res.json(Response.resolve())
         }
         catch (error) {
             console.error(`[api] auth.forgot: ${error}`)
             metricApiError("auth.forgot", error, duration_start)
+
+            res.status(400).send(Response.reject(Errors.EMAIL_ERROR, req.headers.language))
         }
-        res.json(Response.resolve())
     }
     else {
         console.error(`[api] auth.forgot: ${Errors.EMAIL_ERROR.status}`)
