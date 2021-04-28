@@ -8,10 +8,10 @@ const resetSchema = new Schema(
             type: Schema.Types.ObjectId,
             ref: "User"
         },
-        expireAt: {
+        createdAt: {
             type: Date,
-            default: Date.now,
-            require: true,
+            expires: '24h',
+            default: Date.now
         }
     },
     {
@@ -19,7 +19,7 @@ const resetSchema = new Schema(
     }
 );
 
-resetSchema.index({ expireAt: 1 }, { expireAfterSeconds : 86400 });
+// resetSchema.index({ createdAt: 1 }, { expires: 10, expireAfterSeconds: 10 });
 
 const Reset = model('Reset', resetSchema)
 
