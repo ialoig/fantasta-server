@@ -460,6 +460,22 @@
           "intervalFactor": 10,
           "legendFormat": "{{name}} - {{status}} - {{msg}}",
           "refId": "F"
+        },
+        {
+          "expr": "api_duration_seconds_sum{name=\"auth.redirect\", status=\"success\"}",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "{{name}} - {{status}} - {{msg}}",
+          "refId": "G"
+        },
+        {
+          "expr": "api_duration_seconds_sum{name=\"auth.resetPassword\", status=\"success\"}",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "{{name}} - {{status}} - {{msg}}",
+          "refId": "H"
         }
       ],
       "thresholds": [],
@@ -559,46 +575,60 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "api_duration_seconds_count{name=~\"auth.delete\", status=\"error\"}",
+          "expr": "api_duration_seconds_count{name=\"auth.delete\", status=\"error\"}",
           "hide": false,
           "interval": "",
           "legendFormat": "{{name}} - {{status}} - {{msg}}",
           "refId": "A"
         },
         {
-          "expr": "api_duration_seconds_count{name=~\"auth.login\", status=\"error\"}",
+          "expr": "api_duration_seconds_count{name=\"auth.login\", status=\"error\"}",
           "hide": false,
           "interval": "",
           "legendFormat": "{{name}} - {{status}} - {{msg}}",
           "refId": "B"
         },
         {
-          "expr": "api_duration_seconds_count{name=~\"auth.register\", status=\"error\"}",
+          "expr": "api_duration_seconds_count{name=\"auth.register\", status=\"error\"}",
           "hide": false,
           "interval": "",
           "legendFormat": "{{name}} - {{status}} - {{msg}}",
           "refId": "C"
         },
         {
-          "expr": "api_duration_seconds_count{name=~\"auth.token\", status=\"error\"}",
+          "expr": "api_duration_seconds_count{name=\"auth.token\", status=\"error\"}",
           "hide": false,
           "interval": "",
           "legendFormat": "{{name}} - {{status}} - {{msg}}",
           "refId": "D"
         },
         {
-          "expr": "api_duration_seconds_count{name=~\"auth.update\", status=\"error\"}",
+          "expr": "api_duration_seconds_count{name=\"auth.update\", status=\"error\"}",
           "hide": false,
           "interval": "",
           "legendFormat": "{{name}} - {{status}} - {{msg}}",
           "refId": "E"
         },
         {
-          "expr": "api_duration_seconds_count{name=~\"auth.forgot\", status=\"error\"}",
+          "expr": "api_duration_seconds_count{name=\"auth.forgot\", status=\"error\"}",
           "hide": false,
           "interval": "",
           "legendFormat": "{{name}} - {{status}} - {{msg}}",
           "refId": "F"
+        },
+        {
+          "expr": "api_duration_seconds_count{name=\"auth.redirect\", status=\"error\"}",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{name}} - {{status}} - {{msg}}",
+          "refId": "G"
+        },
+        {
+          "expr": "api_duration_seconds_count{name=\"auth.resetPassword\", status=\"error\"}",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{name}} - {{status}} - {{msg}}",
+          "refId": "H"
         }
       ],
       "thresholds": [],
@@ -1428,5 +1458,5 @@
   "timezone": "browser",
   "title": "Fantasta Server",
   "uid": "hghajaEMk",
-  "version": 1
+  "version": 9
 }
