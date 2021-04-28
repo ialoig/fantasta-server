@@ -1,9 +1,8 @@
 import { expect, should, use } from 'chai'
 import chaiHttp from 'chai-http'
-import { User, League, Team, populate } from '../../src/database/index.js'
-import config from 'config'
-import { tokenUtils, Errors } from '../../src/utils/index.js'
-import { requester, findPropertyValueInNestedObject, printObject } from './index.js'
+import { User, Reset } from '../../src/database/index.js'
+import { Errors } from '../../src/utils/index.js'
+import { requester, printObject } from './index.js'
 
 use(chaiHttp);
 should();
@@ -17,16 +16,26 @@ const test_user = {
     username: 'username_1'
 }
 
+const test_reset = {
+    //_id: it will be added once the reset is created
+    //user:
+}
+
 describe("AUTH.RESET", () => {
 
     before(async () => {
 
         // Clean DB
         await User.deleteMany()
+        await Reset.deleteMany()
 
         // Create User
         const test_user_db = await User.create(test_user)
         test_user["_id"] = test_user_db._id.toString()
+
+        // Create Reset
+        const test_reset_db = await Reset.create({ user: test_user_db._id })
+        test_reset["_id"] = test_reset_db._id.toString()
     });
 
     after(() => {
@@ -97,6 +106,10 @@ describe("AUTH.RESET", () => {
     });
 
     it("User RESET his PASSWORD", async () => {
+
+        const resetPassword_before = await Reset.findOne({ user: test_user._id })
+        expect(resetPassword_before).to.be.a('object')
+
         const newPassword = test_user.password + "_new"
         const res = await requester
             .put(api)
@@ -117,13 +130,17 @@ describe("AUTH.RESET", () => {
         expect(res.body.user.leagues).to.have.length(0)
 
         // Check user data in mongo DB
-        let userResetPassword = await User.findOne({ email: test_user.email })
+        const userResetPassword = await User.findOne({ email: test_user.email })
         expect(userResetPassword).to.be.a('object')
         expect(userResetPassword._id.toString()).be.equal(test_user._id.toString())
         expect(userResetPassword.email).be.equal(test_user.email)
         expect(userResetPassword.username).be.equal(test_user.username)
         expect(userResetPassword.password).be.equal(newPassword)
         expect(userResetPassword.leagues).to.have.length(0)
+
+        // Check reset data in mongo DB
+        const resetPassword_after = await Reset.findOne({ user: test_user._id })
+        expect(resetPassword_after).to.be.null
     });
 
 });

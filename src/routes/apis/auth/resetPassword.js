@@ -1,5 +1,5 @@
 import Validator from 'validator'
-import { User } from '../../../database'
+import { User, Reset } from '../../../database'
 import { metricApiError, metricApiSuccess } from '../../../metrics'
 import { Errors, PASSWORD_OPT, Response, userUtils } from '../../../utils'
 
@@ -13,6 +13,7 @@ const resetPassword = async (req, res, next) => {
             let updatedUser = await User.findOneAndUpdate({ email: email }, { password: password }, { new: true, useFindAndModify: false });
             if (updatedUser) {
                 let response = await userUtils.createAuthResponse(updatedUser, updatedUser.password) //todo: why accept password?
+                let reset = await Reset.findOneAndRemove({ user: updatedUser._id })
                 metricApiSuccess("auth.resetPassword", '', duration_start)
                 res.json(Response.resolve(response))
             }

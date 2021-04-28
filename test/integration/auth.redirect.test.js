@@ -2,7 +2,7 @@ import { expect, should, use } from 'chai'
 import chaiHttp from 'chai-http'
 import { User, Reset } from '../../src/database/index.js'
 import { Errors } from '../../src/utils/index.js'
-import { requester, findPropertyValueInNestedObject, printObject } from './index.js'
+import { requester, printObject } from './index.js'
 
 use(chaiHttp);
 should();
