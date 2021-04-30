@@ -1,6 +1,6 @@
 import { metricApiError, metricApiSuccess } from '../../../metrics'
 import { Reset, User } from '../../../database'
-import { Errors, Response } from '../../../utils'
+import { Errors } from '../../../utils'
 import config from 'config'
 import I18n from 'i18n-js'
 import { getLanguage } from '../../../languages'
@@ -51,14 +51,12 @@ const redirect = async (req, res, next) => {
         catch (error) {
             console.error(`[api] auth.redirect: ${error}`)
             metricApiError("auth.redirect", error, duration_start)
-            //res.status(400).send(Response.reject(error, req.headers.language)) // TODO: redirect Errors.INT_SERV_ERR
             res.redirect(getRedirectErrorPageUrl(Errors.INT_SERV_ERR, getLanguage(req.headers.language)))
         }
     }
     else {
         console.error(`[api] auth.redirect: ${Errors.PARAMS_ERROR.status}`)
         metricApiError("auth.redirect", Errors.PARAMS_ERROR, duration_start)
-        //res.status(400).send(Response.reject(Errors.PARAMS_ERROR, req.headers.language)) // TODO: redirect Errors.INT_SERV_ERR
         res.redirect(getRedirectErrorPageUrl(Errors.INT_SERV_ERR, getLanguage(req.headers.language)))
     }
 }

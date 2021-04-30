@@ -2,6 +2,7 @@ import { expect, should, use } from 'chai'
 import chaiHttp from 'chai-http'
 import { User, Reset } from '../../src/database/index.js'
 import { Errors } from '../../src/utils/index.js'
+import config from 'config'
 import { requester, printObject } from './index.js'
 
 use(chaiHttp);
@@ -45,22 +46,20 @@ describe("AUTH.REDIRECT", () => {
     it("Body is undefined", async () => {
         const res = await requester
             .get(api)
+            .redirects(0) // don't follow redirect url
 
-        expect(res).to.have.status(400);
-        expect(res.body).to.be.a('object');
-        expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
-        expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
+        expect(res).to.redirect
+        expect(res).to.have.status(302)
+        expect(res.header.location).to.include(`${config.app.prefix}${config.app.resetPasswordErrorPage}?title=`)
     });
-
     it("Body is empty", async () => {
         const res = await requester
             .get(api)
-            .send({})
+            .redirects(0) // don't follow redirect url
 
-        expect(res).to.have.status(400);
-        expect(res.body).to.be.a('object');
-        expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
-        expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
+        expect(res).to.redirect
+        expect(res).to.have.status(302)
+        expect(res.header.location).to.include(`${config.app.prefix}${config.app.resetPasswordErrorPage}?title=`)
     });
 
     it("ResetId is NOT VALID mongoId", async () => {
@@ -69,11 +68,11 @@ describe("AUTH.REDIRECT", () => {
             .query({
                 id: "not_a_valid_mongo_id"
             })
+            .redirects(0) // don't follow redirect url
 
-        expect(res).to.have.status(400);
-        expect(res.body).to.be.a('object');
-        expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
-        expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
+        expect(res).to.redirect
+        expect(res).to.have.status(302)
+        expect(res.header.location).to.include(`${config.app.prefix}${config.app.resetPasswordErrorPage}?title=`)
     });
 
     it("Reset request EXPIRED", async () => {
@@ -82,11 +81,11 @@ describe("AUTH.REDIRECT", () => {
             .query({
                 id: "60889121f7f811014929d8f0"
             })
+            .redirects(0) // don't follow redirect url
 
-        expect(res).to.have.status(400);
-        expect(res.body).to.be.a('object');
-        expect(res.body.code).to.equal(Errors.RESET_EXPIRED.code)
-        expect(res.body.status).to.equal(Errors.RESET_EXPIRED.status)
+        expect(res).to.redirect
+        expect(res).to.have.status(302)
+        expect(res.header.location).to.include(`${config.app.prefix}${config.app.resetPasswordErrorPage}?title=`)
     });
 
     it("User get REDIRECTED to the resetPassword page in the app", async () => {
@@ -99,22 +98,23 @@ describe("AUTH.REDIRECT", () => {
 
         expect(res).to.redirect
         expect(res).to.have.status(302)
-        expect(res.header.location).to.include('exp://192.168.0.154:19000/--/ResetPassword?email=')
+        expect(res.header.location).to.include(`${config.app.prefix}${config.app.resetPasswordPage}?email=`)
     });
 
     it("ResetId EXISTS but User does NOT EXIST", async () => {
+
         await User.deleteMany()
 
         const res = await requester
             .get(api)
-            .send({
+            .query({
                 id: test_reset._id
             })
+            .redirects(0) // don't follow redirect url
 
-        expect(res).to.have.status(400);
-        expect(res.body).to.be.a('object');
-        expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
-        expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
+        expect(res).to.redirect
+        expect(res).to.have.status(302)
+        expect(res.header.location).to.include(`${config.app.prefix}${config.app.resetPasswordErrorPage}?title=`)
     });
 
 });
