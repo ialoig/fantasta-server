@@ -29,7 +29,9 @@
         }
     },
     "app": {
-        "prefix": "exp://localhost:19000/--/"
+        "prefix": "exp://localhost:19000/--/",
+        "resetPasswordPage": "ResetPassword",
+        "resetPasswordErrorPage": "ResetPasswordError"
     },
     "token": {
         "kty": "oct",

@@ -22,6 +22,8 @@ const forgot = async (req, res, next) => {
 
                 reset = await Reset.create({ user: user._id })
 
+                // TODO: 'localhost' non funziona dalla app.
+                // Bisogna usare lo stesso indirizzo IP della variabile 'fantasta_server_url' in Fantasta_mobile/custom_config
                 let link = `${config.server.url}/fantasta/auth/redirect?id=${reset._id}`
                 let subject = 'Cambio password'
                 let _html = `<!DOCTYPE html>

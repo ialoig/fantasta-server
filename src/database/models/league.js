@@ -13,7 +13,7 @@ const leagueSchema = new Schema(
             index: true,
             validate: {
                 validator: (v) => {
-                    return _.isString(v) && v.length<=40
+                    return _.isString(v) && v.length <= 40
                 },
                 message: props => `${props.value} is not a valid league name!`
             }
@@ -23,7 +23,7 @@ const leagueSchema = new Schema(
             required: true,
             validate: {
                 validator: (v) => {
-                    return _.isString(v) && v.length<=40
+                    return _.isString(v) && v.length <= 40
                 },
                 message: props => `${props.value} is not a valid password!`
             }
@@ -44,7 +44,7 @@ const leagueSchema = new Schema(
         },
         type: {
             type: Schema.Types.String,
-            enum: [ "classic", "mantra" ],
+            enum: ["classic", "mantra"],
             required: true
         },
         goalkeepers: {
@@ -112,12 +112,12 @@ const leagueSchema = new Schema(
         },
         auctionType: {
             type: Schema.Types.String,
-            enum: [ "alphabetic", "call", "random" ],
+            enum: ["alphabetic", "call", "random"],
             required: true
         },
         startPrice: {
             type: Schema.Types.String,
-            enum: [ "zero", "listPrice" ],
+            enum: ["zero", "listPrice"],
             required: true
         },
         teams: [{
@@ -126,7 +126,7 @@ const leagueSchema = new Schema(
         }],
         status: {
             type: Schema.Types.String,
-            enum: [ "new", "active", "paused", "closed" ],
+            enum: ["new", "active", "paused", "closed"],
             required: true
         },
         isDeleted: {
@@ -139,6 +139,6 @@ const leagueSchema = new Schema(
     }
 );
 
-const League = model( 'League', leagueSchema )
+const League = model('League', leagueSchema)
 
 export default League

@@ -158,7 +158,8 @@ export const fakeLeagues = [
         countdown: 3,
         auctionType: "random",
         startPrice: "zero",
-        teams: []
+        teams: [],
+        status: "new"
     }, {
         name: "Serie B",
         password: "serieb",
@@ -174,7 +175,8 @@ export const fakeLeagues = [
         countdown: 3,
         auctionType: "random",
         startPrice: "zero",
-        teams: []
+        teams: [],
+        status: "new"
     }, {
         name: "Serie C",
         password: "seriec",
@@ -190,7 +192,8 @@ export const fakeLeagues = [
         countdown: 3,
         auctionType: "random",
         startPrice: "zero",
-        teams: []
+        teams: [],
+        status: "new"
     }, {
         name: "Serie D",
         password: "seried",
@@ -206,7 +209,8 @@ export const fakeLeagues = [
         countdown: 3,
         auctionType: "random",
         startPrice: "zero",
-        teams: []
+        teams: [],
+        status: "new"
     }, {
         name: "Eccellenza",
         password: "eccellenza",
@@ -222,7 +226,8 @@ export const fakeLeagues = [
         countdown: 3,
         auctionType: "random",
         startPrice: "zero",
-        teams: []
+        teams: [],
+        status: "new"
     }, {
         name: "Prima Categoria",
         password: "primacategoria",
@@ -238,7 +243,8 @@ export const fakeLeagues = [
         countdown: 3,
         auctionType: "random",
         startPrice: "zero",
-        teams: []
+        teams: [],
+        status: "new"
     }, {
         name: "Seconda Categoria",
         password: "secondacategoria",
@@ -254,7 +260,8 @@ export const fakeLeagues = [
         countdown: 3,
         auctionType: "random",
         startPrice: "zero",
-        teams: []
+        teams: [],
+        status: "new"
     }, {
         name: "Terza Categoria",
         password: "terzacategoria",
@@ -270,7 +277,8 @@ export const fakeLeagues = [
         countdown: 3,
         auctionType: "random",
         startPrice: "zero",
-        teams: []
+        teams: [],
+        status: "new"
     }, {
         name: "Premier League",
         password: "premierleague",
@@ -286,7 +294,8 @@ export const fakeLeagues = [
         countdown: 3,
         auctionType: "random",
         startPrice: "zero",
-        teams: []
+        teams: [],
+        status: "new"
     }, {
         name: "Bundesliga",
         password: "bundesliga",
@@ -302,7 +311,8 @@ export const fakeLeagues = [
         countdown: 3,
         auctionType: "random",
         startPrice: "zero",
-        teams: []
+        teams: [],
+        status: "new"
     }, {
         name: "Liga Spagnola",
         password: "ligaspagnola",
@@ -318,7 +328,8 @@ export const fakeLeagues = [
         countdown: 3,
         auctionType: "random",
         startPrice: "zero",
-        teams: []
+        teams: [],
+        status: "new"
     }, {
         name: "Ligue 1",
         password: "ligue1",
@@ -334,6 +345,7 @@ export const fakeLeagues = [
         countdown: 3,
         auctionType: "random",
         startPrice: "zero",
-        teams: []
+        teams: [],
+        status: "new"
     }
 ]

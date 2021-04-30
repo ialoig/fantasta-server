@@ -1,4 +1,3 @@
-
 {
     "port": 3000,
     "server": {
@@ -7,8 +6,8 @@
     },
     "schedule": {
         "hour": 3,
-        "excelFilenameClassic" : "./src/xls/footballPlayerListClassic.xls",
-        "excelFilenameMantra" : "./src/xls/footballPlayerListMantra.xls",
+        "excelFilenameClassic": "./src/xls/footballPlayerListClassic.xls",
+        "excelFilenameMantra": "./src/xls/footballPlayerListMantra.xls",
         "classicUrl": "http://www.fantacalcio.it//Servizi/Excel.ashx?type=0&r=1&t=",
         "mantraUrl": "http://www.fantacalcio.it//Servizi/Excel.ashx?type=0&r=3&t=",
         "statistiche": "https://www.fantacalcio.it/Servizi/Excel.ashx?type=2&r=1&t="
@@ -30,7 +29,9 @@
         }
     },
     "app": {
-        "prefix": "exp://localhost:19000/--/"
+        "prefix": "exp://localhost:19000/--/",
+        "resetPasswordPage": "ResetPassword",
+        "resetPasswordErrorPage": "ResetPasswordError"
     },
     "token": {
         "kty": "oct",
