@@ -40,7 +40,7 @@ const redirect = async (req, res, next) => {
                 if (!user) {
                     console.error(`[api] auth.redirect: ${Errors.USER_NOT_FOUND.status}`)
                     metricApiError("auth.redirect", Errors.USER_NOT_FOUND, duration_start)
-                    res.redirect(getRedirectErrorPageUrl(Errors.USER_NOT_FOUND, getLanguage(req.headers.language)))
+                    res.redirect(getRedirectErrorPageUrl(Errors.RESET_EXPIRED, getLanguage(req.headers.language)))
                 }
                 else {
                     metricApiSuccess("auth.redirect", '', duration_start)
@@ -51,13 +51,13 @@ const redirect = async (req, res, next) => {
         catch (error) {
             console.error(`[api] auth.redirect: ${error}`)
             metricApiError("auth.redirect", error, duration_start)
-            res.redirect(getRedirectErrorPageUrl(Errors.INT_SERV_ERR, getLanguage(req.headers.language)))
+            res.redirect(getRedirectErrorPageUrl(Errors.RESET_EXPIRED, getLanguage(req.headers.language)))
         }
     }
     else {
         console.error(`[api] auth.redirect: ${Errors.PARAMS_ERROR.status}`)
         metricApiError("auth.redirect", Errors.PARAMS_ERROR, duration_start)
-        res.redirect(getRedirectErrorPageUrl(Errors.INT_SERV_ERR, getLanguage(req.headers.language)))
+        res.redirect(getRedirectErrorPageUrl(Errors.RESET_EXPIRED, getLanguage(req.headers.language)))
     }
 }
 

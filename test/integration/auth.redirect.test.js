@@ -52,6 +52,7 @@ describe("AUTH.REDIRECT", () => {
         expect(res).to.have.status(302)
         expect(res.header.location).to.include(`${config.app.prefix}${config.app.resetPasswordErrorPage}?title=`)
     });
+
     it("Body is empty", async () => {
         const res = await requester
             .get(api)
