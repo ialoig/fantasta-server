@@ -3,8 +3,7 @@ import config from 'config'
 
 import { Reset, User } from '../../../database'
 import { metricApiError, metricApiSuccess } from '../../../metrics'
-import { Errors, Response } from '../../../utils'
-import { sendEmail } from '../../../utils'
+import { Errors, Response, sendEmail } from '../../../utils'
 
 const forgot = async (req, res, next) => {
     const duration_start = process.hrtime()
@@ -14,7 +13,7 @@ const forgot = async (req, res, next) => {
     {
         try
         {
-            let user = await User.findOne({ email })
+            const user = await User.findOne({ email })
 
             if ( user && user.$isValid() )
             {
@@ -29,6 +28,7 @@ const forgot = async (req, res, next) => {
 
                 let link = `${config.server.url}/fantasta/auth/redirect?id=${reset._id}`
 
+                let _from = `Fantasta Team <${config.email}>`
                 let subject = 'Cambio password'
                 let _html = `<!DOCTYPE html>
                     <html>
@@ -47,7 +47,7 @@ const forgot = async (req, res, next) => {
                         </body>
                     </html>`
 
-                sendEmail(email, subject, null, _html)
+                await sendEmail(_from, email, null, subject, null, _html)
 
                 metricApiSuccess("auth.forgot", '', duration_start)
             }

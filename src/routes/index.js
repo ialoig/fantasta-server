@@ -25,4 +25,7 @@ routing.route("/metrics").get(apis.metrics.get)
 //----- IMAGES APIS -----//
 routing.route("/images/:image").get(apis.images.get)
 
+//----- SUPPORT APIS -----//
+routing.route("/support").post(apis.support.support)
+
 export default routing

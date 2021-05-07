@@ -2,9 +2,9 @@
 import { expect, should, use } from 'chai'
 import chaiHttp from 'chai-http'
 import config from 'config'
-import { User } from '../../src/database/index.js'
-import { tokenUtils, Errors } from '../../src/utils/index.js'
-import { requester } from './index.js'
+import { User } from '../../src/database'
+import { tokenUtils, Errors } from '../../src/utils'
+import { requester } from './index'
 
 use(chaiHttp);
 should();

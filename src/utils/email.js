@@ -29,12 +29,13 @@ const transporter = createTransport(transport)
  * @param {*} _text : email text content
  * @param {*} _html : html format content
  */
-export const sendEmail = async (_to, _subject, _text, _html) => {
+export const sendEmail = async (_from, _to, _cc, _subject, _text, _html) => {
   try
   {
     let info = await transporter.sendMail({
-      from: `Fantasta Team <${config.email}>`,
+      from: _from,
       to: _to,
+      cc: _cc,
       subject: _subject,
       text: _text,
       html: _html
