@@ -77,7 +77,7 @@ describe("Forgot", () => {
             });
     });
 
-    it("Email is CORRECT", (done) => {
+    xit("Email is CORRECT", (done) => {
         User.create({ email: 'test@test.com', password: '123456', username: 'username' }, () => {
             requester.put('/fantasta/auth/forgot')
                 .send({ email: 'test@test.com' })
