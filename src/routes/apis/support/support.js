@@ -14,7 +14,7 @@ const support = async (req, res, next) => {
             const auth = await userUtils.userFromToken(req)
             const user = auth.user
 
-            let _from = `Support Fantasta <${config.email}>`
+            let _from = `Support Fantasta <${config.email.email}>`
             let subject = 'Richiesta Support'
 
             let _to = email && email.split && email.split(',').map( item => item.trim && item.trim() ).filter( item => Validator.isEmail(item) ) || []
@@ -30,7 +30,7 @@ const support = async (req, res, next) => {
                     </head>
                     <body>
                         <div>
-                            <img src="${config.server.url}/fantasta/images/logo.png" alt="" width="160" />
+                            <img src="https://i.ibb.co/6wDqGMT/logo.png" alt="" width="160" />
                             <p>Ciao ${user.username}</p>
                             <p>La tua email è stata inviata al nostro support</p>
                             <p>Riceverai al più presto una risposta.</p>
@@ -43,7 +43,7 @@ const support = async (req, res, next) => {
                     </body>
                 </html>`
             
-            await sendEmail( _from, _to, config.email, subject, null, _html)
+            await sendEmail( _from, _to, config.email.email, subject, null, _html)
 
             metricApiSuccess("support", '', duration_start)
 

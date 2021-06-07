@@ -23,7 +23,8 @@ const forgot = async (req, res, next) => {
 
                 reset = await Reset.create({ user: user._id })
 
-                let _from = `Fantasta Team <${config.email}>`
+                let link = `${config.server.url}/fantasta/auth/redirect?id=${reset._id}`
+                let _from = `Fantasta Team <${config.email.email}>`
                 let subject = 'Cambio password'
                 let _html = `<!DOCTYPE html>
                     <html>
@@ -32,7 +33,7 @@ const forgot = async (req, res, next) => {
                         </head>
                         <body>
                             <div>
-                                <img src="${config.server.url}/fantasta/images/logo.png" alt="" width="160" />
+                                <img src="https://i.ibb.co/6wDqGMT/logo.png" alt="logo" width="160" />
                                 <p>Ciao ${user.username}</p>
                                 <p>Ecco il link per cambiare la password del tuo account: <a href="${link}" data-applink="${link}">link</a></p>
                                 <p>Il link sarà valido per 24 ore dopo di che dovrai provvedere a crearne uno nuovo per recuperare la tua password.</p>
@@ -42,7 +43,7 @@ const forgot = async (req, res, next) => {
                         </body>
                     </html>`
 
-                await sendEmail(_from, email, null, subject, null, _html)
+                await sendEmail(_from, user.email, null, subject, null, _html)
 
                 metricApiSuccess("auth.forgot", '', duration_start)
             }

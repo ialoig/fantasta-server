@@ -5,17 +5,12 @@ import { createTransport } from 'nodemailer'
 
 import { email_status_counter, METRIC_STATUS } from '../metrics'
 
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// TODO: don't use credential in code. Retrieve them in a safer way
-const email_password = 'tuaPassword'
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 // CHANGE THIS TO USE DIFFERENT DOMAIN LIKE GOOGLE
-const domain = config.transporter.outlook //config.transporter.gmail
+const domain = config.transporter.gmail //config.transporter.outlook
 
 const auth = {
-  user: config.email,
-  pass: email_password
+  user: config.email.email,
+  pass: config.email.password   // TOGLIERE E METTERE QUALCOSA DI PIù SICURO PER LA PASSWORD
 }
 
 const transport = Object.assign({}, _.cloneDeep(domain), { auth })

@@ -12,7 +12,10 @@
         "mantraUrl": "http://www.fantacalcio.it//Servizi/Excel.ashx?type=0&r=3&t=",
         "statistiche": "https://www.fantacalcio.it/Servizi/Excel.ashx?type=2&r=1&t="
     },
-    "email": "fantasta@gmail.com",
+    "email": {
+        "email": "fantasta.info@gmail.com",
+        "password": "Fantasta_2K21"
+    },
     "transporter": {
         "outlook": {
             "host": "smtp-mail.outlook.com",
