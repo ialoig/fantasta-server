@@ -6,9 +6,28 @@ import { downloadPlayers } from '../footballPlayers'
 import { default as populate } from './populate.js'
 import { mongodb_connection_status_counter } from '../metrics'
 import { seed } from "../seed" // for development only
+import { User } from './models'
 
 // use ES6 Promise instead of mongoose.Promise
 mongoose.Promise = Promise
+
+const deletedUserObj = {
+    email: 'deletedUser@email.com',
+    password: 'deletedUserPassword',
+    username: 'deleted user'
+}
+
+const createDeletedUser = async () => {
+    let deletedUserResult = await User.findOne({ email: deletedUserObj.email })
+    if (!deletedUserResult) {
+        console.log(`[createDeletedUser] deletedUser creation`)
+        deletedUserResult = await User.create(deletedUserObj)
+    }
+    else {
+        console.log(`[createDeletedUser] skip deletedUser creation`)
+    }
+    console.log(`deletedUserObj: ${JSON.stringify(deletedUserObj, null, 2)}`)
+}
 
 const mongodbConnection = `${config.mongodb.endpoint}:${config.mongodb.port}/${config.mongodb.database}`
 
@@ -18,7 +37,6 @@ const mongoConnectionParams = {
     useCreateIndex: true,
     autoIndex: true         // disabled in production since index creation can cause a significant performance impact (default: true?)
 }
-
 
 const initMongoConnection = async (trigger_download = true) => {
 
@@ -64,9 +82,11 @@ const initMongoConnection = async (trigger_download = true) => {
         process.exit(1) // fail application
     })
 
-    connection.on('open', () => {
+    connection.on('open', async () => {
         console.log("[mongodb] status: open")
         mongodb_connection_status_counter.inc({ status: "open" });
+
+        await createDeletedUser()
 
         if (trigger_download)
             downloadPlayers()
@@ -87,3 +107,4 @@ process.on('SIGINT', () => {
 
 export { League, FootballPlayer, Team, User, Reset } from './models'
 export { initMongoConnection, populate }
+export { deletedUserObj }

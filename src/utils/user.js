@@ -1,5 +1,5 @@
 import config from 'config'
-import { populate, User, League, Team } from '../database'
+import { populate, User, League, Team, deletedUserObj } from '../database'
 import { default as Token } from './token.js'
 import { Errors, tokenUtils } from '../utils'
 import mongoose from 'mongoose'
@@ -8,20 +8,17 @@ const userFromToken = async (req) => {
 
     let ret = {}
 
-    try
-    {
+    try {
         const token = Token.Get(req) || ''
         let auth = Token.Verify(token, config.token.kid)
 
-        if ( auth.error )
-        {
+        if (auth.error) {
             return Promise.reject(Errors.TOKEN_NOT_VALID)
         }
         else {
             let user = await User.findOne({ email: auth.email })
 
-            if (!user || user.$isEmpty() || !user.$isValid())
-            {
+            if (!user || user.$isEmpty() || !user.$isValid()) {
                 return Promise.reject(Errors.EMAIL_NOT_FOUND)
             }
             else if (user.password && user.password == auth.password) {
@@ -107,26 +104,58 @@ function removeElementFromArray(arr, value) {
     return false
 }
 
+/**
+ * 
+ * @param {*} teams_ids list of team id to analize
+ * @returns team_id of the first active user, null otherwise
+ */
+const getNewAdmin = async (teams_ids, userToDelete, deletedUser) => {
+
+    for (let team_index = 0; team_index < teams_ids.length; team_index++) {
+
+        const team_id = teams_ids[team_index]
+
+        // Check if "team_id" is a valid ObjectId
+        if (!team_id instanceof mongoose.Types.ObjectId) {
+            console.error(`[getNewAdmin]: "${team_id}" is not a valid ObjectId`)
+            continue // parse next team
+        }
+
+        // find team
+        const team = await Team.findById(team_id)
+        if (!team) {
+            console.error(`[getNewAdmin]: "${team_id}" does not match any "Team" document is mongoDB`)
+            continue // parse next team
+        }
+
+        // Check if "team.user" is a valid ObjectId
+        if (!team.user instanceof mongoose.Types.ObjectId) {
+            console.error(`[getNewAdmin]: "${team.user}" is not a valid ObjectId`)
+            continue // parse next team
+        }
+
+        // deletedUser and userToDelete are not eligible to be admin
+        if (team.user.equals(deletedUser._id) || team.user.equals(userToDelete._id)) {
+            continue
+        }
+        else {
+            return team.user
+        }
+    }
+    console.error(`[getNewAdmin]: no active user found in league. "deletedUser" will be the admin`)
+    return deletedUser._id
+}
 
 /**
-     * It removes the User document from DB. It also deletes user teams from DB and removes the reference from the related leagues.
-     * @param {*} user object to remove
-     * @returns true/false
-     */
-const removeUserAndReferences = async (user) => {
-    let res = {
-        userRemoved: [],
-        teamRemoved: [],
-        leagueRemoved: [],
-    }
+ * It removes the User document from DB. It also moves user teams and league references to the userDeleted user.
+ * @param {*} user object to remove
+ * @returns true/false
+ */
+const removeUser = async (userToDelete) => {
+    console.log(`[removeUser]: deleting user ${JSON.stringify(userToDelete, null, 2)}`)
     try {
-        console.log(`[removeUserAndReferences]: deleting user "${user._id}"`)
-
-        // Remove user
-        res.userRemoved.push(user._id)
-        await user.deleteOne();
-
-        const league_ids = user.leagues
+        const deletedUser = await User.findOne({ email: deletedUserObj.email })
+        const league_ids = userToDelete.leagues
 
         // Parse all leagues the user is participating 
         for (let league_index = 0; league_index < league_ids.length; league_index++) {
@@ -134,76 +163,89 @@ const removeUserAndReferences = async (user) => {
 
             // Check if "league_id" is a valid ObjectId
             if (!league_id instanceof mongoose.Types.ObjectId) {
-                console.error(`[removeUserAndReferences]: "${league_id}" is not a valid ObjectId`)
+                console.error(`[removeUser]: "${league_id}" is not a valid ObjectId`)
                 continue // parse next league
             }
 
             // Find league
             const league = await League.findById(league_id)
             if (!league) {
-                console.error(`[removeUserAndReferences]: "${league_id}" does not match any "League" document in mongoDB`)
+                console.error(`[removeUser]: "${league_id}" does not match any "League" document in mongoDB`)
                 continue // parse next league
             }
+
+            // Assign league to deletedUser
+            if (!deletedUser.leagues.includes(league_id)) {
+                deletedUser.leagues.push(league_id)
+            }
+
+            // Counter for teams in League belonging to deletedUser user
+            let deletedUserTeamsInLeague = 0
 
             // Parse all teams in the league
             const teams_ids = league.teams
             for (let team_index = 0; team_index < teams_ids.length; team_index++) {
+
                 const team_id = teams_ids[team_index]
 
                 // Check if "team_id" is a valid ObjectId
                 if (!team_id instanceof mongoose.Types.ObjectId) {
-                    console.error(`[removeUserAndReferences]: "${team_id}" is not a valid ObjectId`)
+                    console.error(`[removeUser]: "${team_id}" is not a valid ObjectId`)
                     continue // parse next team
                 }
 
                 // find team
                 const team = await Team.findById(team_id)
                 if (!team) {
-                    console.error(`[removeUserAndReferences]: "${team_id}" does not match any "Team" document is mongoDB`)
+                    console.error(`[removeUser]: "${team_id}" does not match any "Team" document is mongoDB`)
                     continue // parse next team
                 }
 
                 // Check if "team.user" is a valid ObjectId
                 if (!team.user instanceof mongoose.Types.ObjectId) {
-                    console.error(`[removeUserAndReferences]: "${team.user}" is not a valid ObjectId`)
+                    console.error(`[removeUser]: "${team.user}" is not a valid ObjectId`)
                     continue // parse next team
                 }
 
-                // Check if team belongs to the user
-                if (team.user.equals(user._id)) {
+                // Check if team belongs to the userToDelete
+                if (team.user.equals(userToDelete._id)) {
+                    deletedUserTeamsInLeague++
 
-                    // Remove team
-                    console.log(`[removeUserAndReferences]: deleting team "${team._id}"`)
-                    res.teamRemoved.push(team._id)
-                    await team.deleteOne();
-
-                    // If only team in league -> delete league
-                    if (league.teams.length == 1) {
-                        console.log(`[removeUserAndReferences]: deleting league "${league._id}" (user "${user._id}" was the only participant)`)
-                        res.leagueRemoved.push(league._id)
-                        await league.deleteOne()
+                    // If user was the admin -> make a new admin
+                    if (league.admin.equals(userToDelete._id)) {
+                        const new_admin = await getNewAdmin(teams_ids, userToDelete, deletedUser)
+                        league.admin = new_admin
+                        console.log(`[removeUser]: new admin "${new_admin}" for league "${league._id}"`)
                     }
-                    else {
-                        // Remove team from league
-                        removeElementFromArray(league.teams, team._id)
 
-                        // If user was the admin -> make a new admin
-                        if (league.admin.equals(user._id)) {
-                            const new_admin_team = await Team.findById(league.teams[0])
-                            const new_admin = await User.findById(new_admin_team.user)
-                            league.admin = new_admin._id
-                            console.log(`[removeUserAndReferences]: new admin: "${new_admin._id}" for league "${league._id}"`)
-                        }
-                        await league.save();
-                    }
+                    // Assign team to deletedUser
+                    team.user = deletedUser._id
+                    // Save modified team
+                    await team.save();
                 }
             }
+
+            // check if league contains only deletedUser teams
+            if (league.teams.length == deletedUserTeamsInLeague) {
+                console.log(`[removeUser]: setting isDeleted for league "${league_id}"`)
+                league.isDeleted = true
+            }
+
+            // Save modified league
+            await league.save();
         }
-        return Promise.resolve(res)
+
+        // Save modified deletedUser
+        await deletedUser.save()
+
+        // Delete user
+        await userToDelete.deleteOne();
+        return Promise.resolve(true)
+
     }
     catch (error) {
-        console.error(`[removeUserAndReferences]: error "${error}"`)
-        return Promise.reject(res)
+        console.error(`[removeUser]: error "${error}"`)
+        return Promise.reject(false)
     }
 }
 
@@ -212,5 +254,5 @@ export default {
     getUser,
     parseUser,
     createAuthResponse,
-    removeUserAndReferences
+    removeUser
 }

@@ -2,7 +2,7 @@
 import { expect, should, use } from 'chai';
 import chaiHttp from 'chai-http'
 import config from 'config'
-import { User, League, Team } from '../../src/database/index.js'
+import { User, League, Team, deletedUserObj } from '../../src/database/index.js'
 import { Errors, tokenUtils } from '../../src/utils/index.js'
 import { requester, findPropertyValueInNestedObject, printObject } from './index.js'
 import { userUtils } from '../../src/utils'
@@ -46,8 +46,8 @@ let team_1 = {
     name: "team_1",
     footballPlayers: [],
     budget: 100,
-    user: null,       // it will added once the user is created
-    league: null      // it will added once the league is created
+    //user            // it will added once the user is created
+    //league          // it will added once the league is created
 }
 
 let team_2 = {
@@ -55,8 +55,8 @@ let team_2 = {
     name: "team_2",
     footballPlayers: [],
     budget: 100,
-    user: null,       // it will added once the user is created
-    league: null      // it will added once the league is created
+    //user            // it will added once the user is created
+    //league          // it will added once the league is created
 }
 
 let team_3 = {
@@ -64,14 +64,14 @@ let team_3 = {
     name: "team_3",
     footballPlayers: [],
     budget: 100,
-    user: null,       // it will added once the user is created
-    league: null      // it will added once the league is created
+    //user            // it will added once the user is created
+    //league          // it will added once the league is created
 }
 
 let league_1 = {
     name: "league1",
     password: "league1_password",
-    admin: null,      // it will added once the user is created
+    //admin           // it will added once the user is created
     participants: 3,
     type: "classic",
     goalkeepers: 1,
@@ -83,7 +83,7 @@ let league_1 = {
     countdown: 3,
     auctionType: "call",
     startPrice: "zero",
-    teams: [],         // it will added later once team is created
+    teams: [],        // it will added later once team is created
     status: 'new',
     isDeleted: false
 }
@@ -93,7 +93,7 @@ describe("DELETE", () => {
     before(async () => {
 
         // Clean DB
-        await User.deleteMany({})
+        await User.deleteMany({ email: { $ne: deletedUserObj.email } })
         await League.deleteMany({})
         await Team.deleteMany({})
 
@@ -128,14 +128,17 @@ describe("DELETE", () => {
         let league_1_db = await League.create(league_1)
 
         // Update User and Team
+        team_1["league"] = league_1_db._id
         team_1_db.league = league_1_db._id
         user_1_db.leagues.push(league_1_db._id)
         await user_1_db.save()
         await team_1_db.save()
+        team_2["league"] = league_1_db._id
         team_2_db.league = league_1_db._id
         user_2_db.leagues.push(league_1_db._id)
         await user_2_db.save()
         await team_2_db.save()
+        team_3["league"] = league_1_db._id
         team_3_db.league = league_1_db._id
         user_3_db.leagues.push(league_1_db._id)
         await user_3_db.save()
@@ -199,16 +202,21 @@ describe("DELETE", () => {
         expect(res).to.have.status(200);
         expect(res.body).to.equal(true);
 
+        const deletedUser = await User.findOne({ email: deletedUserObj.email })
         const user_3_after_removal = await User.findOne({ email: user_3.email })
         const team_3_after_removal = await Team.findOne({ name: team_3.name })
         const league_1_after_removal = await League.findOne({ name: league_1.name })
 
         expect(user_3_after_removal).to.be.null
-        expect(team_3_after_removal).to.be.null
+        expect(team_3_after_removal).to.be.a('object')
+        expect(team_3_after_removal.name).to.equal(team_3.name)
+        expect(team_3_after_removal.league.toString()).to.equal(team_3.league.toString())
+        expect(team_3_after_removal.user.toString()).to.equal(deletedUser._id.toString())
         expect(league_1_after_removal.admin.toString()).to.equal(user_1._id.toString())
-        expect(league_1_after_removal.teams).to.have.length(2)
+        expect(league_1_after_removal.teams).to.have.length(league_1.teams.length)
         expect(league_1_after_removal.teams.includes(team_1._id)).to.equal(true);
         expect(league_1_after_removal.teams.includes(team_2._id)).to.equal(true);
+        expect(league_1_after_removal.teams.includes(team_3._id)).to.equal(true);
     })
 
     it("DELETE admin USER", async () => {
@@ -220,16 +228,19 @@ describe("DELETE", () => {
         expect(res).to.have.status(200);
         expect(res.body).to.equal(true);
 
+        const deletedUser = await User.findOne({ email: deletedUserObj.email })
         const user_1_after_removal = await User.findOne({ email: user_1.email })
         const team_1_after_removal = await Team.findOne({ name: team_1.name })
         const league_1_after_removal = await League.findOne({ name: league_1.name })
 
         expect(user_1_after_removal).to.be.null
-        expect(team_1_after_removal).to.be.null
+        expect(team_1_after_removal).to.be.a('object')
+        expect(team_1_after_removal.name).to.equal(team_1.name)
+        expect(team_1_after_removal.league.toString()).to.equal(team_1.league.toString())
+        expect(team_1_after_removal.user.toString()).to.equal(deletedUser._id.toString())
         expect(league_1_after_removal.admin.toString()).to.equal(user_2._id.toString())
-        expect(league_1_after_removal.teams).to.have.length(1)
-
-        expect(league_1_after_removal.teams.includes(team_2._id)).to.equal(true);
+        expect(league_1_after_removal.teams).to.have.length(league_1.teams.length)
+        expect(league_1_after_removal.teams.includes(team_1._id)).to.equal(true);
     })
 
     it("DELETE last USER of league ", async () => {
@@ -241,12 +252,18 @@ describe("DELETE", () => {
         expect(res).to.have.status(200);
         expect(res.body).to.equal(true);
 
+        const deletedUser = await User.findOne({ email: deletedUserObj.email })
         const user_2_after_removal = await User.findOne({ email: user_2.email })
         const team_2_after_removal = await Team.findOne({ name: team_2.name })
         const league_1_after_removal = await League.findOne({ name: league_1.name })
 
         expect(user_2_after_removal).to.be.null
-        expect(team_2_after_removal).to.be.null
-        expect(league_1_after_removal).to.be.null
+        expect(team_2_after_removal).to.be.a('object')
+        expect(team_2_after_removal.name).to.equal(team_2.name)
+        expect(team_2_after_removal.league.toString()).to.equal(team_2.league.toString())
+        expect(team_2_after_removal.user.toString()).to.equal(deletedUser._id.toString())
+        expect(league_1_after_removal.admin.toString()).to.equal(deletedUser._id.toString())
+        expect(league_1_after_removal.teams).to.have.length(league_1.teams.length)
+        expect(league_1_after_removal.teams.includes(team_2._id)).to.equal(true);
     })
 })
