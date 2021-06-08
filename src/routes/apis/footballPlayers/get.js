@@ -1,5 +1,5 @@
 
-import { FootballPlayer } from '../../../database'
+import { FootballPlayers } from '../../../database'
 import { Errors, Response } from '../../../utils'
 import { metricApiError, metricApiSuccess, metricApiPayloadSize } from '../../../metrics'
 
@@ -7,37 +7,39 @@ const get = async (req, res, next) => {
     const duration_start = process.hrtime()
 
     try {
-        let footballPlayers = await FootballPlayer.findOne()
+        let data = await FootballPlayers.findOne()
 
         let response = {
             version: '',
-            footballPlayers: {},
+            list: {},
+            statistics: {},
             updated: false,
         }
 
-        if (!footballPlayers) {
-            console.error(`[api] footballPlayer.get: object is empty`)
-            metricApiError("footballPlayer.get", "EMPTY_OBJECT", duration_start)
+        if (!data) {
+            console.error(`[api] footballPlayers.get: object is empty`)
+            metricApiError("footballPlayers.get", "EMPTY_OBJECT", duration_start)
             res.json(Response.resolve(response))
         }
         else {
-            let dbVersion = footballPlayers.version ? parseInt(footballPlayers.version) : 0
+            let dbVersion = data.version ? parseInt(data.version) : 0
             let mobileVersion = req.query.version ? parseInt(req.query.version) : 0
 
             response = {
                 version: dbVersion,
-                footballPlayers: dbVersion === mobileVersion ? {} : footballPlayers.footballPlayers,
+                list: dbVersion === mobileVersion ? {} : data.list,
+                statistics: dbVersion === mobileVersion ? {} : data.statistics,
                 updated: mobileVersion !== dbVersion,
             }
 
-            metricApiSuccess("footballPlayer.get", '', duration_start)
-            metricApiPayloadSize("footballPlayer.get", response)
+            metricApiSuccess("footballPlayers.get", '', duration_start)
+            metricApiPayloadSize("footballPlayers.get", response)
             res.json(Response.resolve(response))
         }
     }
     catch (error) {
-        console.error(`[api] footballPlayer.get: ${error}`)
-        metricApiError("footballPlayer.get", error, duration_start)
+        console.error(`[api] footballPlayers.get: ${error}`)
+        metricApiError("footballPlayers.get", error, duration_start)
         res.status(400).send(Response.reject(error, req.headers.language))
     }
 }

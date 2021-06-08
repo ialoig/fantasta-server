@@ -105,6 +105,6 @@ process.on('SIGINT', () => {
     })
 })
 
-export { League, FootballPlayer, Team, User, Reset } from './models'
+export { League, FootballPlayers, Team, User, Reset } from './models'
 export { initMongoConnection, populate }
 export { deletedUserObj }

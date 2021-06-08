@@ -30,7 +30,7 @@ const { Schema, model } = mongoose
 
 const footballPlayersSchema = new Schema(
   {
-    footballPlayers: {
+    list: {
       type: Object,
       required: true,
     },

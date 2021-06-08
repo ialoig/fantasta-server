@@ -1,6 +1,6 @@
 
 import _ from "lodash"
-import { FootballPlayer } from "../database"
+import { FootballPlayers } from "../database"
 import { xlsxUtils } from "../utils"
 import { METRIC_STATUS, secondsFrom, load_footballPlayer_duration_seconds } from "../metrics"
 
@@ -54,7 +54,7 @@ const containsCorrectData = (footballPlayer_obj) => {
         return true
     }
 
-    // console.error(`[saveFootballPlayers] corrupted footballPlayer. Reason: ${reason}. ${JSON.stringify(footballPlayer_obj, null, 2)}`)
+    // console.error(`[saveFootballPlayers] corrupted footballPlayers. Reason: ${reason}. ${JSON.stringify(footballPlayer_obj, null, 2)}`)
     return false
 }
 
@@ -135,19 +135,19 @@ const getStatisticsFromExcelContent = (statistics) => {
     return statisticsObj
 }
 
-const saveFootballPlayerWithVersion = async (footballPlayers, statistics, version) => {
+const saveFootballPlayerWithVersion = async (list, statistics, version) => {
 
-    let footballPlayer = FootballPlayer({
-        footballPlayers: footballPlayers,
+    let footballPlayers = FootballPlayers({
+        list: list,
         statistics: statistics,
         version: version,
     });
 
     try {
-        await footballPlayer.save();
+        await footballPlayers.save();
     }
     catch (error) {
-        console.error(`[saveFootballPlayers] error saving FootballPlayer. ${error}`);
+        console.error(`[saveFootballPlayers] error saving FootballPlayers. ${error}`);
     }
 }
 
@@ -175,7 +175,7 @@ const saveFootballPlayers = async (classicFile, mantraFile, statisticsFile) => {
     if (footballPlayersObj || statisticsObj) {
         try {
             // recupero i giocatori
-            let oldTable = await FootballPlayer.findOne()
+            let oldTable = await FootballPlayers.findOne()
 
             let players = oldTable && oldTable.footballPlayers || null
             let statistics = oldTable && oldTable.statistics || null
@@ -198,7 +198,7 @@ const saveFootballPlayers = async (classicFile, mantraFile, statisticsFile) => {
                 }
 
                 // svuoto la tabella
-                await FootballPlayer.deleteMany({})
+                await FootballPlayers.deleteMany({})
                 saveFootballPlayerWithVersion(players, statistics, new Date().getTime())
             }
             else {
@@ -210,7 +210,7 @@ const saveFootballPlayers = async (classicFile, mantraFile, statisticsFile) => {
             load_footballPlayer_duration_seconds.observe({ status: METRIC_STATUS.SUCCESS, msg: "" }, secondsFrom(duration_start))
         }
         catch (error) {
-            console.error(`[saveFootballPlayers] error updating FootballPlayer. ${error}`);
+            console.error(`[saveFootballPlayers] error updating FootballPlayers. ${error}`);
             load_footballPlayer_duration_seconds.observe({ status: METRIC_STATUS.ERROR, msg: error }, secondsFrom(duration_start))
         }
     }
