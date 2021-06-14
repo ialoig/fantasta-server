@@ -7,7 +7,7 @@ import { Errors, Response, sendEmail, userUtils } from '../../../utils'
 const support = async (req, res, next) => {
     const duration_start = process.hrtime()
 
-    const { text = '', email='' } = req.body
+    const { text = '', email='', subject='Support' } = req.body
     if ( text )
     {
         try {
@@ -15,7 +15,6 @@ const support = async (req, res, next) => {
             const user = auth.user
 
             let _from = `Support Fantasta <${config.email.email}>`
-            let subject = 'Richiesta Support'
 
             let _to = email && email.split && email.split(',').map( item => item.trim && item.trim() ).filter( item => Validator.isEmail(item) ) || []
             _to.unshift( `${user.username} <${user.email}>` )
