@@ -132,6 +132,10 @@ const leagueSchema = new Schema(
         isDeleted: {
             type: Schema.Types.Boolean,
             required: false
+        },
+        footballPlayers: {
+            type: Schema.Types.Object,
+            required: false
         }
     },
     {

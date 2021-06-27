@@ -8,34 +8,32 @@ const create = async (req, res, next) => {
 
     const leagueBody = req.body || {}
 
-    let leagueData = leagueUtils.validateleague( leagueBody )
+    let leagueData = leagueUtils.validateleague(leagueBody)
 
-    if ( leagueData.valid )
-    {
-        try
-        {
+    if (leagueData.valid) {
+        try {
             const auth = await userUtils.userFromToken(req)
             let user = auth.user
             const userId = user._id
 
             let settings = leagueData.league
             settings.admin = userId
-            
+
             let league = await League.create(settings)
             let team = await leagueUtils.createTeam(leagueBody.teamname, settings.budget, userId, league._id)
-    
+
             league.teams = [team._id]
             await league.save()
-    
+
             user.leagues.push(league._id)
             await user.save()
-    
+
             let response = await leagueUtils.createLeagueResponse(user, league, team)
-    
+
             //TODO: preparare socket per eventi
             // Socket.addAttendee( req, newLeag.name, '' )
             // Socket.leagueCreate( req, newLeag.name, '' )
-    
+            console.log("[/league/create] - response=", response)
             metricApiSuccess("league.create", '', duration_start)
             metricApiPayloadSize("league.create", response)
             res.json(Response.resolve(response))
@@ -54,8 +52,7 @@ const create = async (req, res, next) => {
             }
         }
     }
-    else
-    {
+    else {
         console.error(`[api] league.create: ${leagueData.error}`)
         metricApiError("league.create", leagueData.error, duration_start)
         res.status(400).send(Response.reject(leagueData.error, req.headers.language))
