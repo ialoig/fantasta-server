@@ -60,7 +60,6 @@ const join = async (req, res, next) => {
             // Socket.addAttendee( req, newLeag.name, '' )
             // Socket.leagueCreate( req, newLeag.name, '' )
 
-            console.log("[/league/join] - response=", response)
             metricApiSuccess("league.join", '', duration_start)
             metricApiPayloadSize("league.join", response)
             res.json(Response.resolve(response))
