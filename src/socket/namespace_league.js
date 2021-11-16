@@ -1,30 +1,6 @@
 import Joi from "joi" // validation library
 import { NAMESPACE, EVENT_TYPE, Message } from "./common"
 
-/*
-================================ FLOW ================================
-CLIENT                                    EVENT_NAME                      SERVER                  EVENT_NAME                      NOTE
-user join room (league name)              CLIENT_LEAGUE_JOIN              notify all users        SERVER_LEAGUE_USER_JOIN         called if the JoinLeague is successfull
-user left the league (spontaneously)      CLIENT_LEAGUE_LEFT              notify all users        SERVER_LEAGUE_LEFT              check whether we need to record the status
-user left the league (connection lost)                                    notify all users        SERVER_LEAGUE_LEFT              check whether we need to record the status
-
-admin open market                         CLIENT_MARKET_OPEN              notify all users        SERVER_MARKET_OPEN              admin user already joined the league room
-user join market                          CLIENT_MARKET_JOIN              notify all users        SERVER_MARKET_JOIN              user has already joined the league room
-admin open market                         CLIENT_MARKET_START             notify all users        SERVER_MARKET_START             all users already joined the market room
-                                                                          notify all users        SERVER_MARKET_SEARCH            your_turn=true/false in the message to discriminate the page
-football player selected                  CLIENT_MARKET_PLAYER_SELECTED   notify all users        SERVER_MARKET_PLAYER_SELECTED
-?? synchronize timer ??
-user bet on player                        CLIENT_MARKET_BET               notify all users        SERVER_MARKET_BET               restart countdown
-user win the auction                      CLIENT_MARKET_WIN               notify all users        SERVER_MARKET_WIN               
-                                                                          notify all users        SERVER_MARKET_SEARCH            wait 5 seconds, then your_turn=true/false in the message to discriminate the page
-
-admin is pausing the market               CLIENT_MARKET_PAUSE             notify all users        SERVER_MARKET_PAUSE             go to waiting page (to be implemented)
-admin is closing the market?              CLIENT_MARKET_CLOSE             notify all users        SERVER_MARKET_CLOSE             does it make sense? maybe after all teams are completed
-user left the market (spontaneously)      CLIENT_MARKET_LEFT              notify all users        SERVER_MARKET_LEFT              check whether we need to record the status
-user left the market (connection lost)                                    notify all users        SERVER_MARKET_LEFT              check whether we need to record the status
-*/
-
-
 // Payload Schema
 const joinPayloadSchema = Joi.object({
   room: Joi.string().max(30).required(),
@@ -35,7 +11,6 @@ const joinPayloadSchema = Joi.object({
 //----------------------------------------------------------
 
 function extractPlayersNames(socket_list, exclude_socket = null) {
-  console.log(`extractPlayersNames(${socket_list}, ${exclude_socket})`)
   return socket_list
     .filter(socket => socket !== exclude_socket)
     .map(socket => socket.player)
@@ -68,13 +43,13 @@ module.exports = (io) => {
       for (const room of rooms) {
         const socket_list = await getSocketsInRoom(namespace_league, room)
         const message_content = extractPlayersNames(socket_list, socket)
-        const message = new Message(EVENT_TYPE.LEAGUE_LEFT, message_content)
+        const message = new Message(EVENT_TYPE.SERVER_LEAGUE_LEFT, message_content)
         namespace_league.in(room).emit(room, message)
       }
     });
 
     // Join League (TODO: check if we really want a callback)
-    socket.on(EVENT_TYPE.LEAGUE_JOIN_REQUEST, async function (payload, callback) {
+    socket.on(EVENT_TYPE.CLIENT_LEAGUE_JOIN, async function (payload, callback) {
 
       // Validate arguments
       if (typeof callback !== "function") {
@@ -105,7 +80,7 @@ module.exports = (io) => {
 
       const socket_list = await getSocketsInRoom(namespace_league, room)
       const message_content = extractPlayersNames(socket_list)
-      const message_obj = new Message(EVENT_TYPE.LEAGUE_JOIN_REQUEST, message_content)
+      const message_obj = new Message(EVENT_TYPE.SERVER_LEAGUE_JOIN, message_content)
       console.log(message_obj)
 
       // Send message to all socket in the room
