@@ -1,0 +1,45 @@
+export const NAMESPACE = {
+  LEAGUE: "/socket/league",
+  MARKET: "/socket/market"
+}
+
+export const EVENT_TYPE = {
+
+  // FootballPlayer
+  SERVER_FOOTBALL_PLAYER_LIST_UPDATE:0,
+
+  // League
+  CLIENT_LEAGUE_JOIN: 0,
+  SERVER_LEAGUE_JOIN: 0,
+  CLIENT_LEAGUE_LEFT: 0,
+  SERVER_LEAGUE_LEFT: 0,
+
+  // Market
+  CLIENT_MARKET_OPEN: 0,
+  SERVER_MARKET_OPEN: 0,
+  CLIENT_MARKET_JOIN: 0,
+  SERVER_MARKET_JOIN: 0,
+  CLIENT_MARKET_START: 0,
+  SERVER_MARKET_START: 0,
+  SERVER_MARKET_SEARCH: 0,
+  CLIENT_MARKET_PLAYER_SELECTED: 0,
+  SERVER_MARKET_PLAYER_SELECTED: 0,
+  CLIENT_MARKET_BET: 0,
+  SERVER_MARKET_BET: 0,
+  CLIENT_MARKET_WIN: 0,
+  SERVER_MARKET_WIN: 0,
+  CLIENT_MARKET_PAUSE: 0,
+  SERVER_MARKET_PAUSE: 0,
+  CLIENT_MARKET_CLOSE: 0,
+  SERVER_MARKET_CLOSE: 0,
+  CLIENT_MARKET_LEFT: 0,
+  SERVER_MARKET_LEFT: 0,
+}
+
+
+export class Message {
+  constructor(event_type, data) {
+      this.event_type = event_type;
+      this.data = data;
+  }
+}

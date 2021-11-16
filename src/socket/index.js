@@ -1,21 +1,15 @@
 import { createServer } from 'http'
-import * as socketio from 'socket.io'
+import { Server } from "socket.io"
+const registerLeagueHandlers = require("./namespace_league")
 
-export const init = ( app ) => {
+export const init = (app) => {
+
+    const httpServer = createServer(app)
+
+    const io = new Server(httpServer, { /* options */ })
     
-    const server = createServer(app)
-    const io = new socketio.Server();
-    io.attach(server);
+    registerLeagueHandlers(io)
 
-    io.on( 'connection', () => {
-        console.log("Socket.io connected")
-    })
+    return httpServer
 
-    io.on( 'connect', () => {
-        console.log("Socket.io connect")
-    })
-    
-    app.set('io', io)
-
-    return server
 }
