@@ -27,9 +27,9 @@ async function getSocketsInRoom(io_namespace, room) {
 module.exports = (io) => {
 
   // Use Namespace
-  // const namespace_league = io.of(NAMESPACE.LEAGUE)
+  const namespace_league = io.of(NAMESPACE.LEAGUE)
 
-  io.on("connection", function (socket) {
+  namespace_league.on("connection", function (socket) {
     console.log(`[socketID: ${socket.id}] connected`)
 
     // Disconnect
@@ -41,10 +41,10 @@ module.exports = (io) => {
     socket.on('disconnecting', async function () {
       const rooms = Array.from(socket.rooms).slice(1) // Set { <socket.id>, "room1", "room2", ... }
       for (const room of rooms) {
-        const socket_list = await getSocketsInRoom(io, room)
+        const socket_list = await getSocketsInRoom(namespace_league, room)
         const message_content = extractPlayersNames(socket_list, socket)
         const message = new Message(EVENT_TYPE.SERVER_LEAGUE_LEFT, message_content)
-        io.in(room).emit(room, message)
+        namespace_league.in(room).emit(room, message)
       }
     });
 
@@ -78,13 +78,13 @@ module.exports = (io) => {
         status: "OK"
       })
 
-      const socket_list = await getSocketsInRoom(io, room)
+      const socket_list = await getSocketsInRoom(namespace_league, room)
       const message_content = extractPlayersNames(socket_list)
       const message_obj = new Message(EVENT_TYPE.SERVER_LEAGUE_JOIN, message_content)
       console.log(message_obj)
 
       // Send message to all socket in the room
-      io.in(room).emit(room, message_obj)
+      namespace_league.in(room).emit(room, message_obj)
     })
 
   })
