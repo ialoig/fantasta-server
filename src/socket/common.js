@@ -52,15 +52,6 @@ export const EVENT_TYPE = {
 	}
 }
 
-
-export class Message {
-	constructor(event_type, data) {
-		this.event_type = event_type;
-		this.data = data;
-	}
-}
-
-
 export async function getSocketsInRoom(io, room) {
 	return io.in(room).fetchSockets()
 }
