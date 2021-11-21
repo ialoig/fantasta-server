@@ -2,25 +2,37 @@
 import { EVENT_TYPE, getSocketsInRoom, extractPlayersNames } from "./common"
 import { Schemas } from "./schemas"
 
+//----------------------------------------------------------
+
+function validateUserNewOrOnline(payload, newUser){
+  if(newUser){
+    return Schemas.userNewClientSchema.validate(payload)
+  }
+  else{
+    return Schemas.userOnlineClientSchema.validate(payload)
+  }
+}
 
 //----------------------------------------------------------
 
-const onUserNew = async (io, socket, payload, callback) => {/* TODO */}
+function eventTypeUserNewOrOnline(newUser){
+  if(newUser){
+    return EVENT_TYPE.SERVER.LEAGUE.USER_NEW
+  }
+  else{
+    return EVENT_TYPE.SERVER.LEAGUE.USER_ONLINE
+  }
+}
 
 //----------------------------------------------------------
 
-const onUserDeleted = async (io, socket, payload, callback) => {/* TODO */}
-
-//----------------------------------------------------------
-
-const onUserOnline = async (io, socket, payload, callback) => {
-
+const onUserNewOrOnline = async (io, socket, payload, callback, newUser) => {
   // Validate arguments
   if (typeof callback !== "function") {
     return socket.disconnect()
   }
-  const userOnlineClient_validation = Schemas.userOnlineClientSchema.validate(payload)
-  if (userOnlineClient_validation.error) {
+  const payload_validation = validateUserNewOrOnline(payload, newUser)
+  if (payload_validation.error) {
     return callback({
       status: "KO",
       error
@@ -28,8 +40,8 @@ const onUserOnline = async (io, socket, payload, callback) => {
   }
 
   // Extract from payload
-  const { room, player } = userOnlineClient_validation.value
-  console.log(`[socketID: ${socket.id}] ${player} joined ${room}`)
+  const { room, player } = payload_validation.value
+  console.log(`[socketID: ${socket.id}] ${player} (newUser=${newUser}) joined ${room}`)
 
   // Add custom information to the socket object
   socket.player = player
@@ -41,12 +53,19 @@ const onUserOnline = async (io, socket, payload, callback) => {
   callback({ status: "OK" })
 
   const socket_list = await getSocketsInRoom(io, room)
-  const message_content = extractPlayersNames(socket_list)
-  const userOnlineServer_validation = Schemas.userOnlineServerSchema.validate({ event_type: EVENT_TYPE.SERVER.LEAGUE.USER_ONLINE, data: message_content})
+  const msg = { 
+    event_type: eventTypeUserNewOrOnline(newUser), 
+    data: extractPlayersNames(socket_list)
+  }  
+  const userOnlineServer_validation = Schemas.userOnlineServerSchema.validate(msg)
 
   // Send message to all socket in the room
   io.in(room).emit(room, userOnlineServer_validation.value)
 }
+
+//----------------------------------------------------------
+
+const onUserDeleted = async (io, socket, payload, callback) => {/* TODO */}
 
 //----------------------------------------------------------
 
@@ -57,8 +76,8 @@ const onUserOffline = async (io, socket, payload, callback) => {/* TODO */}
 module.exports = (io, socket) => {
 
   // Join League (TODO: check if we really want a callback)
-  socket.on(EVENT_TYPE.CLIENT.LEAGUE.USER_NEW, function (payload, callback) { onUserNew(io, socket, payload, callback) })
+  socket.on(EVENT_TYPE.CLIENT.LEAGUE.USER_NEW, function (payload, callback) { onUserNewOrOnline(io, socket, payload, callback, true) })
+  socket.on(EVENT_TYPE.CLIENT.LEAGUE.USER_ONLINE, function (payload, callback) { onUserNewOrOnline(io, socket, payload, callback, false) })
   socket.on(EVENT_TYPE.CLIENT.LEAGUE.USER_DELETED, function (payload, callback) { onUserDeleted(io, socket, payload, callback) })
-  socket.on(EVENT_TYPE.CLIENT.LEAGUE.USER_ONLINE, function (payload, callback) { onUserOnline(io, socket, payload, callback) })
   socket.on(EVENT_TYPE.CLIENT.LEAGUE.USER_OFFLINE, function (payload, callback) { onUserOffline(io, socket, payload, callback) })
 }
