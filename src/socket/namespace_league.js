@@ -40,13 +40,13 @@ module.exports = (io) => {
       for (const room of rooms) {
         const socket_list = await getSocketsInRoom(io, room)
         const message_content = extractPlayersNames(socket_list, socket)
-        const message = new Message(EVENT_TYPE.SERVER_LEAGUE_LEFT, message_content)
+        const message = new Message(EVENT_TYPE.SERVER.LEAGUE.USER_OFFLINE, message_content)
         io.in(room).emit(room, message)
       }
     });
 
     // Join League (TODO: check if we really want a callback)
-    socket.on(EVENT_TYPE.CLIENT_LEAGUE_JOIN, async function (payload, callback) {
+    socket.on(EVENT_TYPE.CLIENT.LEAGUE.USER_ONLINE, async function (payload, callback) {
 
       // Validate arguments
       if (typeof callback !== "function") {
@@ -77,7 +77,7 @@ module.exports = (io) => {
 
       const socket_list = await getSocketsInRoom(io, room)
       const message_content = extractPlayersNames(socket_list)
-      const message_obj = new Message(EVENT_TYPE.SERVER_LEAGUE_JOIN, message_content)
+      const message_obj = new Message(EVENT_TYPE.SERVER.LEAGUE.USER_ONLINE, message_content)
       console.log(message_obj)
 
       // Send message to all socket in the room
