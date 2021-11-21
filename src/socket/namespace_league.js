@@ -1,5 +1,5 @@
 import Joi from "joi" // validation library
-import { NAMESPACE, EVENT_TYPE, Message } from "./common"
+import { EVENT_TYPE, Message } from "./common"
 
 // Payload Schema
 const joinPayloadSchema = Joi.object({
@@ -18,16 +18,13 @@ function extractPlayersNames(socket_list, exclude_socket = null) {
 
 //----------------------------------------------------------
 
-async function getSocketsInRoom(io_namespace, room) {
-  return io_namespace.in(room).fetchSockets()
+async function getSocketsInRoom(io, room) {
+  return io.in(room).fetchSockets()
 }
 
 //----------------------------------------------------------
 
 module.exports = (io) => {
-
-  // Use Namespace
-  // const namespace_league = io.of(NAMESPACE.LEAGUE)
 
   io.on("connection", function (socket) {
     console.log(`[socketID: ${socket.id}] connected`)
