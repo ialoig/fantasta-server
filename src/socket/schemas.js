@@ -1,21 +1,18 @@
 import Joi from "joi" // validation library
 
-const userNewClientSchema = Joi.object({
+const clientLeagueUserOnlineSchema = Joi.object({
     room: Joi.string().required(),
     player: Joi.string().required()
 })
 
-const userOnlineServerSchema = Joi.object({
-    event_type: Joi.number().integer().required(),
-    data: Joi.array().items(Joi.string()).required()
-})
+const clientLeagueUserNewSchema = clientLeagueUserOnlineSchema
 
-const userOnlineClientSchema = userNewClientSchema
-const userOfflineServerSchema = userOnlineServerSchema
+const serverLeagueUserOnlineSchema = Joi.array().items(Joi.string())
+const serverUserOfflineSchema = Joi.array().items(Joi.string())
 
 export const Schemas = {
-    userNewClientSchema,
-    userOnlineClientSchema,
-    userOnlineServerSchema,
-    userOfflineServerSchema
+    clientLeagueUserNewSchema,
+    clientLeagueUserOnlineSchema,
+    serverLeagueUserOnlineSchema,
+    serverUserOfflineSchema
 }

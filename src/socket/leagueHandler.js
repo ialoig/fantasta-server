@@ -6,10 +6,10 @@ import { Schemas } from "./schemas"
 
 function validateUserNewOrOnline(payload, newUser){
   if(newUser){
-    return Schemas.userNewClientSchema.validate(payload)
+    return Schemas.clientLeagueUserNewSchema.validate(payload)
   }
   else{
-    return Schemas.userOnlineClientSchema.validate(payload)
+    return Schemas.clientLeagueUserOnlineSchema.validate(payload)
   }
 }
 
@@ -53,14 +53,10 @@ const onUserNewOrOnline = async (io, socket, payload, callback, newUser) => {
   callback({ status: "OK" })
 
   const socket_list = await getSocketsInRoom(io, room)
-  const msg = { 
-    event_type: eventTypeUserNewOrOnline(newUser), 
-    data: extractPlayersNames(socket_list)
-  }  
-  const userOnlineServer_validation = Schemas.userOnlineServerSchema.validate(msg)
+  const message_validated = Schemas.serverLeagueUserOnlineSchema.validate(extractPlayersNames(socket_list))
 
   // Send message to all socket in the room
-  io.in(room).emit(room, userOnlineServer_validation.value)
+  io.in(room).emit(eventTypeUserNewOrOnline(newUser), message_validated.value)
 }
 
 //----------------------------------------------------------

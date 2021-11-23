@@ -16,9 +16,9 @@ const onDisconnecting = async function (io, socket) {
     const rooms = Array.from(socket.rooms).slice(1) // Set { <socket.id>, "room1", "room2", ... }
     for (const room of rooms) {
         const socket_list = await getSocketsInRoom(io, room)
-        const message_content = extractPlayersNames(socket_list, socket)
-        const userOfflineServer_validation = Schemas.userOfflineServerSchema.validate({ event_type: EVENT_TYPE.SERVER.LEAGUE.USER_OFFLINE, data: message_content})
-        io.in(room).emit(room, userOfflineServer_validation.value)
+        const message = extractPlayersNames(socket_list, socket)
+        const message_validated = Schemas.serverUserOfflineSchema.validate(message)
+        io.in(room).emit(EVENT_TYPE.SERVER.LEAGUE.USER_OFFLINE, message_validated.value)
     }
 }
 
