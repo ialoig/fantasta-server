@@ -52,6 +52,21 @@ export const EVENT_TYPE = {
 	}
 }
 
+export const league_prefix = "league="
+export const market_prefix = "market="
+
+export function isLeagueRoom(room){
+	return room.startsWith(league_prefix)
+}
+
+export function isMarketRoom(room){
+	return room.startsWith(market_prefix)
+}
+
+export function getMarketRoom(league_room){
+	return league_room.replace(league_prefix, market_prefix)
+}
+
 export async function getSocketsInRoom(io, room) {
 	return io.in(room).fetchSockets()
 }
