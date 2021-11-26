@@ -80,5 +80,5 @@ export function extractPlayersNames(socket_list, exclude_socket = null) {
 export function getPlayerTurn(player_list){
 	// TODO: this is only random. handle turn rotation
 	const random_index = Math.floor(Math.random() * player_list.length)
-	return player_list[random_index]
+	return { turn: player_list[random_index] }
 }

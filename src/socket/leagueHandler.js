@@ -223,6 +223,40 @@ const onMarketStart= async (io, socket) => {
   }
 }
 
+
+// TODO: 
+// Validate payload
+// extract playe
+//  
+const onMarketPlayerSelected= async (io, socket, payload) => {
+  // retrieve league room
+  const league_room = Array.from(socket.rooms).slice(1).find(room => isLeagueRoom(room))
+
+  // socket didn't join the league room
+  if (!league_room) {
+    console.error(`[socketID: ${socket.id}] try to select player but did not joined the league room`)
+    // todo: maybe a callback to inform the client?
+  }
+  else
+  {
+    const market_room = Array.from(socket.rooms).slice(1).find(room => isMarketRoom(room))
+
+    // socket didn't join the market room
+    if (!market_room) {
+      console.error(`[socketID: ${socket.id}] try to select player but did not joined the market room`)
+      // todo: maybe a callback to inform the client?
+    }
+    else {
+
+      // validate payload
+      const payload_validation = Schemas.clientMarketPlayerSelected.validate(payload)
+
+      // Send message to all socket in the market room
+      io.in(market_room).emit(EVENT_TYPE.SERVER.MARKET.PLAYER_SELECTED, payload_validation.value)      
+    }
+  }
+}
+
 //----------------------------------------------------------
 
 module.exports = (io, socket) => {
@@ -235,4 +269,5 @@ module.exports = (io, socket) => {
   socket.on(EVENT_TYPE.CLIENT.MARKET.OPEN, () => { onMarketOpen(io, socket) })
   socket.on(EVENT_TYPE.CLIENT.MARKET.USER_ONLINE, () => { onMarketUserOnline(io, socket) })
   socket.on(EVENT_TYPE.CLIENT.MARKET.START, () => { onMarketStart(io, socket) })
+  socket.on(EVENT_TYPE.CLIENT.MARKET.PLAYER_SELECTED, (payload) => { onMarketPlayerSelected(io, socket, payload) })
 }
