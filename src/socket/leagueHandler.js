@@ -51,17 +51,18 @@ const onUserNewOrOnline = async (io, socket, payload, callback, newUser) => {
 
   // Extract from payload
   const { room, player } = payload_validation.value
-  console.log(`[socketID: ${socket.id}] ${player} online in ${room} (newUser=${newUser})`)
 
   // Add custom information to the socket object
   socket.player = player
 
   // Join Room
   socket.join(room)
+  console.log(`[socketID: ${socket.id}] ${player} online in ${room} (newUser=${newUser})`)
 
   // Response back to client
   callback({ status: "OK" })
 
+  // prepare response
   const socket_list = await getSocketsInRoom(io, room)
   const message_validated = Schemas.serverLeagueUserNewOrOnlineSchema.validate(extractPlayersNames(socket_list))
 
@@ -81,6 +82,8 @@ const onUserDeleted = async (io, socket) => {
   for (const room of rooms) {
     console.log(`[socketID: ${socket.id}] ${socket.player} deleted from ${room}`)
     socket.leave(room)
+
+    // prepare response
     const socket_list = await getSocketsInRoom(io, room)
     const message = extractPlayersNames(socket_list)
     const message_validated = Schemas.serverUserDeletedSchema.validate(message)
@@ -99,8 +102,10 @@ const onUserDeleted = async (io, socket) => {
 const onUserOffline = async (io, socket) => {
   const rooms = Array.from(socket.rooms).slice(1) // Set { <socket.id>, "room1", "room2", ... }
   for (const room of rooms) {
-    console.log(`[socketID: ${socket.id}] ${socket.player} offline in ${room}`)
     socket.leave(room)
+    console.log(`[socketID: ${socket.id}] ${socket.player} offline in ${room}`)
+
+    // prepare response
     const socket_list = await getSocketsInRoom(io, room)
     const message = extractPlayersNames(socket_list)
     const message_validated = Schemas.serverUserOfflineSchema.validate(message)
@@ -112,7 +117,7 @@ const onUserOffline = async (io, socket) => {
 
 /**
  * Add socket to the market room.
- * Broadcast the list of online users to the market room.
+ * Broadcast the list of online users to the league room.
  * 
  * @param {*} io      socket server
  * @param {*} socket  socket client
@@ -121,49 +126,69 @@ const onMarketOpen = async (io, socket) => {
   // retrieve league room
   const rooms = Array.from(socket.rooms).slice(1) // Set { <socket.id>, "room1", "room2", ... }
   const league_room = rooms.find(room => isLeagueRoom(room))
+
+  // socket didn't join the league room
   if (!league_room) {
     console.error(`[socketID: ${socket.id}] try to open market but did not joined the league room`)
   }
-  else{
+  else {
     const market_room = getMarketRoom(league_room)
-
-    console.log(`[socketID: ${socket.id}] ${socket.player} open market ${market_room}`)
 
     // Join Market room
     socket.join(market_room)
+    console.log(`[socketID: ${socket.id}] ${socket.player} open market ${market_room}`)
 
+    // prepare response
     const socket_list = await getSocketsInRoom(io, market_room)
     const message = extractPlayersNames(socket_list)
     const message_validated = Schemas.serverMarketOpenSchema.validate(message)
 
     // Send message to all socket in the room
-    io.in(market_room).emit(EVENT_TYPE.SERVER.MARKET.OPEN, message_validated.value)
+    io.in(league_room).emit(EVENT_TYPE.SERVER.MARKET.OPEN, message_validated.value)
   }
 }
 
 
 /**
- * 
+ * Add socket to the market room.
+ * Broadcast the list of online users to the market room.
  * @param {*} io 
  * @param {*} socket 
  */
 const onMarketUserOnline = async (io, socket) => {
+  console.error(`[socketID: ${socket.id}] onMarketUserOnline`)
+
   // retrieve league room
   const rooms = Array.from(socket.rooms).slice(1) // Set { <socket.id>, "room1", "room2", ... }
   const league_room = rooms.find(room => isLeagueRoom(room))
-  const market_room = getMarketRoom(league_room)
 
-  console.log(`[socketID: ${socket.id}] ${socket.player} open market ${market_room}`)
+  // socket didn't join the league room
+  if (!league_room) {
+    console.error(`[socketID: ${socket.id}] try to join market room but did not joined the league room`)
+  }
+  else
+  {
+    const market_room = getMarketRoom(league_room)
 
-  // Join Market room
-  socket.join(market_room)
+    // market room do not exists
+    if (!io.sockets.adapter.rooms.get(market_room)) {
+      console.error(`[socketID: ${socket.id}] ${socket.player} try to join ${market_room} but the market is not open yet`)
+      // todo: maybe a callback to inform the client?
+    }
+    else {
+      // Join Market room
+      socket.join(market_room)
+      console.log(`[socketID: ${socket.id}] ${socket.player} join market ${market_room}`)
 
-  const socket_list = await getSocketsInRoom(io, market_room)
-  const message = extractPlayersNames(socket_list)
-  const message_validated = Schemas.serverMarketUserOnlineSchema.validate(message)
+      // prepare response
+      const socket_list = await getSocketsInRoom(io, market_room)
+      const message = extractPlayersNames(socket_list)
+      const message_validated = Schemas.serverMarketUserOnlineSchema.validate(message)
 
-  // Send message to all socket in the room
-  io.in(league_room).emit(EVENT_TYPE.SERVER.MARKET.USER_ONLINE, message_validated.value)
+      // Send message to all socket in the room
+      io.in(league_room).emit(EVENT_TYPE.SERVER.MARKET.USER_ONLINE, message_validated.value)
+    }
+  }
 }
 
 
