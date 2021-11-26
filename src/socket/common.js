@@ -52,8 +52,8 @@ export const EVENT_TYPE = {
 	}
 }
 
-export const league_prefix = "league="
-export const market_prefix = "market="
+const league_prefix = "league="
+const market_prefix = "market="
 
 export function isLeagueRoom(room){
 	return room.startsWith(league_prefix)
@@ -71,9 +71,14 @@ export async function getSocketsInRoom(io, room) {
 	return io.in(room).fetchSockets()
 }
 
-
 export function extractPlayersNames(socket_list, exclude_socket = null) {
 	return socket_list
 		.filter(socket => socket !== exclude_socket)
 		.map(socket => socket.player)
+}
+
+export function getPlayerTurn(player_list){
+	// TODO: this is only random. handle turn rotation
+	const random_index = Math.floor(Math.random() * player_list.length)
+	return player_list[random_index]
 }

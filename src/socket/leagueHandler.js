@@ -1,5 +1,5 @@
 // import Joi from "joi" // validation library
-import { EVENT_TYPE, getSocketsInRoom, extractPlayersNames, league_prefix, market_prefix, isLeagueRoom, isMarketRoom, getMarketRoom } from "./common"
+import { EVENT_TYPE, getSocketsInRoom, extractPlayersNames, isLeagueRoom, isMarketRoom, getMarketRoom, getPlayerTurn } from "./common"
 import { Schemas } from "./schemas"
 
 //----------------------------------------------------------
@@ -124,12 +124,12 @@ const onUserOffline = async (io, socket) => {
  */
 const onMarketOpen = async (io, socket) => {
   // retrieve league room
-  const rooms = Array.from(socket.rooms).slice(1) // Set { <socket.id>, "room1", "room2", ... }
-  const league_room = rooms.find(room => isLeagueRoom(room))
+  const league_room = Array.from(socket.rooms).slice(1).find(room => isLeagueRoom(room))
 
   // socket didn't join the league room
   if (!league_room) {
     console.error(`[socketID: ${socket.id}] try to open market but did not joined the league room`)
+    // todo: maybe a callback to inform the client?
   }
   else {
     const market_room = getMarketRoom(league_room)
@@ -156,15 +156,13 @@ const onMarketOpen = async (io, socket) => {
  * @param {*} socket 
  */
 const onMarketUserOnline = async (io, socket) => {
-  console.error(`[socketID: ${socket.id}] onMarketUserOnline`)
-
   // retrieve league room
-  const rooms = Array.from(socket.rooms).slice(1) // Set { <socket.id>, "room1", "room2", ... }
-  const league_room = rooms.find(room => isLeagueRoom(room))
+  const league_room = Array.from(socket.rooms).slice(1).find(room => isLeagueRoom(room))
 
   // socket didn't join the league room
   if (!league_room) {
     console.error(`[socketID: ${socket.id}] try to join market room but did not joined the league room`)
+    // todo: maybe a callback to inform the client?
   }
   else
   {
@@ -191,7 +189,39 @@ const onMarketUserOnline = async (io, socket) => {
   }
 }
 
+const onMarketStart= async (io, socket) => {
+  // retrieve league room
+  const league_room = Array.from(socket.rooms).slice(1).find(room => isLeagueRoom(room))
 
+  // socket didn't join the league room
+  if (!league_room) {
+    console.error(`[socketID: ${socket.id}] try to start market but did not joined the league room`)
+    // todo: maybe a callback to inform the client?
+  }
+  else
+  {
+    const market_room = Array.from(socket.rooms).slice(1).find(room => isMarketRoom(room))
+
+    // socket didn't join the market room
+    if (!market_room) {
+      console.error(`[socketID: ${socket.id}] try to start market but did not joined the market room`)
+      // todo: maybe a callback to inform the client?
+    }
+    else {
+      // prepare response
+      const socket_list = await getSocketsInRoom(io, market_room)
+      const message = extractPlayersNames(socket_list)
+      const message_validated = Schemas.serverMarketUserOnlineSchema.validate(message)
+
+      // Send message to all socket in the room
+      io.in(league_room).emit(EVENT_TYPE.SERVER.MARKET.START, message_validated.value)
+
+      const message_turn = getPlayerTurn(message)
+      const message_turn_validated = Schemas.serverMarketSearchSchema.validate(message_turn)
+      io.in(market_room).emit(EVENT_TYPE.SERVER.MARKET.SEARCH, message_turn_validated.value)      
+    }
+  }
+}
 
 //----------------------------------------------------------
 
@@ -204,4 +234,5 @@ module.exports = (io, socket) => {
   socket.on(EVENT_TYPE.CLIENT.LEAGUE.USER_OFFLINE, () => { onUserOffline(io, socket) })
   socket.on(EVENT_TYPE.CLIENT.MARKET.OPEN, () => { onMarketOpen(io, socket) })
   socket.on(EVENT_TYPE.CLIENT.MARKET.USER_ONLINE, () => { onMarketUserOnline(io, socket) })
+  socket.on(EVENT_TYPE.CLIENT.MARKET.START, () => { onMarketStart(io, socket) })
 }

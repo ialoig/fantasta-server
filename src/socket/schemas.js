@@ -12,6 +12,7 @@ const serverUserOfflineSchema = listOfUser
 const serverUserDeletedSchema = listOfUser
 const serverMarketOpenSchema = listOfUser
 const serverMarketUserOnlineSchema = listOfUser
+const serverMarketSearchSchema = player
 
 export const Schemas = {
     clientLeagueUserNewSchema,
@@ -21,5 +22,6 @@ export const Schemas = {
     serverUserOfflineSchema,
     serverUserDeletedSchema,
     serverMarketOpenSchema,
-    serverMarketUserOnlineSchema
+    serverMarketUserOnlineSchema,
+    serverMarketSearchSchema
 }
