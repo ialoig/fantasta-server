@@ -74,7 +74,7 @@ export async function getSocketsInRoom(io, room) {
 export function extractPlayersNames(socket_list, exclude_socket = null) {
 	return socket_list
 		.filter(socket => socket !== exclude_socket)
-		.map(socket => socket.player)
+		.map(socket => socket.user)
 }
 
 export function getPlayerTurn(player_list){

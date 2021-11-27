@@ -31,16 +31,18 @@ function eventTypeUserNewOrOnline(newUser) {
  * 
  * @param {*} io        socket server
  * @param {*} socket    socket client
- * @param {*} payload   { room, player }
+ * @param {*} payload   { room, user }
  * @param {*} callback  sent back to the client as ack/nack
  * @param {*} newUser   whether the user is joining the league for the first time
  * @returns 
  */
 const onUserNewOrOnline = async (io, socket, payload, callback, newUser) => {
-  // Validate arguments
+  // Assert callback is passed
   if (typeof callback !== "function") {
     return socket.disconnect()
   }
+
+  // Validate payload
   const payload_validation = validateUserNewOrOnline(payload, newUser)
   if (payload_validation.error) {
     return callback({
@@ -50,14 +52,14 @@ const onUserNewOrOnline = async (io, socket, payload, callback, newUser) => {
   }
 
   // Extract from payload
-  const { room, player } = payload_validation.value
+  const { room, user } = payload_validation.value
 
   // Add custom information to the socket object
-  socket.player = player
+  socket.user = user
 
   // Join Room
   socket.join(room)
-  console.log(`[socketID: ${socket.id}] ${player} online in ${room} (newUser=${newUser})`)
+  console.log(`[socketID: ${socket.id}] ${user} online in ${room} (newUser=${newUser})`)
 
   // Response back to client
   callback({ status: "OK" })
@@ -80,7 +82,7 @@ const onUserNewOrOnline = async (io, socket, payload, callback, newUser) => {
 const onUserDeleted = async (io, socket) => {
   const rooms = Array.from(socket.rooms).slice(1) // Set { <socket.id>, "room1", "room2", ... }
   for (const room of rooms) {
-    console.log(`[socketID: ${socket.id}] ${socket.player} deleted from ${room}`)
+    console.log(`[socketID: ${socket.id}] ${socket.user} deleted from ${room}`)
     socket.leave(room)
 
     // prepare response
@@ -103,7 +105,7 @@ const onUserOffline = async (io, socket) => {
   const rooms = Array.from(socket.rooms).slice(1) // Set { <socket.id>, "room1", "room2", ... }
   for (const room of rooms) {
     socket.leave(room)
-    console.log(`[socketID: ${socket.id}] ${socket.player} offline in ${room}`)
+    console.log(`[socketID: ${socket.id}] ${socket.user} offline in ${room}`)
 
     // prepare response
     const socket_list = await getSocketsInRoom(io, room)
@@ -129,18 +131,19 @@ const onMarketOpen = async (io, socket) => {
   // socket didn't join the league room
   if (!league_room) {
     console.error(`[socketID: ${socket.id}] try to open market but did not joined the league room`)
-    // todo: maybe a callback to inform the client?
+    // TODO: maybe a callback to inform the client?
   }
   else {
     const market_room = getMarketRoom(league_room)
 
     // Join Market room
     socket.join(market_room)
-    console.log(`[socketID: ${socket.id}] ${socket.player} open market ${market_room}`)
+    console.log(`[socketID: ${socket.id}] ${socket.user} open market ${market_room}`)
 
     // prepare response
     const socket_list = await getSocketsInRoom(io, market_room)
     const message = extractPlayersNames(socket_list)
+    message["user"] = socket.user // add user information to the message
     const message_validated = Schemas.serverMarketOpenSchema.validate(message)
 
     // Send message to all socket in the room
@@ -162,7 +165,7 @@ const onMarketUserOnline = async (io, socket) => {
   // socket didn't join the league room
   if (!league_room) {
     console.error(`[socketID: ${socket.id}] try to join market room but did not joined the league room`)
-    // todo: maybe a callback to inform the client?
+    // TODO: maybe a callback to inform the client?
   }
   else
   {
@@ -170,13 +173,13 @@ const onMarketUserOnline = async (io, socket) => {
 
     // market room do not exists
     if (!io.sockets.adapter.rooms.get(market_room)) {
-      console.error(`[socketID: ${socket.id}] ${socket.player} try to join ${market_room} but the market is not open yet`)
-      // todo: maybe a callback to inform the client?
+      console.error(`[socketID: ${socket.id}] ${socket.user} try to join ${market_room} but the market is not open yet`)
+      // TODO: maybe a callback to inform the client?
     }
     else {
       // Join Market room
       socket.join(market_room)
-      console.log(`[socketID: ${socket.id}] ${socket.player} join market ${market_room}`)
+      console.log(`[socketID: ${socket.id}] ${socket.user} join market ${market_room}`)
 
       // prepare response
       const socket_list = await getSocketsInRoom(io, market_room)
@@ -195,8 +198,8 @@ const onMarketStart= async (io, socket) => {
 
   // socket didn't join the league room
   if (!league_room) {
-    console.error(`[socketID: ${socket.id}] try to start market but did not joined the league room`)
-    // todo: maybe a callback to inform the client?
+    console.error(`[socketID: ${socket.id}] ${socket.user} try to start market but did not joined the league room`)
+    // TODO: maybe a callback to inform the client?
   }
   else
   {
@@ -204,8 +207,8 @@ const onMarketStart= async (io, socket) => {
 
     // socket didn't join the market room
     if (!market_room) {
-      console.error(`[socketID: ${socket.id}] try to start market but did not joined the market room`)
-      // todo: maybe a callback to inform the client?
+      console.error(`[socketID: ${socket.id}] ${socket.user} try to start market but did not joined the market room`)
+      // TODO: maybe a callback to inform the client?
     }
     else {
       // prepare response
@@ -225,17 +228,30 @@ const onMarketStart= async (io, socket) => {
 
 
 // TODO: 
-// Validate payload
-// extract playe
-//  
+// add callback 
+// check that market is open. Add open variable to the room object ??
 const onMarketPlayerSelected= async (io, socket, payload) => {
+  // Assert callback is passed
+  // if (typeof callback !== "function") {
+  //   return socket.disconnect()
+  // }
+
+  // Validate payload
+  const payload_validation = Schemas.clientMarketPlayerSelected.validate(payload)
+  // if (payload_validation.error) {
+  //   return callback({
+  //     status: "KO",
+  //     error
+  //   })
+  // }
+
   // retrieve league room
   const league_room = Array.from(socket.rooms).slice(1).find(room => isLeagueRoom(room))
 
   // socket didn't join the league room
   if (!league_room) {
     console.error(`[socketID: ${socket.id}] try to select player but did not joined the league room`)
-    // todo: maybe a callback to inform the client?
+    // TODO: maybe a callback to inform the client?
   }
   else
   {
@@ -244,15 +260,15 @@ const onMarketPlayerSelected= async (io, socket, payload) => {
     // socket didn't join the market room
     if (!market_room) {
       console.error(`[socketID: ${socket.id}] try to select player but did not joined the market room`)
-      // todo: maybe a callback to inform the client?
+      // TODO: maybe a callback to inform the client?
     }
     else {
 
-      // validate payload
-      const payload_validation = Schemas.clientMarketPlayerSelected.validate(payload)
+      // prepare response
+      const message_validated = Schemas.clientMarketPlayerSelected.validate(payload_validation.value)
 
       // Send message to all socket in the market room
-      io.in(market_room).emit(EVENT_TYPE.SERVER.MARKET.PLAYER_SELECTED, payload_validation.value)      
+      io.in(market_room).emit(EVENT_TYPE.SERVER.MARKET.PLAYER_SELECTED, message_validated.value)      
     }
   }
 }
