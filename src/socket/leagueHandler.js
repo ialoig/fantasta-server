@@ -4,6 +4,20 @@ import { Schemas } from "./schemas"
 
 //------------------------------------------------------------------------------
 
+const callbackSuccess = () => {
+  return { status: "OK" }
+}
+
+const callbackError = (error) => {
+  return { status: "KO", error }
+}
+
+const getSocketRooms = (socket) => {
+  return Array.from(socket.rooms).slice(1) // socket.rooms = Set { <socket.id>, "room1", "room2", ... }
+}
+
+//------------------------------------------------------------------------------
+
 /**
  * 
  * @param {*} payload to be validated
@@ -55,7 +69,7 @@ const onUserNewOrOnline = async (io, socket, payload, callback, newUser) => {
 
   // Validate payload
   const payload_validation = validateUserNewOrOnline(payload, newUser)
-  if (payload_validation.error) { return callback({ status: "KO", error }) }
+  if (payload_validation.error) { return callback(callbackError(payload_validation.error)) }
 
   // Extract from payload
   const { room, user } = payload_validation.value
@@ -67,8 +81,8 @@ const onUserNewOrOnline = async (io, socket, payload, callback, newUser) => {
   socket.join(room)
   console.log(`[leagueHandler] socketID: ${socket.id} - ${user} online in ${room} (newUser=${newUser})`)
 
-  // Response back to client
-  callback({ status: "OK" })
+  // Notify client message is received
+  callback(callbackSuccess())
 
   // prepare message
   const socket_list = await getSocketsInRoom(io, room)
@@ -88,7 +102,7 @@ const onUserNewOrOnline = async (io, socket, payload, callback, newUser) => {
  * @param {*} socket  socket client
  */
 const onUserDeleted = async (io, socket) => {
-  const rooms = Array.from(socket.rooms).slice(1) // Set { <socket.id>, "room1", "room2", ... }
+  const rooms = getSocketRooms(socket)
   for (const room of rooms) {
     console.log(`[leagueHandler] socketID: ${socket.id} - ${socket.user} deleted from ${room}`)
     socket.leave(room)
@@ -112,8 +126,10 @@ const onUserDeleted = async (io, socket) => {
  * @param {*} socket  socket client
  */
 const onUserOffline = async (io, socket) => {
-  const rooms = Array.from(socket.rooms).slice(1) // Set { <socket.id>, "room1", "room2", ... }
+  const rooms = getSocketRooms(socket)
   for (const room of rooms) {
+
+    // leave room
     socket.leave(room)
     console.log(`[leagueHandler] socketID: ${socket.id} - ${socket.user} offline in ${room}`)
 
@@ -138,7 +154,7 @@ const onUserOffline = async (io, socket) => {
  */
 const onMarketOpen = async (io, socket) => {
   // retrieve league room
-  const league_room = Array.from(socket.rooms).slice(1).find(room => isLeagueRoom(room))
+  const league_room = getSocketRooms(socket).find(room => isLeagueRoom(room))
 
   // socket didn't join the league room
   if (!league_room) {
@@ -177,7 +193,7 @@ const onMarketOpen = async (io, socket) => {
  */
 const onMarketUserOnline = async (io, socket) => {
   // retrieve league room
-  const league_room = Array.from(socket.rooms).slice(1).find(room => isLeagueRoom(room))
+  const league_room = getSocketRooms(socket).find(room => isLeagueRoom(room))
 
   // socket didn't join the league room
   if (!league_room) {
@@ -217,7 +233,7 @@ const onMarketUserOnline = async (io, socket) => {
 
 const onMarketStart = async (io, socket) => {
   // retrieve league room
-  const league_room = Array.from(socket.rooms).slice(1).find(room => isLeagueRoom(room))
+  const league_room = getSocketRooms(socket).find(room => isLeagueRoom(room))
 
   // socket didn't join the league room
   if (!league_room) {
@@ -225,7 +241,7 @@ const onMarketStart = async (io, socket) => {
     // TODO: maybe a callback to inform the client?
   }
   else {
-    const market_room = Array.from(socket.rooms).slice(1).find(room => isMarketRoom(room))
+    const market_room = getSocketRooms(socket).find(room => isMarketRoom(room))
 
     // socket didn't join the market room
     if (!market_room) {
@@ -281,7 +297,7 @@ const onMarketFootballPlayerSelectedOrBet = async (io, socket, payload, bet) => 
   }
 
   // retrieve league room
-  const league_room = Array.from(socket.rooms).slice(1).find(room => isLeagueRoom(room))
+  const league_room = getSocketRooms(socket).find(room => isLeagueRoom(room))
 
   // socket didn't join the league room
   if (!league_room) {
@@ -289,7 +305,7 @@ const onMarketFootballPlayerSelectedOrBet = async (io, socket, payload, bet) => 
     // TODO: maybe a callback to inform the client?
   }
   else {
-    const market_room = Array.from(socket.rooms).slice(1).find(room => isMarketRoom(room))
+    const market_room = getSocketRooms(socket).find(room => isMarketRoom(room))
 
     // socket didn't join the market room
     if (!market_room) {
@@ -323,7 +339,7 @@ const onMarketFootballPlayerSelectedOrBet = async (io, socket, payload, bet) => 
 
 module.exports = (io, socket) => {
 
-  // Join League (TODO: check if we really want a callback)
+  // TODO: check if we really want a callback
   socket.on(EVENT_TYPE.CLIENT.LEAGUE.USER_NEW, (payload, callback) => { onUserNewOrOnline(io, socket, payload, callback, true) })
   socket.on(EVENT_TYPE.CLIENT.LEAGUE.USER_ONLINE, (payload, callback) => { onUserNewOrOnline(io, socket, payload, callback, false) })
   socket.on(EVENT_TYPE.CLIENT.LEAGUE.USER_DELETED, () => { onUserDeleted(io, socket) })
