@@ -3,14 +3,14 @@ import Joi from "joi" // validation library
 const listOfUser = Joi.array().items(Joi.string())
 const room = Joi.string().required()
 const user = Joi.string().required()
-const football_player = user
-const bet = Joi.number().required()
+const football_player_id = Joi.number().strict().required()
+const bet = Joi.number().strict().required()
 
 // client messages
 const clientLeagueUserOnlineSchema = Joi.object({room: room, user: user})
 const clientLeagueUserNewSchema = clientLeagueUserOnlineSchema
 const clientLeagueMarketOpen = Joi.object({room: room})
-const clientMarketPlayerSelected = Joi.object({football_player: football_player, bet: bet})
+const clientMarketFootballPlayerSelected = Joi.object({football_player_id: football_player_id, bet: bet})
 
 // server messages
 const serverLeagueUserNewOrOnlineSchema = listOfUser
@@ -19,14 +19,13 @@ const serverUserDeletedSchema = listOfUser
 const serverMarketOpenSchema = listOfUser
 const serverMarketUserOnlineSchema = listOfUser
 const serverMarketSearchSchema = Joi.object({turn: user})
-const serverMarketPlayerSelected = Joi.object({user: user, football_player: football_player, bet: bet})
-
+const serverMarketFootballPlayerSelected = Joi.object({user: user, football_player_id: football_player_id, bet: bet})
 
 export const Schemas = {
     clientLeagueUserNewSchema,
     clientLeagueUserOnlineSchema,
     clientLeagueMarketOpen,
-    clientMarketPlayerSelected,
+    clientMarketFootballPlayerSelected,
 
     serverLeagueUserNewOrOnlineSchema,
     serverUserOfflineSchema,
@@ -34,5 +33,5 @@ export const Schemas = {
     serverMarketOpenSchema,
     serverMarketUserOnlineSchema,
     serverMarketSearchSchema,
-    serverMarketPlayerSelected
+    serverMarketFootballPlayerSelected
 }
