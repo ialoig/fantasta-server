@@ -445,8 +445,6 @@ const onMarketPause = (io, socket, callback) => {
 //------------------------------------------------------------------------------
 
 module.exports = (io, socket) => {
-
-  // TODO: add callback everywhere
   socket.on(EVENT_TYPE.CLIENT.LEAGUE.USER_NEW, (payload, callback) => { onLeagueUserNewOrOnline(io, socket, payload, true, callback) })
   socket.on(EVENT_TYPE.CLIENT.LEAGUE.USER_ONLINE, (payload, callback) => { onLeagueUserNewOrOnline(io, socket, payload, false, callback) })
   socket.on(EVENT_TYPE.CLIENT.LEAGUE.USER_DELETED, (callback) => { onLeagueUserDeleted(io, socket, callback) })
