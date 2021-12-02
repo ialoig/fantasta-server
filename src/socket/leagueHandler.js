@@ -1,4 +1,3 @@
-// import Joi from "joi" // validation library
 import { EVENT_TYPE, getSocketsInRoom, extractPlayersNames, isLeagueRoom, isMarketRoom, getMarketRoom, getPlayerTurn } from "./common"
 import { Schemas } from "./schemas"
 
