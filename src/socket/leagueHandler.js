@@ -65,7 +65,10 @@ const eventTypeUserNewOrOnline = (newUser) => {
  */
 const onLeagueUserNewOrOnline = async (io, socket, payload, newUser, callback) => {
   // Assert callback is passed
-  if (typeof callback !== "function") { return socket.disconnect() }
+  if (typeof callback !== "function") {
+    console.error("No callback is passed. Disconnecting")
+    return socket.disconnect()
+  }
 
   // Validate payload
   const payload_validation = validateUserNewOrOnline(payload, newUser)
@@ -111,7 +114,10 @@ const onLeagueUserNewOrOnline = async (io, socket, payload, newUser, callback) =
  */
 const onLeagueUserDeleted = async (io, socket, callback) => {
   // Assert callback is passed
-  if (typeof callback !== "function") { return socket.disconnect() }
+  if (typeof callback !== "function") {
+    console.error("No callback function passed. Disconnecting")
+    return socket.disconnect()
+  }
 
   const rooms = getSocketRooms(socket)
 
@@ -155,7 +161,10 @@ const onLeagueUserDeleted = async (io, socket, callback) => {
  */
 const onLeagueUserOffline = async (io, socket, callback) => {
   // Assert callback is passed
-  if (typeof callback !== "function") { return socket.disconnect() }
+  if (typeof callback !== "function") {
+    console.error("No callback function passed. Disconnecting")
+    return socket.disconnect()
+  }
 
   const rooms = getSocketRooms(socket)
 
@@ -202,7 +211,10 @@ const onLeagueUserOffline = async (io, socket, callback) => {
  */
 const onMarketOpen = async (io, socket, callback) => {
   // Assert callback is passed
-  if (typeof callback !== "function") { return socket.disconnect() }
+  if (typeof callback !== "function") {
+    console.error("No callback function passed. Disconnecting")
+    return socket.disconnect()
+  }
 
   // retrieve league room
   const league_room = getSocketRooms(socket).find(room => isLeagueRoom(room))
@@ -248,7 +260,10 @@ const onMarketOpen = async (io, socket, callback) => {
  */
 const onMarketUserOnline = async (io, socket, callback) => {
   // Assert callback is passed
-  if (typeof callback !== "function") { return socket.disconnect() }
+  if (typeof callback !== "function") {
+    console.error("No callback function passed. Disconnecting")
+    return socket.disconnect()
+  }
 
   // retrieve league room
   const league_room = getSocketRooms(socket).find(room => isLeagueRoom(room))
@@ -299,7 +314,10 @@ const onMarketUserOnline = async (io, socket, callback) => {
 const onMarketStart = async (io, socket, callback) => {
 
   // Assert callback is passed
-  if (typeof callback !== "function") { return socket.disconnect() }
+  if (typeof callback !== "function") {
+    console.error("No callback function passed. Disconnecting")
+    return socket.disconnect()
+  }
 
   // retrieve league room
   const league_room = getSocketRooms(socket).find(room => isLeagueRoom(room))
@@ -356,7 +374,10 @@ const onMarketStart = async (io, socket, callback) => {
 //       - add field in the database?
 const onMarketFootballPlayerSelectedOrBet = async (io, socket, payload, bet, callback) => {
   // Assert callback is passed
-  if (typeof callback !== "function") { return socket.disconnect() }
+  if (typeof callback !== "function") {
+    console.error("No callback function passed. Disconnecting")
+    return socket.disconnect()
+  }
 
   // Validate payload
   const payload_validation = Schemas.clientMarketFootballPlayerSelected.validate(payload)
@@ -414,7 +435,10 @@ const onMarketFootballPlayerSelectedOrBet = async (io, socket, payload, bet, cal
 const onMarketPause = (io, socket, callback) => {
 
   // Assert callback is passed
-  if (typeof callback !== "function") { return socket.disconnect() }
+  if (typeof callback !== "function") {
+    console.error("No callback function passed. Disconnecting")
+    return socket.disconnect()
+  }
 
   // retrieve league room
   const league_room = getSocketRooms(socket).find(room => isLeagueRoom(room))
