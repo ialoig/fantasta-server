@@ -4,12 +4,12 @@ import { Schemas } from "./schemas"
 
 //------------------------------------------------------------------------------
 
-const callbackSuccess = () => {
+const callbackSuccessObject = () => {
   return { status: "OK" }
 }
 
-const callbackError = (error) => {
-  return { status: "KO", error }
+const callbackErrorObject = (error) => {
+  return { status: "KO", error: error }
 }
 
 const getSocketRooms = (socket) => {
@@ -63,13 +63,15 @@ const eventTypeUserNewOrOnline = (newUser) => {
  * @param {*} newUser   whether the user is joining the league for the first time
  * @returns 
  */
-const onUserNewOrOnline = async (io, socket, payload, callback, newUser) => {
+const onLeagueUserNewOrOnline = async (io, socket, payload, newUser, callback) => {
   // Assert callback is passed
   if (typeof callback !== "function") { return socket.disconnect() }
 
   // Validate payload
   const payload_validation = validateUserNewOrOnline(payload, newUser)
-  if (payload_validation.error) { return callback(callbackError(payload_validation.error)) }
+  if (payload_validation.error) {
+    return callback(callbackErrorObject(payload_validation.error))  // TODO: error_code
+  }
 
   // Extract from payload
   const { room, user } = payload_validation.value
@@ -81,15 +83,21 @@ const onUserNewOrOnline = async (io, socket, payload, callback, newUser) => {
   socket.join(room)
   console.log(`[leagueHandler] socketID: ${socket.id} - ${user} online in ${room} (newUser=${newUser})`)
 
-  // Notify client message is received
-  callback(callbackSuccess())
-
   // prepare message
   const socket_list = await getSocketsInRoom(io, room)
   const message_validated = Schemas.serverLeagueUserNewOrOnlineSchema.validate(extractPlayersNames(socket_list))
 
-  // Send message to all sockets in the room
-  io.in(room).emit(eventTypeUserNewOrOnline(newUser), message_validated.value)
+  if (message_validated.error) {
+    console.error(`[leagueHandler] socketID: ${socket.id} - validation error: ${message_validated.error}`)
+    return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
+  }
+  else {
+    // Notify client message is received
+    callback(callbackSuccessObject())
+
+    // Send message to all sockets in the room
+    io.in(room).emit(eventTypeUserNewOrOnline(newUser), message_validated.value)
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -101,18 +109,38 @@ const onUserNewOrOnline = async (io, socket, payload, callback, newUser) => {
  * @param {*} io      socket server
  * @param {*} socket  socket client
  */
-const onUserDeleted = async (io, socket) => {
+const onLeagueUserDeleted = async (io, socket, callback) => {
+  // Assert callback is passed
+  if (typeof callback !== "function") { return socket.disconnect() }
+
   const rooms = getSocketRooms(socket)
+
+  if (rooms.length == 0){
+    console.error(`[leagueHandler] socketID: ${socket.id} - try to delete user but did not joined any room`)
+    return callback(callbackErrorObject("try to delete user but did not joined any room")) // TODO: error_code
+  }
+
   for (const room of rooms) {
-    console.log(`[leagueHandler] socketID: ${socket.id} - ${socket.user} deleted from ${room}`)
+    console.log(`[leagueHandler] socketID: ${socket.id} - user: ${socket.user} deleted from ${room}`)
     socket.leave(room)
 
     // prepare message
     const socket_list = await getSocketsInRoom(io, room)
     const message = extractPlayersNames(socket_list)
     const message_validated = Schemas.serverUserDeletedSchema.validate(message)
-    if (isLeagueRoom(room)) {
-      io.in(room).emit(EVENT_TYPE.SERVER.LEAGUE.USER_DELETED, message_validated.value)
+
+    if (message_validated.error) {
+      console.error(`[leagueHandler] socketID: ${socket.id} - validation error: ${message_validated.error}`)
+      return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
+    }
+    else {
+      if (isLeagueRoom(room)) {
+        // Notify client message is received
+        callback(callbackSuccessObject())
+
+        // Send message to all sockets in the room
+        io.in(room).emit(EVENT_TYPE.SERVER.LEAGUE.USER_DELETED, message_validated.value)
+      }
     }
   }
 }
@@ -125,20 +153,40 @@ const onUserDeleted = async (io, socket) => {
  * @param {*} io      socket server
  * @param {*} socket  socket client
  */
-const onUserOffline = async (io, socket) => {
+const onLeagueUserOffline = async (io, socket, callback) => {
+  // Assert callback is passed
+  if (typeof callback !== "function") { return socket.disconnect() }
+
   const rooms = getSocketRooms(socket)
+
+  if (rooms.length == 0){
+    console.error(`[leagueHandler] socketID: ${socket.id} - try to offline user but did not joined any room`)
+    return callback(callbackErrorObject("try to offline user but did not joined any room")) // TODO: error_code
+  }
+
   for (const room of rooms) {
 
     // leave room
     socket.leave(room)
-    console.log(`[leagueHandler] socketID: ${socket.id} - ${socket.user} offline in ${room}`)
+    console.log(`[leagueHandler] socketID: ${socket.id} - user: ${socket.user} offline in ${room}`)
 
     // prepare message
     const socket_list = await getSocketsInRoom(io, room)
     const message = extractPlayersNames(socket_list)
     const message_validated = Schemas.serverUserOfflineSchema.validate(message)
-    if (isLeagueRoom(room)) {
-      io.in(room).emit(EVENT_TYPE.SERVER.LEAGUE.USER_OFFLINE, message_validated.value)
+
+    if (message_validated.error) {
+      console.error(`[leagueHandler] socketID: ${socket.id} - validation error: ${message_validated.error}`)
+      return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
+    }
+    else {
+      if (isLeagueRoom(room)) {
+        // Notify client message is received
+        callback(callbackSuccessObject())
+
+        // Send message to all sockets in the room
+        io.in(room).emit(EVENT_TYPE.SERVER.LEAGUE.USER_OFFLINE, message_validated.value)
+      }
     }
   }
 }
@@ -152,21 +200,24 @@ const onUserOffline = async (io, socket) => {
  * @param {*} io      socket server
  * @param {*} socket  socket client
  */
-const onMarketOpen = async (io, socket) => {
+const onMarketOpen = async (io, socket, callback) => {
+  // Assert callback is passed
+  if (typeof callback !== "function") { return socket.disconnect() }
+
   // retrieve league room
   const league_room = getSocketRooms(socket).find(room => isLeagueRoom(room))
 
   // socket didn't join the league room
   if (!league_room) {
     console.error(`[leagueHandler] socketID: ${socket.id} - try to open market but did not joined the league room`)
-    // TODO: maybe a callback to inform the client?
+    return callback(callbackErrorObject("try to open market but did not joined the league room")) // TODO: error_code
   }
   else {
     const market_room = getMarketRoom(league_room)
 
     // Join Market room
     socket.join(market_room)
-    console.log(`[leagueHandler] socketID: ${socket.id} - ${socket.user} open market ${market_room}`)
+    console.log(`[leagueHandler] socketID: ${socket.id} - user: ${socket.user} open market ${market_room}`)
 
     // prepare message
     const socket_list = await getSocketsInRoom(io, market_room)
@@ -174,9 +225,13 @@ const onMarketOpen = async (io, socket) => {
     message["user"] = socket.user // add user information to the message
     const message_validated = Schemas.serverMarketOpenSchema.validate(message)
     if (message_validated.error) {
-      console.log(`[leagueHandler] socketID: ${socket.id} - validation error: ${message_validated.error}`)
+      console.error(`[leagueHandler] socketID: ${socket.id} - validation error: ${message_validated.error}`)
+      return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
     }
     else {
+      // Notify client message is received
+      callback(callbackSuccessObject())
+
       // Send message to all sockets in the room
       io.in(league_room).emit(EVENT_TYPE.SERVER.MARKET.OPEN, message_validated.value)
     }
@@ -191,27 +246,30 @@ const onMarketOpen = async (io, socket) => {
  * @param {*} io 
  * @param {*} socket 
  */
-const onMarketUserOnline = async (io, socket) => {
+const onMarketUserOnline = async (io, socket, callback) => {
+  // Assert callback is passed
+  if (typeof callback !== "function") { return socket.disconnect() }
+
   // retrieve league room
   const league_room = getSocketRooms(socket).find(room => isLeagueRoom(room))
 
   // socket didn't join the league room
   if (!league_room) {
     console.error(`[leagueHandler] socketID: ${socket.id} - try to join market room but did not joined the league room`)
-    // TODO: maybe a callback to inform the client?
+    return callback(callbackErrorObject("try to join market room but did not joined the league room")) // TODO: error_code
   }
   else {
     const market_room = getMarketRoom(league_room)
 
     // market room do not exists
     if (!io.sockets.adapter.rooms.get(market_room)) {
-      console.error(`[leagueHandler] socketID: ${socket.id} - ${socket.user} try to join ${market_room} but the market is not open yet`)
-      // TODO: maybe a callback to inform the client?
+      console.error(`[leagueHandler] socketID: ${socket.id} - user: ${socket.user} try to join ${market_room} but the market is not open yet`)
+      return callback(callbackErrorObject(`try to join ${market_room} but the market is not open yet`)) // TODO: error_code
     }
     else {
       // Join Market room
       socket.join(market_room)
-      console.log(`[leagueHandler] socketID: ${socket.id} - ${socket.user} join market ${market_room}`)
+      console.log(`[leagueHandler] socketID: ${socket.id} - user: ${socket.user} join market ${market_room}`)
 
       // prepare message
       const socket_list = await getSocketsInRoom(io, market_room)
@@ -219,9 +277,13 @@ const onMarketUserOnline = async (io, socket) => {
       const message_validated = Schemas.serverMarketUserOnlineSchema.validate(message)
 
       if (message_validated.error) {
-        console.log(`[leagueHandler] socketID: ${socket.id} - validation error: ${message_validated.error}`)
+        console.error(`[leagueHandler] socketID: ${socket.id} - validation error: ${message_validated.error}`)
+        return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
       }
       else {
+        // Notify client message is received
+        callback(callbackSuccessObject())
+
         // Send message to all sockets in the room
         io.in(league_room).emit(EVENT_TYPE.SERVER.MARKET.USER_ONLINE, message_validated.value)
       }
@@ -231,22 +293,29 @@ const onMarketUserOnline = async (io, socket) => {
 
 //------------------------------------------------------------------------------
 
-const onMarketStart = async (io, socket) => {
+// TODO: check that market is open:
+//       - add open variable to the room object
+//       - add field in the database?
+const onMarketStart = async (io, socket, callback) => {
+
+  // Assert callback is passed
+  if (typeof callback !== "function") { return socket.disconnect() }
+
   // retrieve league room
   const league_room = getSocketRooms(socket).find(room => isLeagueRoom(room))
 
   // socket didn't join the league room
   if (!league_room) {
-    console.error(`[leagueHandler] socketID: ${socket.id} - ${socket.user} try to start market but did not joined the league room`)
-    // TODO: maybe a callback to inform the client?
+    console.error(`[leagueHandler] socketID: ${socket.id} - user: ${socket.user} try to start market but did not joined the league room`)
+    return callback(callbackErrorObject("try to start market but did not joined the league room")) // TODO: error_code
   }
   else {
     const market_room = getSocketRooms(socket).find(room => isMarketRoom(room))
 
     // socket didn't join the market room
     if (!market_room) {
-      console.error(`[leagueHandler] socketID: ${socket.id} - ${socket.user} try to start market but did not joined the market room`)
-      // TODO: maybe a callback to inform the client?
+      console.error(`[leagueHandler] socketID: ${socket.id} - user: ${socket.user} try to start market but did not joined the market room`)
+      return callback(callbackErrorObject("try to start market but did not joined the market room")) // TODO: error_code
     }
     else {
       // prepare message
@@ -255,21 +324,24 @@ const onMarketStart = async (io, socket) => {
       const message_validated = Schemas.serverMarketUserOnlineSchema.validate(message)
 
       if (message_validated.error) {
-        console.log(`[leagueHandler] socketID: ${socket.id} - validation error: ${message_validated.error}`)
+        console.error(`[leagueHandler] socketID: ${socket.id} - validation error: ${message_validated.error}`)
+        return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
       }
       else {
-
-        // Send message to all sockets in the room
-        io.in(league_room).emit(EVENT_TYPE.SERVER.MARKET.START, message_validated.value)
-
         // prepare message
         const message_turn = getPlayerTurn(message)
         const message_turn_validated = Schemas.serverMarketSearchSchema.validate(message_turn)
 
         if (message_turn_validated.error) {
-          console.log(`[leagueHandler] socketID: ${socket.id} - validation error: ${message_turn_validated.error}`)
+          console.error(`[leagueHandler] socketID: ${socket.id} - validation error: ${message_turn_validated.error}`)
+          return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
         }
         else {
+          // Notify client message is received
+          callback(callbackSuccessObject())
+
+          // Send message to all sockets in the room
+          io.in(league_room).emit(EVENT_TYPE.SERVER.MARKET.START, message_validated.value)
           io.in(market_room).emit(EVENT_TYPE.SERVER.MARKET.SEARCH, message_turn_validated.value)
         }
       }
@@ -279,21 +351,18 @@ const onMarketStart = async (io, socket) => {
 
 //------------------------------------------------------------------------------
 
-// TODO: 
-// add callback 
-// check that market is open. Add open variable to the room object ??
-const onMarketFootballPlayerSelectedOrBet = async (io, socket, payload, bet) => {
-  console.log(`[00000] onMarketFootballPlayerSelectedOrBet`)
-
+// TODO: check that market is started:
+//       - add open variable to the room object ?
+//       - add field in the database?
+const onMarketFootballPlayerSelectedOrBet = async (io, socket, payload, bet, callback) => {
   // Assert callback is passed
-  // if (typeof callback !== "function") { return socket.disconnect() }
+  if (typeof callback !== "function") { return socket.disconnect() }
 
   // Validate payload
   const payload_validation = Schemas.clientMarketFootballPlayerSelected.validate(payload)
   if (payload_validation.error) {
-    console.log(`[leagueHandler] socketID: ${socket.id} - validation error: ${payload_validation.error}`)
-    return
-    //return callback({ status: "KO", error })
+    console.error(`[leagueHandler] socketID: ${socket.id} - validation error: ${payload_validation.error}`)
+    return callback(callbackErrorObject(payload_validation.error))  // TODO: error_code
   }
 
   // retrieve league room
@@ -301,28 +370,31 @@ const onMarketFootballPlayerSelectedOrBet = async (io, socket, payload, bet) => 
 
   // socket didn't join the league room
   if (!league_room) {
-    console.error(`[leagueHandler] socketID: ${socket.id} - try to select player but did not joined the league room`)
-    // TODO: maybe a callback to inform the client?
+    console.error(`[leagueHandler] socketID: ${socket.id} - try to select/bet player but did not joined the league room`)
+    return callback(callbackErrorObject("try to select/bet player but did not joined the league room"))  // TODO: error_code
   }
   else {
     const market_room = getSocketRooms(socket).find(room => isMarketRoom(room))
 
     // socket didn't join the market room
     if (!market_room) {
-      console.error(`[leagueHandler] socketID: ${socket.id} - try to select player but did not joined the market room`)
-      // TODO: maybe a callback to inform the client?
+      console.error(`[leagueHandler] socketID: ${socket.id} - try to select/bet player but did not joined the market room`)
+      return callback(callbackErrorObject("try to select/bet player but did not joined the market room"))  // TODO: error_code
     }
     else {
-
       // prepare message
       const message = payload_validation.value
       message["user"] = socket.user // add user information to the message
       const message_validated = Schemas.serverMarketFootballPlayerSelected.validate(message)
 
       if (message_validated.error) {
-        console.log(`[leagueHandler] socketID: ${socket.id} - validation error: ${message_validated.error}`)
+        console.error(`[leagueHandler] socketID: ${socket.id} - validation error: ${message_validated.error}`)
+        return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
       }
       else {
+        // Notify client message is received
+        callback(callbackSuccessObject())
+
         // Send message to all sockets in the market room
         if (bet) {
           io.in(market_room).emit(EVENT_TYPE.SERVER.MARKET.BET, message_validated.value)
@@ -335,18 +407,54 @@ const onMarketFootballPlayerSelectedOrBet = async (io, socket, payload, bet) => 
   }
 }
 
+
+// TODO: check that market is started:
+//       - add open variable to the room object ?
+//       - add field in the database?
+const onMarketPause = (io, socket, callback) => {
+
+  // Assert callback is passed
+  if (typeof callback !== "function") { return socket.disconnect() }
+
+  // retrieve league room
+  const league_room = getSocketRooms(socket).find(room => isLeagueRoom(room))
+
+  // socket didn't join the league room
+  if (!league_room) {
+    console.error(`[leagueHandler] socketID: ${socket.id} - try to pause market room but did not joined the league room`)
+    return callback(callbackErrorObject("try to pause market room but did not joined the league room"))  // TODO: error_code
+  }
+  else {
+    const market_room = getSocketRooms(socket).find(room => isMarketRoom(room))
+
+    // socket didn't join the market room
+    if (!market_room) {
+      console.error(`[leagueHandler] socketID: ${socket.id} - try to pause market room but did not joined the market room`)
+      return callback(callbackErrorObject("try to pause market room but did not joined the market room"))  // TODO: error_code
+    }
+    else {
+      // Notify client message is received
+      callback(callbackSuccessObject())
+
+      // Send message to all sockets in the market room
+      io.in(market_room).emit(EVENT_TYPE.SERVER.MARKET.PAUSE)
+    }
+  }
+}
+
 //------------------------------------------------------------------------------
 
 module.exports = (io, socket) => {
 
-  // TODO: check if we really want a callback
-  socket.on(EVENT_TYPE.CLIENT.LEAGUE.USER_NEW, (payload, callback) => { onUserNewOrOnline(io, socket, payload, callback, true) })
-  socket.on(EVENT_TYPE.CLIENT.LEAGUE.USER_ONLINE, (payload, callback) => { onUserNewOrOnline(io, socket, payload, callback, false) })
-  socket.on(EVENT_TYPE.CLIENT.LEAGUE.USER_DELETED, () => { onUserDeleted(io, socket) })
-  socket.on(EVENT_TYPE.CLIENT.LEAGUE.USER_OFFLINE, () => { onUserOffline(io, socket) })
-  socket.on(EVENT_TYPE.CLIENT.MARKET.OPEN, () => { onMarketOpen(io, socket) })
-  socket.on(EVENT_TYPE.CLIENT.MARKET.USER_ONLINE, () => { onMarketUserOnline(io, socket) })
-  socket.on(EVENT_TYPE.CLIENT.MARKET.START, () => { onMarketStart(io, socket) })
-  socket.on(EVENT_TYPE.CLIENT.MARKET.PLAYER_SELECTED, (payload) => { onMarketFootballPlayerSelectedOrBet(io, socket, payload, false) })
-  socket.on(EVENT_TYPE.CLIENT.MARKET.BET, (payload) => { onMarketFootballPlayerSelectedOrBet(io, socket, payload, true) })
+  // TODO: add callback everywhere
+  socket.on(EVENT_TYPE.CLIENT.LEAGUE.USER_NEW, (payload, callback) => { onLeagueUserNewOrOnline(io, socket, payload, true, callback) })
+  socket.on(EVENT_TYPE.CLIENT.LEAGUE.USER_ONLINE, (payload, callback) => { onLeagueUserNewOrOnline(io, socket, payload, false, callback) })
+  socket.on(EVENT_TYPE.CLIENT.LEAGUE.USER_DELETED, (callback) => { onLeagueUserDeleted(io, socket, callback) })
+  socket.on(EVENT_TYPE.CLIENT.LEAGUE.USER_OFFLINE, (callback) => { onLeagueUserOffline(io, socket, callback) })
+  socket.on(EVENT_TYPE.CLIENT.MARKET.OPEN, (callback) => { onMarketOpen(io, socket, callback) })
+  socket.on(EVENT_TYPE.CLIENT.MARKET.USER_ONLINE, (callback) => { onMarketUserOnline(io, socket, callback) })
+  socket.on(EVENT_TYPE.CLIENT.MARKET.START, (callback) => { onMarketStart(io, socket, callback) })
+  socket.on(EVENT_TYPE.CLIENT.MARKET.PLAYER_SELECTED, (payload, callback) => { onMarketFootballPlayerSelectedOrBet(io, socket, payload, false, callback) })
+  socket.on(EVENT_TYPE.CLIENT.MARKET.BET, (payload, callback) => { onMarketFootballPlayerSelectedOrBet(io, socket, payload, true, callback) })
+  socket.on(EVENT_TYPE.CLIENT.MARKET.PAUSE, (callback) => { onMarketPause(io, socket, callback) })
 }
