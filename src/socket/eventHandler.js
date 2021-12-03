@@ -110,9 +110,22 @@ const setMarketOpen = (market_room) => {
  * @param {*} market_room market room name in the format "market={league_namefrom_db}"
  * @returns true/false depenging on the result of setting the market status to start
  */
-const setMarketStart = (market_room) => {
+ const setMarketStart = (market_room) => {
   // TODO: implement it
   console.log(`[setMarketStart] market_room: ${market_room}`)
+  return true
+}
+
+//------------------------------------------------------------------------------
+
+/**
+ * 
+ * @param {*} market_room market room name in the format "market={league_namefrom_db}"
+ * @returns true/false depenging on the result of setting the market status to start
+ */
+ const setMarketPause = (market_room) => {
+  // TODO: implement it
+  console.log(`[setMarketPause] market_room: ${market_room}`)
   return true
 }
 
@@ -276,7 +289,7 @@ const onLeagueUserOffline = async (io, socket, callback) => {
 //------------------------------------------------------------------------------
 
 /**
- * Add socket to the market room.
+ * Set market status to Open in the database.
  * Broadcast the list of online users to the league room.
  * 
  * @param {*} io       socket server
@@ -395,7 +408,7 @@ const onMarketUserOnline = async (io, socket, callback) => {
 //------------------------------------------------------------------------------
 
 /**
- * Set market status to start in the database.
+ * Set market status to Start in the database.
  * Broadcast new status to all users in the market room.
  * 
  * @param {*} io       socket server
@@ -546,9 +559,15 @@ const onMarketFootballPlayerSelectedOrBet = async (io, socket, payload, bet, cal
 }
 
 
-// TODO: check that market is started:
-//       - add open variable to the room object ?
-//       - add field in the database?
+/**
+ * Set market status to Pause in the database.
+ * Broadcast new status to all users in the market room.
+ * 
+ * @param {*} io       socket server
+ * @param {*} socket   socket client
+ * @param {*} callback sent back to the client
+ * @returns 
+ */
 const onMarketPause = (io, socket, callback) => {
 
   // Assert callback is passed
@@ -584,6 +603,12 @@ const onMarketPause = (io, socket, callback) => {
     return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
   }
 
+  // Pause the market
+  if (!setMarketPause(market_room)) {
+    console.error(`[eventHandler] an error occurred while set market ${market_room} to pause`)
+    return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
+  }
+
   // Notify client message is received
   callback(callbackSuccessObject())
 
@@ -591,9 +616,16 @@ const onMarketPause = (io, socket, callback) => {
   io.in(market_room).emit(EVENT_TYPE.SERVER.MARKET.PAUSE)
 }
 
-// TODO: check that market is started:
-//       - add open variable to the room object ?
-//       - add field in the database?
+
+/**
+ * Set market status to Close in the database.
+ * Broadcast new status to all users in the market room.
+ * 
+ * @param {*} io 
+ * @param {*} socket 
+ * @param {*} callback 
+ * @returns 
+ */
 const onMarketClose = (io, socket, callback) => {
 
   // Assert callback is passed
