@@ -7,9 +7,13 @@ const callbackSuccessObject = () => {
   return { status: "OK" }
 }
 
+//------------------------------------------------------------------------------
+
 const callbackErrorObject = (error) => {
   return { status: "KO", error: error }
 }
+
+//------------------------------------------------------------------------------
 
 const getSocketRooms = (socket) => {
   return Array.from(socket.rooms).slice(1) // socket.rooms = Set { <socket.id>, "room1", "room2", ... }
