@@ -57,9 +57,9 @@ const eventTypeUserNewOrOnline = (newUser) => {
  * 
  * @param {*} io        socket server
  * @param {*} socket    socket client
- * @param {*} payload   { room, user }
- * @param {*} callback  sent back to the client as ack/nack
+ * @param {*} payload   object { room, user }
  * @param {*} newUser   whether the user is joining the league for the first time
+ * @param {*} callback  sent back to the client
  * @returns 
  */
 const onLeagueUserNewOrOnline = async (io, socket, payload, newUser, callback) => {
@@ -105,11 +105,12 @@ const onLeagueUserNewOrOnline = async (io, socket, payload, newUser, callback) =
 //------------------------------------------------------------------------------
 
 /**
- * Remove socket from each room.
+ * Remove socket from each room he has previously joined.
  * Broadcast the list of online users to the league room.
  * 
- * @param {*} io      socket server
- * @param {*} socket  socket client
+ * @param {*} io        socket server
+ * @param {*} socket    socket client
+ * @param {*} callback  sent back to the client
  */
 const onLeagueUserDeleted = async (io, socket, callback) => {
   // Assert callback is passed
@@ -120,7 +121,7 @@ const onLeagueUserDeleted = async (io, socket, callback) => {
 
   const rooms = getSocketRooms(socket)
 
-  if (rooms.length == 0){
+  if (rooms.length == 0) {
     console.error(`[leagueHandler] socketID: ${socket.id} - try to delete user but did not joined any room`)
     return callback(callbackErrorObject("try to delete user but did not joined any room")) // TODO: error_code
   }
@@ -153,10 +154,12 @@ const onLeagueUserDeleted = async (io, socket, callback) => {
 //------------------------------------------------------------------------------
 
 /**
- * Remove socket from each room.
+ * Remove socket from each room he has previously joined.
  * Broadcast the list of online users to the league room.
- * @param {*} io      socket server
- * @param {*} socket  socket client
+ * 
+ * @param {*} io        socket server
+ * @param {*} socket    socket client
+ * @param {*} callback  sent back to the client
  */
 const onLeagueUserOffline = async (io, socket, callback) => {
   // Assert callback is passed
@@ -167,7 +170,7 @@ const onLeagueUserOffline = async (io, socket, callback) => {
 
   const rooms = getSocketRooms(socket)
 
-  if (rooms.length == 0){
+  if (rooms.length == 0) {
     console.error(`[leagueHandler] socketID: ${socket.id} - try to offline user but did not joined any room`)
     return callback(callbackErrorObject("try to offline user but did not joined any room")) // TODO: error_code
   }
