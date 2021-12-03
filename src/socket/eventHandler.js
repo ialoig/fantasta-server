@@ -1,6 +1,7 @@
 import { EVENT_TYPE, getSocketsInRoom, extractPlayersNames, isLeagueRoom, isMarketRoom, getMarketRoom, getPlayerTurn } from "./common"
 import { Schemas } from "./schemas"
 
+// TODO: add metrics
 //------------------------------------------------------------------------------
 
 const callbackSuccessObject = () => {
@@ -621,9 +622,9 @@ const onMarketPause = (io, socket, callback) => {
  * Set market status to Close in the database.
  * Broadcast new status to all users in the market room.
  * 
- * @param {*} io 
- * @param {*} socket 
- * @param {*} callback 
+ * @param {*} io       socket server
+ * @param {*} socket   socket client
+ * @param {*} callback sent back to the client
  * @returns 
  */
 const onMarketClose = (io, socket, callback) => {

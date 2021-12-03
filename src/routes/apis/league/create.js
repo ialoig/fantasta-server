@@ -28,11 +28,7 @@ const create = async (req, res, next) => {
             user.leagues.push(league._id)
             await user.save()
 
-            let response = await leagueUtils.createLeagueResponse(user, league, team)
-
-            //TODO: preparare socket per eventi
-            // Socket.addAttendee( req, newLeag.name, '' )
-            // Socket.leagueCreate( req, newLeag.name, '' )
+            let response = await leagueUtils.createLeagueResponse(user, league, team)            
             console.log("[/league/create] - response=", response)
             metricApiSuccess("league.create", '', duration_start)
             metricApiPayloadSize("league.create", response)
