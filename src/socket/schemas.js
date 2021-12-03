@@ -26,7 +26,6 @@ export const Schemas = {
     clientLeagueUserOnlineSchema,
     clientLeagueMarketOpen,
     clientMarketFootballPlayerSelected,
-
     serverLeagueUserNewOrOnlineSchema,
     serverUserOfflineSchema,
     serverUserDeletedSchema,

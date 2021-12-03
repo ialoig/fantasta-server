@@ -1,6 +1,6 @@
 import { createServer } from 'http'
 import { Server } from "socket.io"
-const registerLeagueHandlers = require("./leagueHandler")
+const registerEventHandlers = require("./eventHandler")
 import { EVENT_TYPE, getSocketsInRoom, extractPlayersNames, isLeagueRoom, isMarketRoom} from "./common"
 import { Schemas } from "./schemas"
 
@@ -35,7 +35,9 @@ const onDisconnecting = async function (io, socket) {
 
 const onConnection = (io, socket) => {
     console.log(`[socketID: ${socket.id}] connected`)
-    registerLeagueHandlers(io, socket)
+    
+    // Event Handler
+    registerEventHandlers(io, socket)
 
     // Disconnect
     socket.on("disconnect", function () { onDisconnect(socket) })
@@ -56,5 +58,4 @@ export const init = (app) => {
     io.on("connection", function (socket) { onConnection(io, socket) })
 
     return httpServer
-
 }

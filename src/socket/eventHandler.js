@@ -83,14 +83,14 @@ const onLeagueUserNewOrOnline = async (io, socket, payload, newUser, callback) =
 
   // Join Room
   socket.join(room)
-  console.log(`[leagueHandler] socketID: ${socket.id} - ${user} online in ${room} (newUser=${newUser})`)
+  console.log(`[eventHandler] socketID: ${socket.id} - ${user} online in ${room} (newUser=${newUser})`)
 
   // prepare message
   const socket_list = await getSocketsInRoom(io, room)
   const message_validated = Schemas.serverLeagueUserNewOrOnlineSchema.validate(extractPlayersNames(socket_list))
 
   if (message_validated.error) {
-    console.error(`[leagueHandler] socketID: ${socket.id} - validation error: ${message_validated.error}`)
+    console.error(`[eventHandler] socketID: ${socket.id} - validation error: ${message_validated.error}`)
     return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
   }
   else {
@@ -122,12 +122,12 @@ const onLeagueUserDeleted = async (io, socket, callback) => {
   const rooms = getSocketRooms(socket)
 
   if (rooms.length == 0) {
-    console.error(`[leagueHandler] socketID: ${socket.id} - try to delete user but did not joined any room`)
+    console.error(`[eventHandler] socketID: ${socket.id} - try to delete user but did not joined any room`)
     return callback(callbackErrorObject("try to delete user but did not joined any room")) // TODO: error_code
   }
 
   for (const room of rooms) {
-    console.log(`[leagueHandler] socketID: ${socket.id} - user: ${socket.user} deleted from ${room}`)
+    console.log(`[eventHandler] socketID: ${socket.id} - user: ${socket.user} deleted from ${room}`)
     socket.leave(room)
 
     // prepare message
@@ -136,7 +136,7 @@ const onLeagueUserDeleted = async (io, socket, callback) => {
     const message_validated = Schemas.serverUserDeletedSchema.validate(message)
 
     if (message_validated.error) {
-      console.error(`[leagueHandler] socketID: ${socket.id} - validation error: ${message_validated.error}`)
+      console.error(`[eventHandler] socketID: ${socket.id} - validation error: ${message_validated.error}`)
       return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
     }
     else {
@@ -171,7 +171,7 @@ const onLeagueUserOffline = async (io, socket, callback) => {
   const rooms = getSocketRooms(socket)
 
   if (rooms.length == 0) {
-    console.error(`[leagueHandler] socketID: ${socket.id} - try to offline user but did not joined any room`)
+    console.error(`[eventHandler] socketID: ${socket.id} - try to offline user but did not joined any room`)
     return callback(callbackErrorObject("try to offline user but did not joined any room")) // TODO: error_code
   }
 
@@ -179,7 +179,7 @@ const onLeagueUserOffline = async (io, socket, callback) => {
 
     // leave room
     socket.leave(room)
-    console.log(`[leagueHandler] socketID: ${socket.id} - user: ${socket.user} offline in ${room}`)
+    console.log(`[eventHandler] socketID: ${socket.id} - user: ${socket.user} offline in ${room}`)
 
     // prepare message
     const socket_list = await getSocketsInRoom(io, room)
@@ -187,7 +187,7 @@ const onLeagueUserOffline = async (io, socket, callback) => {
     const message_validated = Schemas.serverUserOfflineSchema.validate(message)
 
     if (message_validated.error) {
-      console.error(`[leagueHandler] socketID: ${socket.id} - validation error: ${message_validated.error}`)
+      console.error(`[eventHandler] socketID: ${socket.id} - validation error: ${message_validated.error}`)
       return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
     }
     else {
@@ -223,7 +223,7 @@ const onMarketOpen = async (io, socket, callback) => {
 
   // socket didn't join the league room
   if (!league_room) {
-    console.error(`[leagueHandler] socketID: ${socket.id} - try to open market but did not joined the league room`)
+    console.error(`[eventHandler] socketID: ${socket.id} - try to open market but did not joined the league room`)
     return callback(callbackErrorObject("try to open market but did not joined the league room")) // TODO: error_code
   }
   else {
@@ -231,7 +231,7 @@ const onMarketOpen = async (io, socket, callback) => {
 
     // Join Market room
     socket.join(market_room)
-    console.log(`[leagueHandler] socketID: ${socket.id} - user: ${socket.user} open market ${market_room}`)
+    console.log(`[eventHandler] socketID: ${socket.id} - user: ${socket.user} open market ${market_room}`)
 
     // prepare message
     const socket_list = await getSocketsInRoom(io, market_room)
@@ -239,7 +239,7 @@ const onMarketOpen = async (io, socket, callback) => {
     message["user"] = socket.user // add user information to the message
     const message_validated = Schemas.serverMarketOpenSchema.validate(message)
     if (message_validated.error) {
-      console.error(`[leagueHandler] socketID: ${socket.id} - validation error: ${message_validated.error}`)
+      console.error(`[eventHandler] socketID: ${socket.id} - validation error: ${message_validated.error}`)
       return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
     }
     else {
@@ -272,7 +272,7 @@ const onMarketUserOnline = async (io, socket, callback) => {
 
   // socket didn't join the league room
   if (!league_room) {
-    console.error(`[leagueHandler] socketID: ${socket.id} - try to join market room but did not joined the league room`)
+    console.error(`[eventHandler] socketID: ${socket.id} - try to join market room but did not joined the league room`)
     return callback(callbackErrorObject("try to join market room but did not joined the league room")) // TODO: error_code
   }
   else {
@@ -280,13 +280,13 @@ const onMarketUserOnline = async (io, socket, callback) => {
 
     // market room do not exists
     if (!io.sockets.adapter.rooms.get(market_room)) {
-      console.error(`[leagueHandler] socketID: ${socket.id} - user: ${socket.user} try to join ${market_room} but the market is not open yet`)
+      console.error(`[eventHandler] socketID: ${socket.id} - user: ${socket.user} try to join ${market_room} but the market is not open yet`)
       return callback(callbackErrorObject(`try to join ${market_room} but the market is not open yet`)) // TODO: error_code
     }
     else {
       // Join Market room
       socket.join(market_room)
-      console.log(`[leagueHandler] socketID: ${socket.id} - user: ${socket.user} join market ${market_room}`)
+      console.log(`[eventHandler] socketID: ${socket.id} - user: ${socket.user} join market ${market_room}`)
 
       // prepare message
       const socket_list = await getSocketsInRoom(io, market_room)
@@ -294,7 +294,7 @@ const onMarketUserOnline = async (io, socket, callback) => {
       const message_validated = Schemas.serverMarketUserOnlineSchema.validate(message)
 
       if (message_validated.error) {
-        console.error(`[leagueHandler] socketID: ${socket.id} - validation error: ${message_validated.error}`)
+        console.error(`[eventHandler] socketID: ${socket.id} - validation error: ${message_validated.error}`)
         return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
       }
       else {
@@ -326,7 +326,7 @@ const onMarketStart = async (io, socket, callback) => {
 
   // socket didn't join the league room
   if (!league_room) {
-    console.error(`[leagueHandler] socketID: ${socket.id} - user: ${socket.user} try to start market but did not joined the league room`)
+    console.error(`[eventHandler] socketID: ${socket.id} - user: ${socket.user} try to start market but did not joined the league room`)
     return callback(callbackErrorObject("try to start market but did not joined the league room")) // TODO: error_code
   }
   else {
@@ -334,7 +334,7 @@ const onMarketStart = async (io, socket, callback) => {
 
     // socket didn't join the market room
     if (!market_room) {
-      console.error(`[leagueHandler] socketID: ${socket.id} - user: ${socket.user} try to start market but did not joined the market room`)
+      console.error(`[eventHandler] socketID: ${socket.id} - user: ${socket.user} try to start market but did not joined the market room`)
       return callback(callbackErrorObject("try to start market but did not joined the market room")) // TODO: error_code
     }
     else {
@@ -344,7 +344,7 @@ const onMarketStart = async (io, socket, callback) => {
       const message_validated = Schemas.serverMarketUserOnlineSchema.validate(message)
 
       if (message_validated.error) {
-        console.error(`[leagueHandler] socketID: ${socket.id} - validation error: ${message_validated.error}`)
+        console.error(`[eventHandler] socketID: ${socket.id} - validation error: ${message_validated.error}`)
         return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
       }
       else {
@@ -353,7 +353,7 @@ const onMarketStart = async (io, socket, callback) => {
         const message_turn_validated = Schemas.serverMarketSearchSchema.validate(message_turn)
 
         if (message_turn_validated.error) {
-          console.error(`[leagueHandler] socketID: ${socket.id} - validation error: ${message_turn_validated.error}`)
+          console.error(`[eventHandler] socketID: ${socket.id} - validation error: ${message_turn_validated.error}`)
           return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
         }
         else {
@@ -384,7 +384,7 @@ const onMarketFootballPlayerSelectedOrBet = async (io, socket, payload, bet, cal
   // Validate payload
   const payload_validation = Schemas.clientMarketFootballPlayerSelected.validate(payload)
   if (payload_validation.error) {
-    console.error(`[leagueHandler] socketID: ${socket.id} - validation error: ${payload_validation.error}`)
+    console.error(`[eventHandler] socketID: ${socket.id} - validation error: ${payload_validation.error}`)
     return callback(callbackErrorObject(payload_validation.error))  // TODO: error_code
   }
 
@@ -393,7 +393,7 @@ const onMarketFootballPlayerSelectedOrBet = async (io, socket, payload, bet, cal
 
   // socket didn't join the league room
   if (!league_room) {
-    console.error(`[leagueHandler] socketID: ${socket.id} - try to select/bet player but did not joined the league room`)
+    console.error(`[eventHandler] socketID: ${socket.id} - try to select/bet player but did not joined the league room`)
     return callback(callbackErrorObject("try to select/bet player but did not joined the league room"))  // TODO: error_code
   }
   else {
@@ -401,7 +401,7 @@ const onMarketFootballPlayerSelectedOrBet = async (io, socket, payload, bet, cal
 
     // socket didn't join the market room
     if (!market_room) {
-      console.error(`[leagueHandler] socketID: ${socket.id} - try to select/bet player but did not joined the market room`)
+      console.error(`[eventHandler] socketID: ${socket.id} - try to select/bet player but did not joined the market room`)
       return callback(callbackErrorObject("try to select/bet player but did not joined the market room"))  // TODO: error_code
     }
     else {
@@ -411,7 +411,7 @@ const onMarketFootballPlayerSelectedOrBet = async (io, socket, payload, bet, cal
       const message_validated = Schemas.serverMarketFootballPlayerSelected.validate(message)
 
       if (message_validated.error) {
-        console.error(`[leagueHandler] socketID: ${socket.id} - validation error: ${message_validated.error}`)
+        console.error(`[eventHandler] socketID: ${socket.id} - validation error: ${message_validated.error}`)
         return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
       }
       else {
@@ -447,7 +447,7 @@ const onMarketPause = (io, socket, callback) => {
 
   // socket didn't join the league room
   if (!league_room) {
-    console.error(`[leagueHandler] socketID: ${socket.id} - try to pause market room but did not joined the league room`)
+    console.error(`[eventHandler] socketID: ${socket.id} - try to pause market room but did not joined the league room`)
     return callback(callbackErrorObject("try to pause market room but did not joined the league room"))  // TODO: error_code
   }
   else {
@@ -455,7 +455,7 @@ const onMarketPause = (io, socket, callback) => {
 
     // socket didn't join the market room
     if (!market_room) {
-      console.error(`[leagueHandler] socketID: ${socket.id} - try to pause market room but did not joined the market room`)
+      console.error(`[eventHandler] socketID: ${socket.id} - try to pause market room but did not joined the market room`)
       return callback(callbackErrorObject("try to pause market room but did not joined the market room"))  // TODO: error_code
     }
     else {
