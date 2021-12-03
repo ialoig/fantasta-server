@@ -154,6 +154,7 @@ const onLeagueUserNewOrOnline = async (io, socket, payload, newUser, callback) =
   // Validate payload
   const payload_validation = validateUserNewOrOnline(payload, newUser)
   if (payload_validation.error) {
+    console.error(`[eventHandler] client payload validation failed. ${payload_validation.error}`)
     return callback(callbackErrorObject(payload_validation.error))  // TODO: error_code
   }
 
@@ -174,7 +175,7 @@ const onLeagueUserNewOrOnline = async (io, socket, payload, newUser, callback) =
   // validate response message
   const message_validated = Schemas.serverLeagueUserNewOrOnlineSchema.validate(message)
   if (message_validated.error) {
-    console.error(`[eventHandler] socketID: ${socket.id} - validation error: ${message_validated.error}`)
+    console.error(`[eventHandler] response message validation failed. ${message_validated.error}`)
     return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
   }
 
@@ -223,7 +224,7 @@ const onLeagueUserDeleted = async (io, socket, callback) => {
       // validate response message
       const message_validated = Schemas.serverUserDeletedSchema.validate(message)
       if (message_validated.error) {
-        console.error(`[eventHandler] socketID: ${socket.id} - validation error: ${message_validated.error}`)
+        console.error(`[eventHandler] response message validation failed. ${message_validated.error}`)
         return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
       }
 
@@ -274,7 +275,7 @@ const onLeagueUserOffline = async (io, socket, callback) => {
       // validate response message
       const message_validated = Schemas.serverUserOfflineSchema.validate(message)
       if (message_validated.error) {
-        console.error(`[eventHandler] socketID: ${socket.id} - validation error: ${message_validated.error}`)
+        console.error(`[eventHandler] response message validation failed. ${message_validated.error}`)
         return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
       }
 
@@ -333,7 +334,7 @@ const onMarketOpen = async (io, socket, callback) => {
   // validate response message
   const message_validated = Schemas.serverMarketOpenSchema.validate(message)
   if (message_validated.error) {
-    console.error(`[eventHandler] socketID: ${socket.id} - validation error: ${message_validated.error}`)
+    console.error(`[eventHandler] response message validation failed. ${message_validated.error}`)
     return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
   }
   
@@ -394,7 +395,7 @@ const onMarketUserOnline = async (io, socket, callback) => {
   // validate response message
   const message_validated = Schemas.serverMarketUserOnlineSchema.validate(message)
   if (message_validated.error) {
-    console.error(`[eventHandler] socketID: ${socket.id} - validation error: ${message_validated.error}`)
+    console.error(`[eventHandler] response message validation failed. ${message_validated.error}`)
     return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
   }
 
@@ -461,7 +462,7 @@ const onMarketStart = async (io, socket, callback) => {
   // validate response message
   const message_validated = Schemas.serverMarketUserOnlineSchema.validate(message)
   if (message_validated.error) {
-    console.error(`[eventHandler] socketID: ${socket.id} - validation error: ${message_validated.error}`)
+    console.error(`[eventHandler] response message validation failed. ${message_validated.error}`)
     return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
   }
 
@@ -511,7 +512,7 @@ const onMarketFootballPlayerSelectedOrBet = async (io, socket, payload, bet, cal
   // Validate payload
   const payload_validation = Schemas.clientMarketFootballPlayerSelected.validate(payload)
   if (payload_validation.error) {
-    console.error(`[eventHandler] socketID: ${socket.id} - validation error: ${payload_validation.error}`)
+    console.error(`[eventHandler] client payload validation failed. ${payload_validation.error}`)
     return callback(callbackErrorObject(payload_validation.error))  // TODO: error_code
   }
 
@@ -538,7 +539,7 @@ const onMarketFootballPlayerSelectedOrBet = async (io, socket, payload, bet, cal
   // validate response message
   const message_validated = Schemas.serverMarketFootballPlayerSelected.validate(message)
   if (message_validated.error) {
-    console.error(`[eventHandler] socketID: ${socket.id} - validation error: ${message_validated.error}`)
+    console.error(`[eventHandler] response message validation failed. ${message_validated.error}`)
     return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
   }
 
