@@ -7,5 +7,6 @@ export {
     metricApiError,
     metricApiPayloadSize,
     mongodb_connection_status_counter,
-    email_status_counter
+    email_status_counter,
+    socket_event_counter
 } from './metrics.js'

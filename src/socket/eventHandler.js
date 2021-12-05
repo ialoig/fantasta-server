@@ -1,4 +1,5 @@
 import { EVENT_TYPE, getSocketsInRoom, extractPlayersNames, isLeagueRoom, isMarketRoom, getMarketRoom, getPlayerTurn } from "./common"
+import { socket_event_counter } from "../metrics"
 import { Schemas } from "./schemas"
 
 // TODO: add metrics
@@ -676,15 +677,59 @@ const onMarketClose = (io, socket, callback) => {
 //------------------------------------------------------------------------------
 
 module.exports = (io, socket) => {
-  socket.on(EVENT_TYPE.CLIENT.LEAGUE.USER_NEW, (payload, callback) => { onLeagueUserNewOrOnline(io, socket, payload, true, callback) })
-  socket.on(EVENT_TYPE.CLIENT.LEAGUE.USER_ONLINE, (payload, callback) => { onLeagueUserNewOrOnline(io, socket, payload, false, callback) })
-  socket.on(EVENT_TYPE.CLIENT.LEAGUE.USER_DELETED, (callback) => { onLeagueUserDeleted(io, socket, callback) })
-  socket.on(EVENT_TYPE.CLIENT.LEAGUE.USER_OFFLINE, (callback) => { onLeagueUserOffline(io, socket, callback) })
-  socket.on(EVENT_TYPE.CLIENT.MARKET.OPEN, (callback) => { onMarketOpen(io, socket, callback) })
-  socket.on(EVENT_TYPE.CLIENT.MARKET.USER_ONLINE, (callback) => { onMarketUserOnline(io, socket, callback) })
-  socket.on(EVENT_TYPE.CLIENT.MARKET.START, (callback) => { onMarketStart(io, socket, callback) })
-  socket.on(EVENT_TYPE.CLIENT.MARKET.PLAYER_SELECTED, (payload, callback) => { onMarketFootballPlayerSelectedOrBet(io, socket, payload, false, callback) })
-  socket.on(EVENT_TYPE.CLIENT.MARKET.BET, (payload, callback) => { onMarketFootballPlayerSelectedOrBet(io, socket, payload, true, callback) })
-  socket.on(EVENT_TYPE.CLIENT.MARKET.PAUSE, (callback) => { onMarketPause(io, socket, callback) })
-  socket.on(EVENT_TYPE.CLIENT.MARKET.CLOSE, (callback) => { onMarketClose(io, socket, callback) })
+  
+  socket.on(EVENT_TYPE.CLIENT.LEAGUE.USER_NEW, (payload, callback) => { 
+    socket_event_counter.inc({ event_type: "EVENT_TYPE.CLIENT.LEAGUE.USER_NEW"})
+    onLeagueUserNewOrOnline(io, socket, payload, true, callback) }
+    )
+
+  socket.on(EVENT_TYPE.CLIENT.LEAGUE.USER_ONLINE, (payload, callback) => {
+    socket_event_counter.inc({ event_type: "EVENT_TYPE.CLIENT.LEAGUE.USER_ONLINE"})
+     onLeagueUserNewOrOnline(io, socket, payload, false, callback) 
+    })
+
+  socket.on(EVENT_TYPE.CLIENT.LEAGUE.USER_DELETED, (callback) => { 
+    socket_event_counter.inc({ event_type: "EVENT_TYPE.CLIENT.LEAGUE.USER_DELETED"})
+    onLeagueUserDeleted(io, socket, callback) 
+  })
+  
+  socket.on(EVENT_TYPE.CLIENT.LEAGUE.USER_OFFLINE, (callback) => {
+    socket_event_counter.inc({ event_type: "EVENT_TYPE.CLIENT.LEAGUE.USER_OFFLINE"})
+     onLeagueUserOffline(io, socket, callback)
+    })
+  
+  socket.on(EVENT_TYPE.CLIENT.MARKET.OPEN, (callback) => {
+    socket_event_counter.inc({ event_type: "EVENT_TYPE.CLIENT.MARKET.OPEN"})
+     onMarketOpen(io, socket, callback)
+    })
+  
+  socket.on(EVENT_TYPE.CLIENT.MARKET.USER_ONLINE, (callback) => {
+    socket_event_counter.inc({ event_type: "EVENT_TYPE.CLIENT.MARKET.USER_ONLINE"})
+     onMarketUserOnline(io, socket, callback)
+    })
+  
+  socket.on(EVENT_TYPE.CLIENT.MARKET.START, (callback) => {
+    socket_event_counter.inc({ event_type: "EVENT_TYPE.CLIENT.MARKET.START"})
+     onMarketStart(io, socket, callback)
+    })
+  
+  socket.on(EVENT_TYPE.CLIENT.MARKET.PLAYER_SELECTED, (payload, callback) => {
+    socket_event_counter.inc({ event_type: "EVENT_TYPE.CLIENT.MARKET.PLAYER_SELECTED"})
+     onMarketFootballPlayerSelectedOrBet(io, socket, payload, false, callback)
+    })
+  
+  socket.on(EVENT_TYPE.CLIENT.MARKET.BET, (payload, callback) => {
+    socket_event_counter.inc({ event_type: "EVENT_TYPE.CLIENT.MARKET.BET,"})
+     onMarketFootballPlayerSelectedOrBet(io, socket, payload, true, callback)
+    })
+  
+  socket.on(EVENT_TYPE.CLIENT.MARKET.PAUSE, (callback) => {
+    socket_event_counter.inc({ event_type: "EVENT_TYPE.CLIENT.MARKET.PAUSE"})
+     onMarketPause(io, socket, callback)
+    })
+  
+  socket.on(EVENT_TYPE.CLIENT.MARKET.CLOSE, (callback) => {
+    socket_event_counter.inc({ event_type: "EVENT_TYPE.CLIENT.MARKET.CLOSE"})
+     onMarketClose(io, socket, callback)
+    })
 }

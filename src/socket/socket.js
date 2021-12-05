@@ -1,4 +1,4 @@
-
+/*
 const leagueCreate = ( req, leagueName, resp ) =>
 {
     let io = req.app.get('io');
@@ -15,4 +15,4 @@ export {
     leagueCreate,
     addAttendee
 }
-
+*/

@@ -2,17 +2,20 @@ import { createServer } from 'http'
 import { Server } from "socket.io"
 const registerEventHandlers = require("./eventHandler")
 import { EVENT_TYPE, getSocketsInRoom, extractPlayersNames, isLeagueRoom, isMarketRoom} from "./common"
+import { socket_event_counter } from "../metrics"
 import { Schemas } from "./schemas"
 
 // --------------------------------------------------
 
 const onDisconnect = function (socket) {
+    socket_event_counter.inc({ event_type: "disconnected"})
     console.log(`[socketID: ${socket.id}] disconnected`)
 }
 
 // --------------------------------------------------
 
 const onDisconnecting = async function (io, socket) {
+    socket_event_counter.inc({ event_type: "disconnecting"})
     const rooms = Array.from(socket.rooms).slice(1) // Set { <socket.id>, "room1", "room2", ... }
     console.log(`[socketID: ${socket.id}] disconnecting from rooms [${rooms}]`)
     for (const room of rooms) {
@@ -34,6 +37,7 @@ const onDisconnecting = async function (io, socket) {
 // --------------------------------------------------
 
 const onConnection = (io, socket) => {
+    socket_event_counter.inc({ event_type: "connected"})
     console.log(`[socketID: ${socket.id}] connected`)
     
     // Event Handler

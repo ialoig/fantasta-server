@@ -101,3 +101,10 @@ export const metricApiError = (name, error, duration_start) => {
         },
         secondsFrom(duration_start))
 }
+
+// Socket events
+export const socket_event_counter = new prometheusClient.Counter({
+    name: 'socket_event_counter',
+    help: 'counter for socket events',
+    labelNames: ['event_type']
+})
