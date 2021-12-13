@@ -1,8 +1,3 @@
-export const NAMESPACE = {
-	LEAGUE: "/socket/league",
-	MARKET: "/socket/market"
-}
-
 export const EVENT_TYPE = {
 
 	// FootballPlayer

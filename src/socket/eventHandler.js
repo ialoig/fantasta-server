@@ -487,7 +487,7 @@ const onMarketStart = async (io, socket, callback) => {
   callback(callbackSuccessObject())
 
   // Send messages to all sockets in the room
-  io.in(league_room).emit(EVENT_TYPE.SERVER.MARKET.START, message_validated.value)
+  io.in(market_room).emit(EVENT_TYPE.SERVER.MARKET.START, message_validated.value)
   io.in(market_room).emit(EVENT_TYPE.SERVER.MARKET.SEARCH, message_turn_validated.value)
 }
 
