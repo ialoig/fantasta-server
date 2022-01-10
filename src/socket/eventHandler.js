@@ -629,7 +629,7 @@ const onMarketPause = (io, socket, callback) => {
  * @param {*} callback sent back to the client
  * @returns 
  */
-const onMarketClose = (io, socket, callback) => {
+const onMarketClose = async (io, socket, callback) => {
 
   // Assert callback is passed
   if (typeof callback !== "function") {
@@ -667,11 +667,14 @@ const onMarketClose = (io, socket, callback) => {
   // Notify client message is received
   callback(callbackSuccessObject())
 
+  console.log(`[eventHandler] socketID: ${socket.id} - user: ${socket.user} close market ${market_room}`)
+
   // Send message to all sockets in the market room
   io.in(market_room).emit(EVENT_TYPE.SERVER.MARKET.CLOSE)
 
   // Remove all sockets from the market room
-  io.in(market_room).leave(market_room)
+  const socket_list = await getSocketsInRoom(io, market_room)
+  socket_list.map(socket => socket.leave(market_room))
 }
 
 //------------------------------------------------------------------------------
