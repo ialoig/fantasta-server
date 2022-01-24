@@ -1,4 +1,4 @@
-import { League } from '../../../database'
+import { League, Market } from '../../../database'
 import { Errors, Response, leagueUtils, userUtils } from '../../../utils'
 import { metricApiError, metricApiSuccess, metricApiPayloadSize } from '../../../metrics'
 import * as Socket from 'socket.io'
@@ -19,7 +19,14 @@ const create = async (req, res, next) => {
             let settings = leagueData.league
             settings.admin = userId
 
+            // create league object
             let league = await League.create(settings)
+
+            // create market object
+            let marketObj = { leagueId: league._id, betHistory: [] }
+            let market = await Market.create(marketObj)
+
+            // create team object
             let team = await leagueUtils.createTeam(leagueBody.teamname, settings.budget, userId, league._id)
 
             league.teams = [team._id]
@@ -28,7 +35,7 @@ const create = async (req, res, next) => {
             user.leagues.push(league._id)
             await user.save()
 
-            let response = await leagueUtils.createLeagueResponse(user, league, team)            
+            let response = await leagueUtils.createLeagueResponse(user, league, team, market)
             console.log("[/league/create] - response=", response)
             metricApiSuccess("league.create", '', duration_start)
             metricApiPayloadSize("league.create", response)

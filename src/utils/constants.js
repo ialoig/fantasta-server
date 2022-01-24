@@ -263,7 +263,15 @@ const Errors = {
             title: 'reset_expired',
             message: 'reset_expired_msg'
         }
-    }
+    },
+    MARKET_NOT_FOUND: {
+        status: "MARKET_NOT_FOUND",
+        code: 816,
+        info: {
+            title: 'market_not_found',
+            message: 'market_not_found_msg'
+        }
+    },
 }
 
 const PASSWORD_OPT = {

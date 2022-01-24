@@ -84,9 +84,9 @@ const validateleague = ( leagueData ) => {
 
 const parseLeague = (league) => {
     let leag = {
-        _id: league._id,
+        _id: league._id.toString(),
         admin: {
-            _id: league.admin._id,
+            _id: league.admin._id.toString(),
             name: league.admin.username
         },
         auctionType: league.auctionType,
@@ -132,7 +132,7 @@ const createTeam = async (teamName, budget, userId, leagueId) => {
 
 const parseTeam = (team) => {
     let tm = {
-        _id: team._id,
+        _id: team._id.toString(),
         budget: team.budget,
         name: team.name,
         budget: team.budget,
@@ -140,7 +140,7 @@ const parseTeam = (team) => {
         updatedAt: team.updatedAt.toISOString(),
         footballPlayers: [],
         user: {
-            _id: team.user._id,
+            _id: team.user._id.toString(),
             name: team.user.username
         }
     }
@@ -148,7 +148,24 @@ const parseTeam = (team) => {
     return tm
 }
 
-const createLeagueResponse = async (user, league, team) => {
+const parseMarket = (market) => {
+    let mk = {
+        _id: market._id.toString(),
+        league: market.leagueId.toString(),
+        open: market.open,
+        active: market.active,
+        onlineTeams: market.onlineTeams,
+        teamTurn: market.teamTurn,
+        betHistory: market.betHistory,
+        closedAt: market.closedAt ? market.closedAt.toISOString() : null,
+        createdAt: market.createdAt.toISOString(),
+        updatedAt: market.updatedAt.toISOString(),
+    }
+
+    return mk
+}
+
+const createLeagueResponse = async (user, league, team, market) => {
     let usr1 = await populate.user(user)
     let lg1 = await populate.league(league)
     let tm1 = await populate.team(team)
@@ -157,6 +174,7 @@ const createLeagueResponse = async (user, league, team) => {
         user: userUtils.parseUser(usr1),
         league: parseLeague(lg1),
         team: parseTeam(tm1),
+        market: parseMarket(market)
     }
 
     return Promise.resolve(response)

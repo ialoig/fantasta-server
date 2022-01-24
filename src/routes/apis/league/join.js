@@ -1,4 +1,4 @@
-import { League, populate } from '../../../database'
+import { League, Market, populate } from '../../../database'
 import { Errors, Response, leagueUtils, userUtils } from '../../../utils'
 import { metricApiError, metricApiSuccess, metricApiPayloadSize } from '../../../metrics'
 import * as Socket from 'socket.io'
@@ -21,6 +21,12 @@ const join = async (req, res, next) => {
 
             if (!league || !league.$isValid() || league.$isEmpty()) {
                 throw Errors.LEAGUE_NOT_FOUND
+            }
+
+            // create market object
+            let marketObj = await getMarket(league)
+            if (!marketObj || !marketObj.$isValid() || marketObj.$isEmpty()) {
+                throw Errors.MARKET_NOT_FOUND
             }
 
             let team = null
@@ -54,7 +60,7 @@ const join = async (req, res, next) => {
                 throw Errors.TEAM_NOT_FOUND
             }
 
-            let response = await leagueUtils.createLeagueResponse(user, league, team)
+            let response = await leagueUtils.createLeagueResponse(user, league, team, marketObj)
             metricApiSuccess("league.join", '', duration_start)
             metricApiPayloadSize("league.join", response)
             res.json(Response.resolve(response))
@@ -92,6 +98,17 @@ const getLeague = async (user, id, name) => {
     }
     catch (error) {
         console.error(`[api] league.join -> getLeague: ${error}`)
+        return Promise.reject(error)
+    }
+}
+
+const getMarket = async (league) => {
+    try {
+        let market = await Market.findOne({ leagueId: league._id, closedAt: null })
+        return market && market.$isValid() ? Promise.resolve(market) : Promise.resolve(null)
+    }
+    catch (error) {
+        console.error(`[api] league.join -> getMarket: ${error}`)
         return Promise.reject(error)
     }
 }
