@@ -56,3 +56,85 @@ Useful links:
 * [Server metric API call](http://localhost:3000/fantasta/metrics)
 * [Collected metrics by Prometheus](http://localhost:9090)
 * [Grafana](http://localhost:3001)
+
+
+
+# 🌱 MONGO DB
+
+## Useful commands
+
+To open a `MongoDB CLI` run the command:
+
+```shell
+$ mongo
+```
+
+Show all databases instances:
+
+```shell
+> show dbs
+```
+
+It will show you all the databases instances.
+```shell
+admin           0.000GB
+config          0.000GB
+fantasta_debug  0.000GB
+fantasta_test   0.000GB
+local           0.000GB
+```
+
+You can now select what do you prefer by running:
+
+```shell
+> use fantasta_debug
+```
+
+The selected instance is now active. You can nwo query tables inside.
+
+`Users` table :
+
+```shell
+> db.users.find()
+```
+
+`Teams` table :
+
+```shell
+> db.teams.find()
+```
+
+`Leagues` table :
+
+```shell
+> db.leagues.find()
+```
+
+Find a `user` with a specific email:
+
+```shell
+> db.users.find({email: "user02@email.com"})
+```
+
+## Drop database
+You can drob entire instance by running the following command:
+
+```shell
+> db.dropDatabase()
+```
+
+Now all the entries within the db instance are deleted. You can restart the server instance to get a new seed of entries (it will run automatically when it does not found any entries).
+
+> NOTE: Please check server console log to view if Seed has been executed correctyl at startup (it will show you something like below)
+```shell
+fantasta_server    | [seed] user found in db: 1
+fantasta_server    | [seed] starting to seed db ...
+fantasta_server    | [seed] insert users: 10
+fantasta_server    | [seed] insert leagues: 12
+fantasta_server    | [seed] 	... done
+fantasta_server    | [seed] insert markets (empty): 12
+fantasta_server    | [seed] 	... done
+fantasta_server    | [seed] insert teams: 14
+fantasta_server    | [seed] 	... done
+fantasta_server    | [seed] Done. Database seeded!
+```
