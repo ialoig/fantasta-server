@@ -1,7 +1,6 @@
 import { League, Market } from '../../../database'
 import { Errors, Response, leagueUtils, userUtils } from '../../../utils'
 import { metricApiError, metricApiSuccess, metricApiPayloadSize } from '../../../metrics'
-import * as Socket from 'socket.io'
 
 const create = async (req, res, next) => {
     const duration_start = process.hrtime()
