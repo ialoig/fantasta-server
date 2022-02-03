@@ -262,31 +262,44 @@ const onLeagueUserOffline = async (io, socket, callback) => {
     return callback(callbackErrorObject("try to offline user but did not joined any room")) // TODO: error_code
   }
 
+  let leagueUserOnline = null
+  let marketUserOnline = null
+  // retrieve league room
+  const league_room = getSocketRooms(socket).find(room => isLeagueRoom(room))
+
   // leave all rooms
   for (const room of rooms) {
     socket.leave(room)
     console.log(`[eventHandler] socketID: ${socket.id} - user: ${socket.user} offline in ${room}`)
 
-    // notify users in league room only
-    if (isLeagueRoom(room)) {
-      // prepare response message
-      const socket_list = await getSocketsInRoom(io, room)
-      const message = extractPlayersNames(socket_list)
+    // prepare response message
+    const socket_list = await getSocketsInRoom(io, room)
+    const message = extractPlayersNames(socket_list)
 
-      // validate response message
-      const message_validated = Schemas.serverUserOfflineSchema.validate(message)
-      if (message_validated.error) {
-        console.error(`[eventHandler] response message validation failed. ${message_validated.error}`)
-        return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
-      }
-
-      // Notify client message is received
-      callback(callbackSuccessObject())
-
-      // Send message to all sockets in the room
-      io.in(room).emit(EVENT_TYPE.SERVER.LEAGUE.USER_OFFLINE, message_validated.value)
+    // validate response message
+    const message_validated = Schemas.serverUserOfflineSchema.validate(message)
+    if (message_validated.error) {
+      console.error(`[eventHandler] response message validation failed. ${message_validated.error}`)
+      return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
     }
+
+    if (isLeagueRoom(room)) {
+      leagueUserOnline = message_validated.value
+    }
+    else if (isMarketRoom(room)) {
+      marketUserOnline = message_validated.value
+    }
+    else {
+      console.log(`[socketID: ${socket.id}] leaving room ${room} that is not a League nor a Market`)
   }
+  }
+
+  // Notify client message is received
+  callback(callbackSuccessObject())
+
+  // Send message to all sockets in the League room
+  io.in(league_room).emit(EVENT_TYPE.SERVER.LEAGUE.USER_OFFLINE, leagueUserOnline)
+  io.in(league_room).emit(EVENT_TYPE.SERVER.MARKET.USER_OFFLINE, marketUserOnline)
 }
 
 //------------------------------------------------------------------------------
@@ -667,14 +680,17 @@ const onMarketClose = async (io, socket, callback) => {
   // Notify client message is received
   callback(callbackSuccessObject())
 
-  console.log(`[eventHandler] socketID: ${socket.id} - user: ${socket.user} close market ${market_room}`)
-
-  // Send message to all sockets in the market room
-  io.in(market_room).emit(EVENT_TYPE.SERVER.MARKET.CLOSE)
-
   // Remove all sockets from the market room
   const socket_list = await getSocketsInRoom(io, market_room)
-  socket_list.map(socket => socket.leave(market_room))
+  socket_list.map(socket => {
+    console.log(`[eventHandler] REMOVING socket: ${socket.id} from market ${market_room}`)
+    socket.leave(market_room)
+  })
+
+  console.log(`[eventHandler] socketID: ${socket.id} - user: ${socket.user} close market ${market_room}`)
+
+  // Send message to all sockets in the league room
+  io.in(league_room).emit(EVENT_TYPE.SERVER.MARKET.CLOSE)
 }
 
 //------------------------------------------------------------------------------
