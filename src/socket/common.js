@@ -66,10 +66,10 @@ export async function getSocketsInRoom(io, room) {
 	return io.in(room).fetchSockets()
 }
 
-export function extractPlayersNames(socket_list, exclude_socket = null) {
+export function extractUserId(socket_list, exclude_socket = null) {
 	return socket_list
 		.filter(socket => socket !== exclude_socket)
-		.map(socket => socket.user)
+		.map(socket => ({ team_id: socket.team_id }))
 }
 
 export function getPlayerTurn(player_list){

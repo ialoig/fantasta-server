@@ -45,7 +45,8 @@ const marketSchema = new Schema(
                     type: Schema.Types.Number,
                     required: true,
                 }
-            }]
+            }],
+            default: []
         }],
         closedAt: {
             type: Schema.Types.Date,
@@ -60,16 +61,3 @@ const marketSchema = new Schema(
 const Market = model('Market', marketSchema)
 
 export default Market
-
-
-// obj = {
-//     let OPEN = false
-//     let JOINED = false
-//     let START = false
-//     let PAUSE = false
-//     let ONLINE_PLAYERS = []
-//     let PLAYER_TURN = null
-//     let LAST_BET = null
-//     let betHistory = [1,2,3,4,5,6,7,8,]
-//     ...
-//     }

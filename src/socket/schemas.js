@@ -1,25 +1,27 @@
 import Joi from "joi" // validation library
 
-const listOfUser = Joi.array().items(Joi.string())
-const room = Joi.string().required()
-const user = Joi.string().required()
+const team_id = Joi.string().required()
+const listOfTeam = Joi.array().items(Joi.object({team_id: team_id}))
+const room = Joi.string().required() // TODO: as league_id but market_id
+const league_id = Joi.string().required()
+const user_id = Joi.string().required()
 const football_player_id = Joi.number().strict().required()
 const bet = Joi.number().strict().required()
 
 // client messages
-const clientLeagueUserOnlineSchema = Joi.object({room: room, user: user})
+const clientLeagueUserOnlineSchema = Joi.object({team_id: team_id, league_id: league_id})
 const clientLeagueUserNewSchema = clientLeagueUserOnlineSchema
 const clientLeagueMarketOpen = Joi.object({room: room})
 const clientMarketFootballPlayerSelected = Joi.object({football_player_id: football_player_id, bet: bet})
 
 // server messages
-const serverLeagueUserNewOrOnlineSchema = listOfUser
-const serverUserOfflineSchema = listOfUser
-const serverUserDeletedSchema = listOfUser
-const serverMarketOpenSchema = listOfUser
-const serverMarketUserOnlineSchema = listOfUser
-const serverMarketSearchSchema = Joi.object({turn: user})
-const serverMarketFootballPlayerSelected = Joi.object({user: user, football_player_id: football_player_id, bet: bet})
+const serverLeagueUserNewOrOnlineSchema = listOfTeam
+const serverUserOfflineSchema = listOfTeam
+const serverUserDeletedSchema = listOfTeam
+const serverMarketOpenSchema = listOfTeam
+const serverMarketUserOnlineSchema = listOfTeam
+const serverMarketSearchSchema = Joi.object({turn: team_id})
+const serverMarketFootballPlayerSelected = Joi.object({team_id: team_id, football_player_id: football_player_id, bet: bet})
 
 export const Schemas = {
     clientLeagueUserNewSchema,
