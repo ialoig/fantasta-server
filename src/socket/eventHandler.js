@@ -264,6 +264,7 @@ const onLeagueUserOffline = async (io, socket, callback) => {
 
   let leagueUserOnline = null
   let marketUserOnline = null
+
   // retrieve league room
   const league_room = getSocketRooms(socket).find(room => isLeagueRoom(room))
 
