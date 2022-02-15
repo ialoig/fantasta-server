@@ -1,6 +1,8 @@
-import { EVENT_TYPE, getSocketsInRoom, extractUserId, isLeagueRoom, isMarketRoom, getMarketRoom, getPlayerTurn } from "./common"
+import { EVENT_TYPE, getSocketsInRoom, extractTeamId, isLeagueRoom, isMarketRoom, getMarketRoom, getPlayerTurn, league_prefix, market_prefix } from "./common"
 import { socket_event_counter } from "../metrics"
 import { Schemas } from "./schemas"
+import { League, Market } from '../database'
+import { Errors } from '../utils'
 
 // TODO: add metrics
 //------------------------------------------------------------------------------
@@ -61,11 +63,24 @@ const eventTypeUserNewOrOnline = (newUser) => {
  * @param {*} socket socket client
  * @returns true/false depending on the admin status of the user behind the socket
  */
-const isAdmin = (socket) => {
-  // TODO: implement it
-  console.log(`[isAdmin] socket: ${socket.user_id}`)
+const isAdmin = async (league_id, user_id) => {
+  console.log(`[isAdmin] user_id=${user_id} league_id=${league_id}`)
 
-  return true
+  try {
+    const league = await League.findById({ _id: league_id })
+
+    if (!league || !league.$isValid() || league.$isEmpty()) {
+      // TODO: send ERROR event and manage failure
+      return Promise.reject("error")
+    }
+    else {
+      return Promise.resolve(user_id == league.admin.toString())
+    }
+  }
+  catch (error) {
+    // TODO: send ERROR event and manage failure
+    return Promise.reject(error)
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -115,7 +130,7 @@ const setMarketOpen = (market_room) => {
  * @param {*} market_room market room name in the format "market={league_namefrom_db}"
  * @returns true/false depenging on the result of setting the market status to start
  */
- const setMarketStart = (market_room) => {
+const setMarketStart = (market_room) => {
   // TODO: implement it
   console.log(`[setMarketStart] market_room: ${market_room}`)
   return true
@@ -128,7 +143,7 @@ const setMarketOpen = (market_room) => {
  * @param {*} market_room market room name in the format "market={league_namefrom_db}"
  * @returns true/false depenging on the result of setting the market status to start
  */
- const setMarketPause = (market_room) => {
+const setMarketPause = (market_room) => {
   // TODO: implement it
   console.log(`[setMarketPause] market_room: ${market_room}`)
   return true
@@ -163,20 +178,23 @@ const onLeagueUserNewOrOnline = async (io, socket, payload, newUser, callback) =
   }
 
   // Extract from payload
-  const { team_id, league_id } = payload_validation.value
+  const { user_id, team_id, league_id } = payload_validation.value
 
-  const room = `league=${league_id}`
+  const league_room = `${league_prefix}${league_id}`
 
   // Add custom information to the socket object
+  socket.user_id = user_id
   socket.team_id = team_id
+  socket.league_id = league_id
+  socket.isAdmin = await isAdmin(league_id, user_id)
 
   // Join Room
-  socket.join(room)
-  console.log(`[eventHandler] socketID: ${socket.id} - ${team_id} online in ${room} (newUser=${newUser})`)
+  socket.join(league_room)
+  console.log(`[eventHandler] socketID: ${socket.id} - user_id=${user_id} team_id=${team_id} league_id=${league_id} online in ${league_room} (newUser=${newUser})`)
 
   // prepare response message
-  const socket_list = await getSocketsInRoom(io, room)
-  const message = extractUserId(socket_list)
+  const socket_list = await getSocketsInRoom(io, league_room)
+  const message = extractTeamId(socket_list)
 
   // validate response message
   const message_validated = Schemas.serverLeagueUserNewOrOnlineSchema.validate(message)
@@ -189,7 +207,7 @@ const onLeagueUserNewOrOnline = async (io, socket, payload, newUser, callback) =
   callback(callbackSuccessObject())
 
   // Send message to all sockets in the room
-  io.in(room).emit(eventTypeUserNewOrOnline(newUser), message_validated.value)
+  io.in(league_room).emit(eventTypeUserNewOrOnline(newUser), message_validated.value)
 }
 
 //------------------------------------------------------------------------------
@@ -212,35 +230,41 @@ const onLeagueUserDeleted = async (io, socket, callback) => {
   const rooms = getSocketRooms(socket)
 
   if (rooms.length == 0) {
-    console.error(`[eventHandler] socketID: ${socket.id} - try to delete user but did not joined any room`)
+    console.error(`[eventHandler] socketID: ${socket.id} - user_id=${socket.user_id} team_id=${socket.team_id} try to delete but did not joined any room`)
     return callback(callbackErrorObject("try to delete user but did not joined any room")) // TODO: error_code
   }
 
   // leave all rooms
   for (const room of rooms) {
     socket.leave(room)
-    console.log(`[eventHandler] socketID: ${socket.id} - user: ${socket.user_id} deleted from ${room}`)
+    console.log(`[eventHandler] socketID: ${socket.id} - user_id=${socket.user_id} team_id=${socket.team_id} left room ${room}`)
 
-    // notify users in league room only
+    // prepare response message
+    const socket_list = await getSocketsInRoom(io, room)
+    const message = extractTeamId(socket_list)
+
+    // validate response message
+    const message_validated = Schemas.serverUserDeletedSchema.validate(message)
+    if (message_validated.error) {
+      console.error(`[eventHandler] response message validation failed. ${message_validated.error}`)
+      return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
+    }
+
     if (isLeagueRoom(room)) {
-      // prepare response message
-      const socket_list = await getSocketsInRoom(io, room)
-      const message = extractUserId(socket_list)
-
-      // validate response message
-      const message_validated = Schemas.serverUserDeletedSchema.validate(message)
-      if (message_validated.error) {
-        console.error(`[eventHandler] response message validation failed. ${message_validated.error}`)
-        return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
-      }
-
-      // Notify client message is received
-      callback(callbackSuccessObject())
-
-      // Send message to all sockets in the room
+      // Send message to all sockets in the League room
       io.in(room).emit(EVENT_TYPE.SERVER.LEAGUE.USER_DELETED, message_validated.value)
     }
+    else if (isMarketRoom(room)) {
+      // Send message to all sockets in the Market room
+      io.in(room).emit(EVENT_TYPE.SERVER.MARKET.USER_OFFLINE, message_validated.value)
+    }
+    else {
+      console.error(`[eventHandler] socketID: ${socket.id} - user_id=${socket.user_id} team_id=${socket.team_id} leaving room ${room} that is not a League nor a Market`)
+    }
   }
+
+  // Notify client message is received
+  callback(callbackSuccessObject())
 }
 
 //------------------------------------------------------------------------------
@@ -263,24 +287,18 @@ const onLeagueUserOffline = async (io, socket, callback) => {
   const rooms = getSocketRooms(socket)
 
   if (rooms.length == 0) {
-    console.error(`[eventHandler] socketID: ${socket.id} - try to offline user but did not joined any room`)
+    console.error(`[eventHandler] socketID: ${socket.id} - user_id=${socket.user_id} team_id=${socket.team_id} try to offline but did not joined any room`)
     return callback(callbackErrorObject("try to offline user but did not joined any room")) // TODO: error_code
   }
-
-  let leagueUserOnline = null
-  let marketUserOnline = null
-
-  // retrieve league room
-  const league_room = getSocketRooms(socket).find(room => isLeagueRoom(room))
 
   // leave all rooms
   for (const room of rooms) {
     socket.leave(room)
-    console.log(`[eventHandler] socketID: ${socket.id} - user: ${socket.user_id} offline in ${room}`)
+    console.log(`[eventHandler] socketID: ${socket.id} - user_id=${socket.user_id} team_id=${socket.team_id} left room ${room}`)
 
     // prepare response message
     const socket_list = await getSocketsInRoom(io, room)
-    const message = extractUserId(socket_list)
+    const message = extractTeamId(socket_list)
 
     // validate response message
     const message_validated = Schemas.serverUserOfflineSchema.validate(message)
@@ -290,22 +308,20 @@ const onLeagueUserOffline = async (io, socket, callback) => {
     }
 
     if (isLeagueRoom(room)) {
-      leagueUserOnline = message_validated.value
+      // Send message to all sockets in the League room
+      io.in(room).emit(EVENT_TYPE.SERVER.LEAGUE.USER_OFFLINE, message_validated.value)
     }
     else if (isMarketRoom(room)) {
-      marketUserOnline = message_validated.value
+      // Send message to all sockets in the Market room
+      io.in(room).emit(EVENT_TYPE.SERVER.MARKET.USER_OFFLINE, message_validated.value)
     }
     else {
-      console.log(`[socketID: ${socket.id}] leaving room ${room} that is not a League nor a Market`)
-  }
+      console.error(`[eventHandler] socketID: ${socket.id} - user_id=${socket.user_id} team_id=${socket.team_id} leaving room ${room} that is not a League nor a Market`)
+    }
   }
 
   // Notify client message is received
   callback(callbackSuccessObject())
-
-  // Send message to all sockets in the League room
-  io.in(league_room).emit(EVENT_TYPE.SERVER.LEAGUE.USER_OFFLINE, leagueUserOnline)
-  io.in(league_room).emit(EVENT_TYPE.SERVER.MARKET.USER_OFFLINE, marketUserOnline)
 }
 
 //------------------------------------------------------------------------------
@@ -348,7 +364,7 @@ const onMarketOpen = async (io, socket, callback) => {
 
   // prepare response message
   const socket_list = await getSocketsInRoom(io, market_room)
-  const message = extractUserId(socket_list)
+  const message = extractTeamId(socket_list)
   message["user"] = socket.user_id // add user information to the message
 
   // validate response message
@@ -357,7 +373,7 @@ const onMarketOpen = async (io, socket, callback) => {
     console.error(`[eventHandler] response message validation failed. ${message_validated.error}`)
     return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
   }
-  
+
   // Set market Open in the DB
   if (!setMarketOpen(market_room)) {
     console.error(`[eventHandler] an error occurred while set market ${market_room} to open`)
@@ -410,7 +426,7 @@ const onMarketUserOnline = async (io, socket, callback) => {
 
   // prepare response message
   const socket_list = await getSocketsInRoom(io, market_room)
-  const message = extractUserId(socket_list)
+  const message = extractTeamId(socket_list)
 
   // validate response message
   const message_validated = Schemas.serverMarketUserOnlineSchema.validate(message)
@@ -477,7 +493,7 @@ const onMarketStart = async (io, socket, callback) => {
 
   // prepare response message
   const socket_list = await getSocketsInRoom(io, market_room)
-  const message = extractUserId(socket_list)
+  const message = extractTeamId(socket_list)
 
   // validate response message
   const message_validated = Schemas.serverMarketUserOnlineSchema.validate(message)
@@ -702,59 +718,60 @@ const onMarketClose = async (io, socket, callback) => {
 //------------------------------------------------------------------------------
 
 module.exports = (io, socket) => {
-  
-  socket.on(EVENT_TYPE.CLIENT.LEAGUE.USER_NEW, (payload, callback) => { 
-    socket_event_counter.inc({ event_type: "EVENT_TYPE.CLIENT.LEAGUE.USER_NEW"})
-    onLeagueUserNewOrOnline(io, socket, payload, true, callback) }
-    )
+
+  socket.on(EVENT_TYPE.CLIENT.LEAGUE.USER_NEW, (payload, callback) => {
+    socket_event_counter.inc({ event_type: "EVENT_TYPE.CLIENT.LEAGUE.USER_NEW" })
+    onLeagueUserNewOrOnline(io, socket, payload, true, callback)
+  }
+  )
 
   socket.on(EVENT_TYPE.CLIENT.LEAGUE.USER_ONLINE, (payload, callback) => {
-    socket_event_counter.inc({ event_type: "EVENT_TYPE.CLIENT.LEAGUE.USER_ONLINE"})
-     onLeagueUserNewOrOnline(io, socket, payload, false, callback) 
-    })
-
-  socket.on(EVENT_TYPE.CLIENT.LEAGUE.USER_DELETED, (callback) => { 
-    socket_event_counter.inc({ event_type: "EVENT_TYPE.CLIENT.LEAGUE.USER_DELETED"})
-    onLeagueUserDeleted(io, socket, callback) 
+    socket_event_counter.inc({ event_type: "EVENT_TYPE.CLIENT.LEAGUE.USER_ONLINE" })
+    onLeagueUserNewOrOnline(io, socket, payload, false, callback)
   })
-  
+
+  socket.on(EVENT_TYPE.CLIENT.LEAGUE.USER_DELETED, (callback) => {
+    socket_event_counter.inc({ event_type: "EVENT_TYPE.CLIENT.LEAGUE.USER_DELETED" })
+    onLeagueUserDeleted(io, socket, callback)
+  })
+
   socket.on(EVENT_TYPE.CLIENT.LEAGUE.USER_OFFLINE, (callback) => {
-    socket_event_counter.inc({ event_type: "EVENT_TYPE.CLIENT.LEAGUE.USER_OFFLINE"})
-     onLeagueUserOffline(io, socket, callback)
-    })
-  
-  socket.on(EVENT_TYPE.CLIENT.MARKET.OPEN, (callback) => {
-    socket_event_counter.inc({ event_type: "EVENT_TYPE.CLIENT.MARKET.OPEN"})
-     onMarketOpen(io, socket, callback)
-    })
-  
+    socket_event_counter.inc({ event_type: "EVENT_TYPE.CLIENT.LEAGUE.USER_OFFLINE" })
+    onLeagueUserOffline(io, socket, callback)
+  })
+
+  socket.on(EVENT_TYPE.CLIENT.LEAGUE.MARKET_OPEN, (callback) => {
+    socket_event_counter.inc({ event_type: "EVENT_TYPE.CLIENT.LEAGUE.MARKET_OPEN" })
+    onMarketOpen(io, socket, callback)
+  })
+
   socket.on(EVENT_TYPE.CLIENT.MARKET.USER_ONLINE, (callback) => {
-    socket_event_counter.inc({ event_type: "EVENT_TYPE.CLIENT.MARKET.USER_ONLINE"})
-     onMarketUserOnline(io, socket, callback)
-    })
-  
+    socket_event_counter.inc({ event_type: "EVENT_TYPE.CLIENT.MARKET.USER_ONLINE" })
+    onMarketUserOnline(io, socket, callback)
+  })
+
   socket.on(EVENT_TYPE.CLIENT.MARKET.START, (callback) => {
-    socket_event_counter.inc({ event_type: "EVENT_TYPE.CLIENT.MARKET.START"})
-     onMarketStart(io, socket, callback)
-    })
-  
+    socket_event_counter.inc({ event_type: "EVENT_TYPE.CLIENT.MARKET.START" })
+    onMarketStart(io, socket, callback)
+  })
+
   socket.on(EVENT_TYPE.CLIENT.MARKET.PLAYER_SELECTED, (payload, callback) => {
-    socket_event_counter.inc({ event_type: "EVENT_TYPE.CLIENT.MARKET.PLAYER_SELECTED"})
-     onMarketFootballPlayerSelectedOrBet(io, socket, payload, false, callback)
-    })
-  
+    socket_event_counter.inc({ event_type: "EVENT_TYPE.CLIENT.MARKET.PLAYER_SELECTED" })
+    onMarketFootballPlayerSelectedOrBet(io, socket, payload, false, callback)
+  })
+
   socket.on(EVENT_TYPE.CLIENT.MARKET.BET, (payload, callback) => {
-    socket_event_counter.inc({ event_type: "EVENT_TYPE.CLIENT.MARKET.BET,"})
-     onMarketFootballPlayerSelectedOrBet(io, socket, payload, true, callback)
-    })
-  
+    socket_event_counter.inc({ event_type: "EVENT_TYPE.CLIENT.MARKET.BET," })
+    onMarketFootballPlayerSelectedOrBet(io, socket, payload, true, callback)
+  })
+
   socket.on(EVENT_TYPE.CLIENT.MARKET.PAUSE, (callback) => {
-    socket_event_counter.inc({ event_type: "EVENT_TYPE.CLIENT.MARKET.PAUSE"})
-     onMarketPause(io, socket, callback)
-    })
-  
+    socket_event_counter.inc({ event_type: "EVENT_TYPE.CLIENT.MARKET.PAUSE" })
+    onMarketPause(io, socket, callback)
+  })
+
   socket.on(EVENT_TYPE.CLIENT.MARKET.CLOSE, (callback) => {
-    socket_event_counter.inc({ event_type: "EVENT_TYPE.CLIENT.MARKET.CLOSE"})
-     onMarketClose(io, socket, callback)
-    })
+    socket_event_counter.inc({ event_type: "EVENT_TYPE.CLIENT.MARKET.CLOSE" })
+    onMarketClose(io, socket, callback)
+  })
 }

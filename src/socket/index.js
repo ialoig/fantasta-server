@@ -1,7 +1,7 @@
 import { createServer } from 'http'
 import { Server } from "socket.io"
 const registerEventHandlers = require("./eventHandler")
-import { EVENT_TYPE, getSocketsInRoom, extractUserId, isLeagueRoom, isMarketRoom} from "./common"
+import { EVENT_TYPE, getSocketsInRoom, extractTeamId, isLeagueRoom, isMarketRoom} from "./common"
 import { socket_event_counter } from "../metrics"
 import { Schemas } from "./schemas"
 
@@ -20,7 +20,7 @@ const onDisconnecting = async function (io, socket) {
     console.log(`[socketID: ${socket.id}] disconnecting from rooms [${rooms}]`)
     for (const room of rooms) {
         const socket_list = await getSocketsInRoom(io, room)
-        const message = extractUserId(socket_list, socket)
+        const message = extractTeamId(socket_list, socket)
         const message_validated = Schemas.serverUserOfflineSchema.validate(message)
         if (isLeagueRoom(room)){
             io.in(room).emit(EVENT_TYPE.SERVER.LEAGUE.USER_OFFLINE, message_validated.value)

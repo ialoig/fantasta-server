@@ -9,10 +9,10 @@ export const EVENT_TYPE = {
 			USER_NEW: 101,
 			USER_DELETED: 102,
 			USER_ONLINE: 103,
-			USER_OFFLINE: 104
+			USER_OFFLINE: 104,
+			MARKET_OPEN: 105
 		},
 		MARKET: {
-			OPEN: 105,
 			USER_ONLINE: 106,
 			START: 107,
 			PLAYER_SELECTED: 108,
@@ -30,10 +30,10 @@ export const EVENT_TYPE = {
 			USER_NEW: 201,
 			USER_DELETED: 202,
 			USER_ONLINE: 203,
-			USER_OFFLINE: 204
+			USER_OFFLINE: 204,
+			MARKET_OPEN: 205
 		},
 		MARKET: {
-			OPEN: 205,
 			USER_ONLINE: 206,
 			START: 207,
 			PLAYER_SELECTED: 208,
@@ -47,8 +47,8 @@ export const EVENT_TYPE = {
 	}
 }
 
-const league_prefix = "league="
-const market_prefix = "market="
+export const league_prefix = "league="
+export const market_prefix = "market="
 
 export function isLeagueRoom(room){
 	return room.startsWith(league_prefix)
@@ -66,7 +66,7 @@ export async function getSocketsInRoom(io, room) {
 	return io.in(room).fetchSockets()
 }
 
-export function extractUserId(socket_list, exclude_socket = null) {
+export function extractTeamId(socket_list, exclude_socket = null) {
 	return socket_list
 		.filter(socket => socket !== exclude_socket)
 		.map(socket => ({ team_id: socket.team_id }))
