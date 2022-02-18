@@ -64,8 +64,6 @@ const eventTypeUserNewOrOnline = (newUser) => {
  * @returns true/false depending on the admin status of the user behind the socket
  */
 const isAdmin = async (league_id, user_id) => {
-  console.log(`[isAdmin] user_id=${user_id} league_id=${league_id}`)
-
   try {
     const league = await League.findById({ _id: league_id })
 
