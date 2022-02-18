@@ -21,10 +21,6 @@ const create = async (req, res, next) => {
             // create league object
             let league = await League.create(settings)
 
-            // create market object
-            let marketObj = { leagueId: league._id, betHistory: [] }
-            let market = await Market.create(marketObj)
-
             // create team object
             let team = await leagueUtils.createTeam(leagueBody.teamname, settings.budget, userId, league._id)
 
@@ -34,7 +30,7 @@ const create = async (req, res, next) => {
             user.leagues.push(league._id)
             await user.save()
 
-            let response = await leagueUtils.createLeagueResponse(user, league, team, market)
+            let response = await leagueUtils.createLeagueResponse(user, league, team)
             console.log("[/league/create] - response=", response)
             metricApiSuccess("league.create", '', duration_start)
             metricApiPayloadSize("league.create", response)

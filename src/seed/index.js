@@ -13,7 +13,7 @@ const seed = async () => {
             console.log("[seed] starting to seed db ...")
             await inserFakeUsers();
             await inserFakeLeagues();
-            await inserFakeMarket();
+            // await inserFakeMarket();
             await inserFakeTeams();
         }
         console.log("[seed] Done. Database seeded!")

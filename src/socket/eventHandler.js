@@ -84,6 +84,37 @@ const isAdmin = async (league_id, user_id) => {
 }
 
 //------------------------------------------------------------------------------
+
+const createMarketObject = async (league_id) => {
+  console.log(`[createMarketObject] league_id=${league_id}`)
+
+  try {
+
+    const league = await League.findById({ _id: league_id })
+
+    if (!league || !league.$isValid() || league.$isEmpty()) {
+      // TODO: send ERROR event and manage failure
+      return Promise.reject("error")
+    }
+    else {
+      // create market in DB
+      let marketObj = { leagueId: league_id }
+      let market = await Market.create(marketObj)
+      
+      // add market to league in DB
+      league.market.push(market._id)
+      league.save()
+
+      return Promise.resolve()
+    }
+  }
+  catch (error) {
+    // TODO: send ERROR event and manage failure
+    return Promise.reject(error)
+  }
+}
+
+//------------------------------------------------------------------------------
 /**
  * 
  * @param {*} market_room market room name in the format "market={league_namefrom_db}"
@@ -351,10 +382,19 @@ const onMarketOpen = async (io, socket, callback) => {
   }
 
   // check admin
-  if (!isAdmin(socket)) {
+  if (!socket.isAdmin) {
     console.error(`[eventHandler] socketID: ${socket.id} - try to open market but user is not admin`)
     return callback(callbackErrorObject("try to open market but user is not admin")) // TODO: error_code
   }
+
+  // Create Market object in DB
+  await createMarketObject(socket.league_id) //TODO: error handling?
+
+  // Set market Open in the DB
+  // if (!setMarketOpen(market_room)) {
+  //   console.error(`[eventHandler] an error occurred while set market ${market_room} to open`)
+  //   return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
+  // }
 
   const market_room = getMarketRoom(league_room)
 
@@ -374,17 +414,11 @@ const onMarketOpen = async (io, socket, callback) => {
     return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
   }
 
-  // Set market Open in the DB
-  if (!setMarketOpen(market_room)) {
-    console.error(`[eventHandler] an error occurred while set market ${market_room} to open`)
-    return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
-  }
-
   // Notify client message is received
   callback(callbackSuccessObject())
 
   // Send message to all sockets in the room
-  io.in(league_room).emit(EVENT_TYPE.SERVER.MARKET.OPEN, message_validated.value)
+  io.in(league_room).emit(EVENT_TYPE.SERVER.LEAGUE.MARKET_OPEN, message_validated.value)
 }
 
 //------------------------------------------------------------------------------

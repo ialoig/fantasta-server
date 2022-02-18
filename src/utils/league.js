@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { populate, Team } from '../database'
+import { populate, Team, Market } from '../database'
 import { Errors, userUtils } from '../utils'
 
 const validateleague = ( leagueData ) => {
@@ -85,31 +85,41 @@ const validateleague = ( leagueData ) => {
 const parseLeague = (league) => {
     let leag = {
         _id: league._id.toString(),
+        name: league.name,
+        password: league.password,
         admin: {
             _id: league.admin._id.toString(),
             name: league.admin.username
         },
-        auctionType: league.auctionType,
+        participants: league.participants,
         type: league.type,
+        goalkeepers: league.goalkeepers,
+        defenders: league.defenders,
+        midfielders: league.midfielders,
+        strikers: league.strikers,
+        players: league.players,
         budget: league.budget,
         countdown: league.countdown,
-        createdAt: league.createdAt.toISOString(),
-        updatedAt: league.updatedAt.toISOString(),
-        defenders: league.defenders,
-        goalkeepers: league.goalkeepers,
-        midfielders: league.midfielders,
-        name: league.name,
-        participants: league.participants,
-        password: league.password,
-        players: league.players,
+        auctionType: league.auctionType,
         startPrice: league.startPrice,
-        strikers: league.strikers,
-        teams: []
+        teams: [],
+        // TODO: status
+        // TODO: isDeleted
+        // TODO: footballPlayers
+        // market: [], // we pass the last created market as a separate object
+        createdAt: league.createdAt.toISOString(),
+        updatedAt: league.updatedAt.toISOString()
     }
 
+    // populate 'teams' field
     for (let i = 0; i < league.teams.length; i++) {
         leag.teams.push(parseTeam(league.teams[i]))
     }
+    
+    // populate 'market' field
+    // for (let i = 0; i < league.market.length; i++) {
+    //     leag.teams.push(parseMarket(league.market[i]))
+    // }
 
     return leag
 }
@@ -149,32 +159,86 @@ const parseTeam = (team) => {
 }
 
 const parseMarket = (market) => {
+
+    if(market == null){
+        return null
+    }
+
     let mk = {
         _id: market._id.toString(),
-        league: market.leagueId.toString(),
+        league_id: market.leagueId.toString(),
         open: market.open,
         active: market.active,
-        onlineTeams: market.onlineTeams,
-        teamTurn: market.teamTurn,
+        onlineTeams: [],
+        teamTurn: market.teamTurn ? market.teamTurn._id.toString(): null,
         betHistory: market.betHistory,
         closedAt: market.closedAt ? market.closedAt.toISOString() : null,
         createdAt: market.createdAt.toISOString(),
         updatedAt: market.updatedAt.toISOString(),
     }
 
+    // populate 'onlineTeams' field
+    for (let i = 0; i < market.onlineTeams.length; i++) {
+        onlineTeams.push(market.onlineTeams[i]._id.toString())
+    }
+
+    /*
+    // populate 'betHistory' field
+    for (let i = 0; i < market.betHistory.length; i++) {
+        const betHistoryFootballPlayerRaw = market.betHistory[i]
+
+        let betHistoryFootballPlayer = {
+            footballPlayerId: betHistoryFootballPlayerRaw.footballPlayerId,
+            bets: []
+        }
+        // populate 'betHistoryFootballPlayer.bets' field
+        for (let j = 0; j < betHistoryFootballPlayerRaw.bets.length; j++) {
+            const singleBetFootballPlayer = {
+                teamId: betHistoryFootballPlayerRaw.bets[j].teamId.toString(),
+                value: betHistoryFootballPlayerRaw.bets[j].value
+            }
+            betHistoryFootballPlayer.bets.push(singleBetFootballPlayer)
+        }
+        betHistory.push(betHistoryFootballPlayer)
+    }
+    */
+
     return mk
 }
 
-const createLeagueResponse = async (user, league, team, market) => {
+/**
+ * 
+ * @param {*} league 
+ * @returns the latest market object in the league.market array if it is not closed. null otherwise
+ */
+const getLatestMarket = async (league) => {
+    const leagueMarkets = league.market
+    if(leagueMarkets.length == 0){
+        return Promise.resolve(null)
+    }
+
+    try {
+        const marketObject = await Market.findById({ _id: leagueMarkets[leagueMarkets.length - 1] })
+        return marketObject && marketObject.$isValid() && marketObject.closedAt == null ? Promise.resolve(marketObject) : Promise.resolve(null)
+    }
+    catch (error) {
+        console.error(`[getLatestMarket] error: ${error}`)
+        return Promise.reject(error)
+    }
+}
+
+
+const createLeagueResponse = async (user, league, team) => {
     let usr1 = await populate.user(user)
     let lg1 = await populate.league(league)
     let tm1 = await populate.team(team)
+    const mk1 = await getLatestMarket(league)
 
     let response = {
         user: userUtils.parseUser(usr1),
         league: parseLeague(lg1),
         team: parseTeam(tm1),
-        market: parseMarket(market)
+        market: parseMarket(mk1)
     }
 
     return Promise.resolve(response)

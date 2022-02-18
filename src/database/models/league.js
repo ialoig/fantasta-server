@@ -141,8 +141,8 @@ const leagueSchema = new Schema(
             // List of Markets associated to that league. Last element of the array correspond to the latest Market
             type: Schema.Types.ObjectId,
             ref: "Market",
-            required: true
-        }]
+            default: []
+        }],
     },
     {
         timestamps: true, // createdAt, updatedAt automatically added by mongoose

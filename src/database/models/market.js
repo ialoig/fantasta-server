@@ -12,12 +12,10 @@ const marketSchema = new Schema(
         },
         open: {
             type: Schema.Types.Boolean,
-            required: true,
-            default: false
+            default: true
         },
         active: {
             type: Schema.Types.Boolean,
-            required: true,
             default: false
         },
         onlineTeams: [{
