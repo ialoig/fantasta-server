@@ -124,11 +124,6 @@ const leagueSchema = new Schema(
             type: Schema.Types.ObjectId,
             ref: "Team"
         }],
-        status: {
-            type: Schema.Types.String,
-            enum: ["new", "active", "paused", "closed"],
-            required: true
-        },
         isDeleted: {
             type: Schema.Types.Boolean,
             required: false

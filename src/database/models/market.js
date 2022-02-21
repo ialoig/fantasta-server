@@ -10,11 +10,8 @@ const marketSchema = new Schema(
             ref: "League",
             required: true
         },
-        open: {
-            type: Schema.Types.Boolean,
-            default: true
-        },
         active: {
+            // after all users joined, admin can market starts
             type: Schema.Types.Boolean,
             default: false
         },

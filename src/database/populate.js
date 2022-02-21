@@ -1,5 +1,6 @@
 const user = ( user ) =>
 {
+    // TODO: filter out league.isDeleted == true
     return new Promise((resolve, reject) => {
         user.populate({ path: 'leagues', populate: { path: 'teams' } })
         .execPopulate(
