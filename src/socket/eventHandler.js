@@ -103,7 +103,7 @@ const createMarketObject = async (league_id) => {
       league.market.push(market._id)
       league.save()
 
-      return Promise.resolve()
+      return Promise.resolve(market)
     }
   }
   catch (error) {
@@ -375,35 +375,28 @@ const onMarketOpen = async (io, socket, callback) => {
 
   // socket didn't join the league room
   if (!league_room) {
-    console.error(`[eventHandler] socketID: ${socket.id} - try to open market but did not joined the league room`)
+    console.error(`[eventHandler] [onMarketOpen] socketID: ${socket.id} - try to open market but did not joined the league room`)
     return callback(callbackErrorObject("try to open market but did not joined the league room")) // TODO: error_code
   }
 
   // check admin
   if (!socket.isAdmin) {
-    console.error(`[eventHandler] socketID: ${socket.id} - try to open market but user is not admin`)
+    console.error(`[eventHandler] [onMarketOpen] socketID: ${socket.id} - try to open market but user is not admin`)
     return callback(callbackErrorObject("try to open market but user is not admin")) // TODO: error_code
   }
 
   // Create Market object in DB
   await createMarketObject(socket.league_id) //TODO: error handling?
 
-  // Set market Open in the DB
-  // if (!setMarketOpen(market_room)) {
-  //   console.error(`[eventHandler] an error occurred while set market ${market_room} to open`)
-  //   return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
-  // }
-
   const market_room = getMarketRoom(league_room)
 
   // Join Market room
   socket.join(market_room)
-  console.log(`[eventHandler] socketID: ${socket.id} - user: ${socket.user_id} open market ${market_room}`)
+  console.log(`[eventHandler] [onMarketOpen] socketID: ${socket.id} - user: ${socket.user_id} open market ${market_room}`)
 
   // prepare response message
   const socket_list = await getSocketsInRoom(io, market_room)
   const message = extractTeamId(socket_list)
-  message["user"] = socket.user_id // add user information to the message
 
   // validate response message
   const message_validated = Schemas.serverMarketOpenSchema.validate(message)
