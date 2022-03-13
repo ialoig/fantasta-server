@@ -1,4 +1,4 @@
-import { League, Market, populate } from '../../../database'
+import { League, populate } from '../../../database'
 import { Errors, Response, leagueUtils, userUtils } from '../../../utils'
 import { metricApiError, metricApiSuccess, metricApiPayloadSize } from '../../../metrics'
 
@@ -24,7 +24,7 @@ const join = async (req, res, next) => {
 
             let team = null
 
-            if (id) {
+            if (userId) {
                 team = league.teams.find((t) => t.user._id.toString() == userId.toString()) || null
             }
             else if (name) {

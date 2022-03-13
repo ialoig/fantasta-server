@@ -116,7 +116,7 @@ export const fakeTeams = [
         user: "",
         league: ""
     }, {
-        name: "Athletico di Madrid",
+        name: "Atletico Madrid",
         footballPlayers: "",
         budget: "500",
         user: "",

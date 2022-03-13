@@ -202,7 +202,7 @@ const onLeagueUserNewOrOnline = async (io, socket, payload, newUser, callback) =
   // Validate payload
   const payload_validation = validateUserNewOrOnline(payload, newUser)
   if (payload_validation.error) {
-    console.error(`[eventHandler] client payload validation failed. ${payload_validation.error}`)
+    console.error(`[eventHandler] [onLeagueUserNewOrOnline] client payload validation failed. ${payload_validation.error}`)
     return callback(callbackErrorObject(payload_validation.error))  // TODO: error_code
   }
 
@@ -219,7 +219,7 @@ const onLeagueUserNewOrOnline = async (io, socket, payload, newUser, callback) =
 
   // Join Room
   socket.join(league_room)
-  console.log(`[eventHandler] socketID: ${socket.id} - user_id=${user_id} team_id=${team_id} league_id=${league_id} online in ${league_room} (newUser=${newUser})`)
+  console.log(`[eventHandler] [onLeagueUserNewOrOnline] socketID: ${socket.id} - user_id=${user_id} team_id=${team_id} league_id=${league_id} online in ${league_room} (newUser=${newUser})`)
 
   // prepare response message
   const socket_list = await getSocketsInRoom(io, league_room)
@@ -228,7 +228,7 @@ const onLeagueUserNewOrOnline = async (io, socket, payload, newUser, callback) =
   // validate response message
   const message_validated = Schemas.serverLeagueUserNewOrOnlineSchema.validate(message)
   if (message_validated.error) {
-    console.error(`[eventHandler] response message validation failed. ${message_validated.error}`)
+    console.error(`[eventHandler] [onLeagueUserNewOrOnline] response message validation failed. ${message_validated.error}`)
     return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
   }
 
