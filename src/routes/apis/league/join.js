@@ -9,25 +9,31 @@ const join = async (req, res, next) => {
     const { id = '', name = '', password = '', teamname = '' } = req.body
 
     if (id || name && password && teamname) {
+        console.log("[api] league.join - params: ", id, name, password, teamname)
         try {
             const auth = await userUtils.userFromToken(req)
             let user = auth.user
             const userId = user._id
-
+            console.log("[api] league.join - userId: ", userId)
+            
             await populate.user(user)
-
+            console.log("[api] league.join - user: ", user)
+            
             let league = await getLeague(user, id, name)
 
             if (!league || !league.$isValid() || league.$isEmpty()) {
                 throw Errors.LEAGUE_NOT_FOUND
             }
+            console.log("[api] league.join - league: ", league)
 
             let team = null
 
-            if (userId) {
+            if (id) {
                 team = league.teams.find((t) => t.user._id.toString() == userId.toString()) || null
+                console.log("[api] league.join - team: ", team)
             }
             else if (name) {
+                console.log("[api] league.join - name: ", name)
                 if (league.participants && league.teams && league.teams.length >= league.participants) {
                     throw Errors.FULL_LEAGUE
                 }
@@ -54,6 +60,7 @@ const join = async (req, res, next) => {
             }
 
             let response = await leagueUtils.createLeagueResponse(user, league, team)
+            console.log("[api] league.join: ", response)
             metricApiSuccess("league.join", '', duration_start)
             metricApiPayloadSize("league.join", response)
             res.json(Response.resolve(response))

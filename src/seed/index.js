@@ -13,12 +13,11 @@ const seed = async () => {
             console.log("[seed] starting to seed db ...")
             await inserFakeUsers();
             await inserFakeLeagues();
-            // await inserFakeMarket();
             await inserFakeTeams();
         }
         console.log("[seed] Done. Database seeded!")
     } catch (error) {
-        console.error("Error seeding database file: " + error)
+        console.error("[ERROR] Error while seeding database: " + error)
     }
 }
 
@@ -30,8 +29,6 @@ const inserFakeUsers = async () => {
 const inserFakeLeagues = async () => {
     // array of leagues created. use it to insert into league table
     let leagues = []
-    // array of markets created. use it to insert into market table
-    let markets = []
     for (let i = 0; i < fakeLeagues.length; i++) {
 
         // get a fake user from array of fake users
@@ -64,6 +61,25 @@ const inserFakeTeams = async () => {
         let userFound = await User.findOne({ email: user.email })
         let league = _.sample(fakeLeagues);
         let leagueFound = await League.findOne({ name: league.name })
+        console.log("[seed] League: %s, with Admin: %s", leagueFound.name, leagueFound.admin)
+        
+        // for each team in league, find the one associated with the admin's league
+        // otherwise return admin user
+        let adminTeam = null
+        for (const team of leagueFound.teams) {
+            const teamFound = await Team.findOne({ _id : team })
+            if (teamFound && teamFound.user.toString() == leagueFound.admin.toString()) {
+                // admin team is already created
+                adminTeam = teamFound
+                console.log("[seed] \tAdmin team already created [%s]. Adding more Teams to League ...", teamFound.name)
+                break
+            }
+        }
+        // admin team not created. Search for admin user and using it to create the team
+        if (adminTeam == null) {
+            userFound = await User.findOne({ _id: leagueFound.admin })
+            console.log("[seed] \tAdmin Team not created. Using Admin [%s] to create a new Team", userFound.username)
+        }
 
         fakeTeams[i].user = userFound._id
         fakeTeams[i].league = leagueFound._id
@@ -76,6 +92,7 @@ const inserFakeTeams = async () => {
         await userFound.save();
 
         teams.push(fakeTeams[i])
+        console.log("[seed] Team created:", createdTeam.name)
     }
     console.log("[seed] insert teams: " + teams.length)
     console.log("[seed] \t... done")
