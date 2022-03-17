@@ -1,25 +1,25 @@
-import Validator from 'validator'
-import config from 'config'
+import config from "config"
+import Validator from "validator"
 
-import { metricApiError, metricApiSuccess } from '../../../metrics'
-import { Errors, Response, sendEmail, userUtils } from '../../../utils'
+import { metricApiError, metricApiSuccess } from "../../../metrics"
+import { Errors, Response, sendEmail, userUtils } from "../../../utils"
 
 const support = async (req, res, next) => {
-    const duration_start = process.hrtime()
+	const duration_start = process.hrtime()
 
-    const { text = '', email='', subject='Support' } = req.body
-    if ( text )
-    {
-        try {
-            const auth = await userUtils.userFromToken(req)
-            const user = auth.user
+	const { text = "", email="", subject="Support" } = req.body
+	if ( text )
+	{
+		try {
+			const auth = await userUtils.userFromToken(req)
+			const user = auth.user
 
-            let _from = `Support Fantasta <${config.email.email}>`
+			let _from = `Support Fantasta <${config.email.email}>`
 
-            let _to = email && email.split && email.split(',').map( item => item.trim && item.trim() ).filter( item => Validator.isEmail(item) ) || []
-            _to.unshift( `${user.username} <${user.email}>` )
+			let _to = email && email.split && email.split(",").map( item => item.trim && item.trim() ).filter( item => Validator.isEmail(item) ) || []
+			_to.unshift( `${user.username} <${user.email}>` )
 
-            let _html = `<!DOCTYPE html>
+			let _html = `<!DOCTYPE html>
                 <html>
                     <head>
                         <title>Support request</title>
@@ -42,23 +42,23 @@ const support = async (req, res, next) => {
                     </body>
                 </html>`
             
-            await sendEmail( _from, _to, config.email.email, subject, null, _html)
+			await sendEmail( _from, _to, config.email.email, subject, null, _html)
 
-            metricApiSuccess("support", '', duration_start)
+			metricApiSuccess("support", "", duration_start)
 
-            res.json(Response.resolve())
-        }
-        catch (error) {
-            console.error(`[api] support: ${error}`)
-            metricApiError("support", error, duration_start)
-            res.status(400).send(Response.reject(error, req.headers.language))
-        }
-    }
-    else {
-        console.error(`[api] support: ${Errors.PARAMS_ERROR.status}`)
-        metricApiError("support", Errors.PARAMS_ERROR, duration_start)
-        res.status(400).send(Response.reject(Errors.PARAMS_ERROR, req.headers.language))
-    }
+			res.json(Response.resolve())
+		}
+		catch (error) {
+			console.error(`[api] support: ${error}`)
+			metricApiError("support", error, duration_start)
+			res.status(400).send(Response.reject(error, req.headers.language))
+		}
+	}
+	else {
+		console.error(`[api] support: ${Errors.PARAMS_ERROR.status}`)
+		metricApiError("support", Errors.PARAMS_ERROR, duration_start)
+		res.status(400).send(Response.reject(Errors.PARAMS_ERROR, req.headers.language))
+	}
 }
 
 export default support

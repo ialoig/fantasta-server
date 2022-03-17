@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose from "mongoose"
 const { Schema, model } = mongoose
 
 /* Example
@@ -29,25 +29,25 @@ const { Schema, model } = mongoose
 */
 
 const footballPlayersSchema = new Schema(
-  {
-    list: {
-      type: Object,
-      required: true,
-    },
-    statistics: {
-      type: Object,
-      required: true,
-    },
-    version: {
-      type: Number,
-      required: true,
-    },
-  },
-  {
-    timestamps: true, // createdAt, updatedAt automatically added by mongoose
-  }
-);
+	{
+		list: {
+			type: Object,
+			required: true,
+		},
+		statistics: {
+			type: Object,
+			required: true,
+		},
+		version: {
+			type: Number,
+			required: true,
+		},
+	},
+	{
+		timestamps: true, // createdAt, updatedAt automatically added by mongoose
+	}
+)
 
-const FootballPlayers = model("FootballPlayers", footballPlayersSchema);
+const FootballPlayers = model("FootballPlayers", footballPlayersSchema)
 
-export default FootballPlayers;
+export default FootballPlayers

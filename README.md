@@ -57,8 +57,6 @@ Useful links:
 * [Collected metrics by Prometheus](http://localhost:9090)
 * [Grafana](http://localhost:3001)
 
-
-
 # 🌱 MONGO DB
 
 ## Useful commands
@@ -66,7 +64,7 @@ Useful links:
 To open a `MongoDB CLI` run the command:
 
 ```shell
-$ mongo
+mongo
 ```
 
 Show all databases instances:
@@ -76,6 +74,7 @@ Show all databases instances:
 ```
 
 It will show you all the databases instances.
+
 ```shell
 admin           0.000GB
 config          0.000GB
@@ -117,6 +116,7 @@ Find a `user` with a specific email:
 ```
 
 ## Drop database
+
 You can drob entire instance by running the following command:
 
 ```shell
@@ -126,15 +126,24 @@ You can drob entire instance by running the following command:
 Now all the entries within the db instance are deleted. You can restart the server instance to get a new seed of entries (it will run automatically when it does not found any entries).
 
 > NOTE: Please check server console log to view if Seed has been executed correctyl at startup (it will show you something like below)
+
 ```shell
 fantasta_server    | [seed] user found in db: 1
 fantasta_server    | [seed] starting to seed db ...
 fantasta_server    | [seed] insert users: 10
 fantasta_server    | [seed] insert leagues: 12
-fantasta_server    | [seed] 	... done
+fantasta_server    | [seed]  ... done
 fantasta_server    | [seed] insert markets (empty): 12
-fantasta_server    | [seed] 	... done
+fantasta_server    | [seed]  ... done
 fantasta_server    | [seed] insert teams: 14
-fantasta_server    | [seed] 	... done
+fantasta_server    | [seed]  ... done
 fantasta_server    | [seed] Done. Database seeded!
 ```
+
+# ESLint
+
+## When should I use @babel/eslint-parser?
+
+ESLint's default parser and core rules [only support the latest final ECMAScript standard](https://github.com/eslint/eslint/blob/a675c89573836adaf108a932696b061946abf1e6/README.md#what-about-experimental-features) and do not support experimental (such as new features) and non-standard (such as Flow or TypeScript types) syntax provided by Babel. @babel/eslint-parser is a parser that allows ESLint to run on source code that is transformed by Babel.
+
+**Note:** You only need to use @babel/eslint-parser if you are using Babel to transform your code. If this is not the case, please use the relevant parser for your chosen flavor of ECMAScript (note that the default parser supports all non-experimental syntax as well as JSX).

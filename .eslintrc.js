@@ -1,4 +1,17 @@
 module.exports = {
+	parser: "@babel/eslint-parser",
+	parserOptions: {
+		sourceType: "module",
+		allowImportExportEverywhere: false,
+		ecmaFeatures: {
+		  globalReturn: false,
+		  jsx: true
+		},
+		ecmaVersion: 12,
+		// babelOptions: {
+		//   configFile: "./.babelrc.json",
+		// }
+	},
 	/** environment specification */
 	env: {
 		"es2021": true, //adds all ECMAScript 2021 globals and automatically sets the ecmaVersion parser option to 12
@@ -6,28 +19,9 @@ module.exports = {
 	},
 	extends: [
 		"eslint:recommended",
-		"plugin:react/recommended",
-		"plugin:react-native/all",
 		"plugin:import/errors",
 		"plugin:import/warnings",
 		"plugin:i18n-json/recommended"
-	],
-	settings: {
-		"react": {
-			version: "17"
-		}
-	},
-	parserOptions: {
-		ecmaFeatures: {
-			"jsx": true
-		},
-		ecmaVersion: 12,
-		sourceType: "module",
-		requireConfigFile: false //allow @babel/eslint-parser to run on files that do not have a Babel configuration associated with them
-	},
-	plugins: [
-		"react",
-		"react-native"
 	],
 	rules: {
 		indent: [
@@ -76,12 +70,6 @@ module.exports = {
 				groups: ["builtin", "external", "parent", "sibling", "index"],
 			}
 		],
-		"react-native/no-unused-styles": 2,
-		"react-native/split-platform-components": 2,
-		"react-native/no-inline-styles": 2,
-		"react-native/no-color-literals": 2,
-		"react-native/no-raw-text": 2,
-		"react-native/no-single-element-style-arrays": 2,
 		/** translations rules */
 		"i18n-json/valid-message-syntax": [2, {
 			syntax: "icu",

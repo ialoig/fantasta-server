@@ -1,5 +1,5 @@
-import { Router } from 'express'
-import { default as apis } from './apis'
+import { Router } from "express"
+import { default as apis } from "./apis"
 
 let routing = Router()
 

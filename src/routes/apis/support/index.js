@@ -1,1 +1,1 @@
-export { default as support } from './support'
+export { default as support } from "./support"
