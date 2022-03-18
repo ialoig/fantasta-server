@@ -46,6 +46,7 @@
   "devDependencies": {
     "@babel/core": "^7.17.7",
     "@babel/eslint-parser": "^7.17.0",
+    "@babel/eslint-plugin": "^7.17.7",
     "babel-cli": "^6.26.0",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.7.0",
@@ -54,7 +55,7 @@
     "debug": "^4.3.1",
     "eslint": "^8.11.0",
     "eslint-plugin-i18n-json": "^3.1.0",
-    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-import": "^2.25.4",
     "mocha": "^8.3.1",
     "nodemon": "^2.0.7",
     "nyc": "^15.1.0"

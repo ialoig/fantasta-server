@@ -1,4 +1,4 @@
-import { League, Market } from "../../../database"
+import { League } from "../../../database"
 import { metricApiError, metricApiPayloadSize, metricApiSuccess } from "../../../metrics"
 import { Errors, leagueUtils, Response, userUtils } from "../../../utils"
 

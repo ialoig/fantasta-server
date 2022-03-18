@@ -29,7 +29,7 @@ app.use( (req, res, next) => {
 })
 
 // Error Handling
-app.use( (err, req, res, next) => {
+app.use( (err, req, res) => {
 	console.error("!!!!!!!!!!!!!!!!!")
 	console.error("An error occurred")
 	console.error(`request: ${req}`)

@@ -65,7 +65,7 @@ export const email_status_counter = new prometheusClient.Counter({
  */
 export const metricApiPayloadSize = (name, payload) => {
 	const size = Buffer.byteLength(JSON.stringify(payload), "utf8")
-	api_payload_bytes.labels(name = name).set(size)
+	api_payload_bytes.labels(name).set(size)
 }
 
 /**

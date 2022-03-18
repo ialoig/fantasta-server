@@ -1,4 +1,3 @@
-
 import _ from "lodash"
 import { FootballPlayers } from "../database"
 import { load_footballPlayer_duration_seconds, METRIC_STATUS, secondsFrom } from "../metrics"
@@ -10,7 +9,7 @@ const mantraRolesAllowed = ["Por", "Dd", "Ds", "Dc", "E", "M", "C", "W", "T", "A
 
 const containsCorrectData = (footballPlayer_obj) => {
 	let reason = ""
-	if (!mandatoryFields.every(item => footballPlayer_obj.hasOwnProperty(item)))  // all fields must be present
+	if (!mandatoryFields.every(item => Object.prototype.footballPlayer_obj.hasOwnProperty.call(item)))  // all fields must be present
 	{
 		reason = "Object does not contain mandatory fields"
 	}
@@ -54,7 +53,7 @@ const containsCorrectData = (footballPlayer_obj) => {
 		return true
 	}
 
-	// console.error(`[saveFootballPlayers] corrupted footballPlayers. Reason: ${reason}. ${JSON.stringify(footballPlayer_obj, null, 2)}`)
+	console.error(`[saveFootballPlayers] corrupted footballPlayers. Reason: ${reason}. ${JSON.stringify(footballPlayer_obj, null, 2)}`)
 	return false
 }
 

@@ -1,5 +1,3 @@
-
-
 import config from "config"
 import mongoose from "mongoose"
 import { downloadPlayers } from "../footballPlayers"

@@ -5,9 +5,6 @@ import { Errors, tokenUtils } from "../utils"
 import { default as Token } from "./token.js"
 
 const userFromToken = async (req) => {
-
-	let ret = {}
-
 	try {
 		const token = Token.Get(req) || ""
 		let auth = Token.Verify(token, config.token.kid)
@@ -88,22 +85,6 @@ const createAuthResponse = async (user, password) => {
 	return Promise.resolve(response)
 }
 
-
-/**
- * 
- * @param {*} arr array to scan and modify
- * @param {*} value to remove
- * @returns whether the value was removed or not
- */
-function removeElementFromArray(arr, value) {
-	var index = arr.indexOf(value)
-	if (index > -1) {
-		arr.splice(index, 1)
-		return true
-	}
-	return false
-}
-
 /**
  * 
  * @param {*} teams_ids list of team id to analize
@@ -116,7 +97,7 @@ const getNewAdmin = async (teams_ids, userToDelete, deletedUser) => {
 		const team_id = teams_ids[team_index]
 
 		// Check if "team_id" is a valid ObjectId
-		if (!team_id instanceof mongoose.Types.ObjectId) {
+		if (!(team_id instanceof mongoose.Types.ObjectId)) {
 			console.error(`[getNewAdmin]: "${team_id}" is not a valid ObjectId`)
 			continue // parse next team
 		}
@@ -129,7 +110,7 @@ const getNewAdmin = async (teams_ids, userToDelete, deletedUser) => {
 		}
 
 		// Check if "team.user" is a valid ObjectId
-		if (!team.user instanceof mongoose.Types.ObjectId) {
+		if (!(team.user instanceof mongoose.Types.ObjectId)) {
 			console.error(`[getNewAdmin]: "${team.user}" is not a valid ObjectId`)
 			continue // parse next team
 		}
@@ -162,7 +143,7 @@ const removeUser = async (userToDelete) => {
 			const league_id = league_ids[league_index]
 
 			// Check if "league_id" is a valid ObjectId
-			if (!league_id instanceof mongoose.Types.ObjectId) {
+			if (!(league_id instanceof mongoose.Types.ObjectId)) {
 				console.error(`[removeUser]: "${league_id}" is not a valid ObjectId`)
 				continue // parse next league
 			}
@@ -189,7 +170,7 @@ const removeUser = async (userToDelete) => {
 				const team_id = teams_ids[team_index]
 
 				// Check if "team_id" is a valid ObjectId
-				if (!team_id instanceof mongoose.Types.ObjectId) {
+				if (!(team_id instanceof mongoose.Types.ObjectId)) {
 					console.error(`[removeUser]: "${team_id}" is not a valid ObjectId`)
 					continue // parse next team
 				}
@@ -202,7 +183,7 @@ const removeUser = async (userToDelete) => {
 				}
 
 				// Check if "team.user" is a valid ObjectId
-				if (!team.user instanceof mongoose.Types.ObjectId) {
+				if (!(team.user instanceof mongoose.Types.ObjectId)) {
 					console.error(`[removeUser]: "${team.user}" is not a valid ObjectId`)
 					continue // parse next team
 				}

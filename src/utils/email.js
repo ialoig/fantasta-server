@@ -27,7 +27,7 @@ const transporter = createTransport(transport)
 export const sendEmail = async (_from, _to, _cc, _subject, _text, _html) => {
 	try
 	{
-		let info = await transporter.sendMail({
+		await transporter.sendMail({
 			from: _from,
 			to: _to,
 			cc: _cc,

@@ -1,7 +1,6 @@
 import { League, Market } from "../database"
 import { socket_event_counter } from "../metrics"
-import { Errors } from "../utils"
-import { EVENT_TYPE, extractTeamId, getMarketRoom, getPlayerTurn, getSocketsInRoom, isLeagueRoom, isMarketRoom, league_prefix, market_prefix } from "./common"
+import { EVENT_TYPE, extractTeamId, getMarketRoom, getPlayerTurn, getSocketsInRoom, isLeagueRoom, isMarketRoom, league_prefix } from "./common"
 import { Schemas } from "./schemas"
 
 // TODO: add metrics

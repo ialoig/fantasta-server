@@ -1,4 +1,3 @@
-
 export { default as League } from "./league"
 export { default as Team } from "./team"
 export { default as FootballPlayers } from "./footballPlayers"

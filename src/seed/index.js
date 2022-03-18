@@ -1,5 +1,5 @@
 import _ from "lodash"
-import { League, Market, Team, User } from "../database/models"
+import { League, Team, User } from "../database/models"
 import { fakeLeagues, fakeTeams, fakeUsers } from "./fakeData.js"
 
 const seed = async () => {
@@ -95,27 +95,6 @@ const inserFakeTeams = async () => {
 		console.log("[seed] Team created:", createdTeam.name)
 	}
 	console.log("[seed] insert teams: " + teams.length)
-	console.log("[seed] \t... done")
-}
-
-
-
-const inserFakeMarket = async () => {
-	// save markets created
-	let markets = []
-	let leagues = await League.find()
-	for (let i = 0; i < leagues.length; i++) {
-		let league = leagues[i]
-
-		// create market obj for any league created and add it to array of markets
-		let market = { leagueId: league._id, betHistory: []}
-		markets.push(market)
-	}
-
-	// inser many markets to market table
-	console.log("[seed] insert markets (empty): " + markets.length)
-	await Market.insertMany(markets)
-
 	console.log("[seed] \t... done")
 }
 

@@ -4,14 +4,15 @@ module.exports = {
 		sourceType: "module",
 		allowImportExportEverywhere: false,
 		ecmaFeatures: {
-		  globalReturn: false,
-		  jsx: true
+			globalReturn: false,
+			jsx: true
 		},
 		ecmaVersion: 12,
-		// babelOptions: {
-		//   configFile: "./.babelrc.json",
-		// }
+		requireConfigFile: false
 	},
+	plugins: [
+		"@babel"
+	],
 	/** environment specification */
 	env: {
 		"es2021": true, //adds all ECMAScript 2021 globals and automatically sets the ecmaVersion parser option to 12

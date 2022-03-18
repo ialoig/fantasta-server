@@ -145,7 +145,6 @@ const parseTeam = (team) => {
 		_id: team._id.toString(),
 		budget: team.budget,
 		name: team.name,
-		budget: team.budget,
 		createdAt: team.createdAt.toISOString(),
 		updatedAt: team.updatedAt.toISOString(),
 		footballPlayers: [],
@@ -179,7 +178,7 @@ const parseMarket = (market) => {
 
 	// populate 'onlineTeams' field
 	for (let i = 0; i < market.onlineTeams.length; i++) {
-		onlineTeams.push(market.onlineTeams[i]._id.toString())
+		mk.onlineTeams.push(market.onlineTeams[i]._id.toString())
 	}
 
 	/*

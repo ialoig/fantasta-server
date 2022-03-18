@@ -1,7 +1,6 @@
 import mongoose from "mongoose"
 const { Schema, model } = mongoose
 
-import _ from "lodash"
 
 const marketSchema = new Schema(
 	{

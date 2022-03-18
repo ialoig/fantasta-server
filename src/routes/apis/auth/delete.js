@@ -1,4 +1,3 @@
-
 import { metricApiError, metricApiSuccess } from "../../../metrics"
 import { Errors, Response, userUtils } from "../../../utils"
 
@@ -21,7 +20,7 @@ const deleteAccount = async (req, res, next) => {
 			}
 			else {
 				metricApiSuccess("auth.delete", "", duration_start)
-				const removeUserAndReferencesResult = await userUtils.removeUser(user)
+				await userUtils.removeUser(user)
 				res.json(Response.resolve(true))
 			}
 		}
