@@ -6,7 +6,7 @@
   "scripts": {
     "build": "babel src --out-dir ./dist --source-maps",
     "prod": "node dist/fantasta.js",
-    "debug": "nodemon --exec babel-node ./src/fantasta.js",
+    "debug": "nodemon --signal SIGINT --exec babel-node ./src/fantasta.js",
     "test": "nyc mocha test/**/*.test.js --exit --timeout 0",
     "test-unit": "nyc mocha test/unit-test/*.test.js --exit --timeout 0",
     "test-integration": "nyc mocha test/integration/*.test.js --exit --timeout 0",
@@ -44,12 +44,13 @@
     "xlsx": "0.16.9"
   },
   "devDependencies": {
+    "@babel/cli": "^7.17.6",
     "@babel/core": "^7.17.7",
     "@babel/eslint-parser": "^7.17.0",
     "@babel/eslint-plugin": "^7.17.7",
-    "babel-cli": "^6.26.0",
-    "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-preset-env": "^1.7.0",
+    "@babel/node": "^7.16.8",
+    "@babel/plugin-transform-runtime": "^7.17.0",
+    "@babel/preset-env": "^7.16.11",
     "chai": "^4.3.3",
     "chai-http": "^4.3.0",
     "debug": "^4.3.1",

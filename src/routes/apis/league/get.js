@@ -3,6 +3,8 @@ import { metricApiError, metricApiPayloadSize, metricApiSuccess } from "../../..
 import { Errors, leagueUtils, Response, userUtils } from "../../../utils"
 
 
+// eslint disabled for 'next' params - it has to be defined even if not used
+// eslint-disable-next-line no-unused-vars
 const get = async (req, res, next) => {
 	const duration_start = process.hrtime()
 	try {

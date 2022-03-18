@@ -16,6 +16,9 @@ COPY package.json package-lock.json ./
 # babel configuration
 COPY .babelrc ./
 
+# eslint configuration
+COPY .eslintrc.js ./
+
 # test framework configuration (for test ONLY)
 COPY .nycrc.json ./
 

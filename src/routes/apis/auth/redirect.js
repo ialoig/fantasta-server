@@ -20,6 +20,8 @@ function getRedirectErrorPageUrl(error, lang) {
 	return redirectErrorPage_url
 }
 
+// eslint disabled for 'next' params - it has to be defined even if not used
+// eslint-disable-next-line no-unused-vars
 const redirect = async (req, res, next) => {
 	const duration_start = process.hrtime()
 

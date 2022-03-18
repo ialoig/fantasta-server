@@ -140,6 +140,12 @@ fantasta_server    | [seed]  ... done
 fantasta_server    | [seed] Done. Database seeded!
 ```
 
+# ESLINT
+
+They are two types of module syntax for nodejs. The `commonJS` syntax, that uses **require** and **module.exports**, and the `ES syntax`, that use **import * from "path"** style of module.
+
+By default, `nodejs` will try to load modules with the CommonJS syntax. If you want to use the ES syntax, you must specify `"type":"module"` in your `package.json`. But you can't mix them up. You can use one syntax, but not both
+
 # @babel/eslint-parser [![npm](https://img.shields.io/npm/v/@babel/eslint-parser.svg)](https://www.npmjs.com/package/@babel/eslint-parser)
 
 ## When should I use @babel/eslint-parser?

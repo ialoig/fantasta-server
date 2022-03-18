@@ -3,6 +3,8 @@ import { User } from "../../../database"
 import { metricApiError, metricApiSuccess } from "../../../metrics"
 import { Errors, PASSWORD_OPT, Response, userUtils } from "../../../utils"
 
+// eslint disabled for 'next' params - it has to be defined even if not used
+// eslint-disable-next-line no-unused-vars
 const register = async (req, res, next) => {
 	const duration_start = process.hrtime()
 

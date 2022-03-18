@@ -9,7 +9,7 @@ const mantraRolesAllowed = ["Por", "Dd", "Ds", "Dc", "E", "M", "C", "W", "T", "A
 
 const containsCorrectData = (footballPlayer_obj) => {
 	let reason = ""
-	if (!mandatoryFields.every(item => Object.prototype.footballPlayer_obj.hasOwnProperty.call(item)))  // all fields must be present
+	if (!mandatoryFields.every(item => footballPlayer_obj.hasOwnProperty(item)))  // all fields must be present
 	{
 		reason = "Object does not contain mandatory fields"
 	}

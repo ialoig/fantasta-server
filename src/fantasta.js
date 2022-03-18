@@ -29,7 +29,9 @@ app.use( (req, res, next) => {
 })
 
 // Error Handling
-app.use( (err, req, res) => {
+// eslint disabled for 'next' params - it has to be defined even if not used
+// eslint-disable-next-line no-unused-vars
+app.use( (err, req, res, next) => {
 	console.error("!!!!!!!!!!!!!!!!!")
 	console.error("An error occurred")
 	console.error(`request: ${req}`)

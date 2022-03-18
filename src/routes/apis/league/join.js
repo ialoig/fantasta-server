@@ -2,6 +2,8 @@ import { League, populate } from "../../../database"
 import { metricApiError, metricApiPayloadSize, metricApiSuccess } from "../../../metrics"
 import { Errors, leagueUtils, Response, userUtils } from "../../../utils"
 
+// eslint disabled for 'next' params - it has to be defined even if not used
+// eslint-disable-next-line no-unused-vars
 const join = async (req, res, next) => {
 	// used to measure execution time
 	const duration_start = process.hrtime()

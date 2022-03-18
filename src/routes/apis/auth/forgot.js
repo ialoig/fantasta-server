@@ -4,6 +4,8 @@ import { Reset, User } from "../../../database"
 import { metricApiError, metricApiSuccess } from "../../../metrics"
 import { Errors, Response, sendEmail } from "../../../utils"
 
+// eslint disabled for 'next' params - it has to be defined even if not used
+// eslint-disable-next-line no-unused-vars
 const forgot = async (req, res, next) => {
 	const duration_start = process.hrtime()
 

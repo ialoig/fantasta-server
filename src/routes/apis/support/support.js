@@ -1,9 +1,10 @@
 import config from "config"
 import Validator from "validator"
-
 import { metricApiError, metricApiSuccess } from "../../../metrics"
 import { Errors, Response, sendEmail, userUtils } from "../../../utils"
 
+// eslint disabled for 'next' params - it has to be defined even if not used
+// eslint-disable-next-line no-unused-vars
 const support = async (req, res, next) => {
 	const duration_start = process.hrtime()
 

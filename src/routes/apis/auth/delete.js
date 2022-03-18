@@ -4,6 +4,8 @@ import { Errors, Response, userUtils } from "../../../utils"
 /** 
  * @route DELETE api/auth/deleteAccount
 * */
+// eslint disabled for 'next' params - it has to be defined even if not used
+// eslint-disable-next-line no-unused-vars
 const deleteAccount = async (req, res, next) => {
 	const duration_start = process.hrtime()
 

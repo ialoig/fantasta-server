@@ -94,14 +94,15 @@ const initMongoConnection = async (trigger_download = true) => {
 			seed()
 		}
 	})
+	
+	process.on("SIGINT", () => {
+		connection.close(() => {
+			console.log("Mongoose default connection is disconnected due to application termination")
+			process.exit(0)
+		})
+	})
 }
 
-process.on("SIGINT", () => {
-	connection.close(() => {
-		console.log("Mongoose default connection is disconnected due to application termination")
-		process.exit(0)
-	})
-})
 
 export { League, FootballPlayers, Team, User, Reset, Market } from "./models"
 export { initMongoConnection, populate }
