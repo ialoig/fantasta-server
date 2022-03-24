@@ -1,5 +1,6 @@
 import { League, Market } from "../database"
 import { socket_event_counter } from "../metrics"
+import { Errors } from "../utils"
 import { EVENT_TYPE, extractTeamId, getMarketRoom, getPlayerTurn, getSocketsInRoom, isLeagueRoom, isMarketRoom, league_prefix } from "./common"
 import { Schemas } from "./schemas"
 
@@ -82,6 +83,24 @@ const isAdmin = async (league_id, user_id) => {
 
 //------------------------------------------------------------------------------
 
+
+/**
+ * Object from db: 
+ * 	active: false,
+ * 	onlineTeams: [],
+ * 	teamTurn: null,
+ * 	closedAt: null,
+ * 	_id: 6239ebfae5d03b00ef9fc30d,
+ * 	leagueId: 6239e77569e9d30068c56bb5,
+ * 	betHistory: [],
+ * 	createdAt: 2022-03-22T15:32:10.947Z,
+ * 	updatedAt: 2022-03-22T15:32:10.947Z,
+ * 	__v: 0
+ * 
+ * 
+ * @param {*} league_id 
+ * @returns 
+ */
 const createMarketObject = async (league_id) => {
 	console.log(`[createMarketObject] league_id=${league_id}`)
 
@@ -91,7 +110,7 @@ const createMarketObject = async (league_id) => {
 
 		if (!league || !league.$isValid() || league.$isEmpty()) {
 			// TODO: send ERROR event and manage failure
-			return Promise.reject("error")
+			return Promise.reject(Errors.LEAGUE_NOT_FOUND)
 		}
 		else {
 			// create market in DB
@@ -100,7 +119,9 @@ const createMarketObject = async (league_id) => {
       
 			// add market to league in DB
 			league.market.push(market._id)
-			league.save()
+			await league.save()
+
+			console.log("[createMarketObject] market object created in db:", market)
 
 			return Promise.resolve(market)
 		}
@@ -128,19 +149,6 @@ const isMarketOpen = (market_room) => {
 /**
  * 
  * @param {*} market_room market room name in the format "market={league_namefrom_db}"
- * @returns true/false depenging on the market start status
- */
-const isMarketStart = (market_room) => {
-	// TODO: implement it
-	console.log(`[isMarketStart] market_room: ${market_room}`)
-	return true
-}
-
-//------------------------------------------------------------------------------
-
-/**
- * 
- * @param {*} market_room market room name in the format "market={league_namefrom_db}"
  * @returns true/false depenging on the result of setting the market status to open
  */
 const setMarketOpen = (market_room) => {
@@ -156,12 +164,33 @@ const setMarketOpen = (market_room) => {
 /**
  * 
  * @param {*} market_room market room name in the format "market={league_namefrom_db}"
- * @returns true/false depenging on the result of setting the market status to start
+ * @returns true if the market is not closed, so will be active, false otherwise
  */
-const setMarketStart = (market_room) => {
-	// TODO: implement it
-	console.log(`[setMarketStart] market_room: ${market_room}`)
-	return true
+const setMarketActive = async (market_room) => {
+	try {
+		console.log(`[setMarketActive] market_room: ${market_room}`)
+
+		// find market object in db with leagueId and not closed
+		const market = await Market.find({ leagueId: market_room, closetAt: null })
+		console.log("[setMarketActive] market not closed found:", market)
+
+		if (!market || !market.$isValid() || market.$isEmpty()) {
+			// TODO: send ERROR event and manage failure
+			return Promise.reject(Errors.MARKET_NOT_FOUND)
+		} else {
+		
+			// set flag market active
+			market.active = true
+			await market.save()
+
+			console.log("[setMarketActive] market set as active:", market)
+
+			return Promise.resolve(market)
+		}
+	} catch (error) {
+		// TODO: send ERROR event and manage failure
+		return Promise.reject(error)
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -169,13 +198,26 @@ const setMarketStart = (market_room) => {
 /**
  * 
  * @param {*} market_room market room name in the format "market={league_namefrom_db}"
- * @returns true/false depenging on the result of setting the market status to start
+ * @returns true/false depenging on the market active status
  */
-const setMarketPause = (market_room) => {
+const isMarketActive = (market_room) => {
 	// TODO: implement it
-	console.log(`[setMarketPause] market_room: ${market_room}`)
+	console.log(`[isMarketActive] market_room: ${market_room}`)
 	return true
 }
+
+//------------------------------------------------------------------------------
+
+// /**
+//  * 
+//  * @param {*} market_room market room name in the format "market={league_namefrom_db}"
+//  * @returns true/false depenging on the result of setting the market status to start
+//  */
+// const setMarketPause = (market_room) => {
+// 	// TODO: implement it
+// 	console.log(`[setMarketPause] market_room: ${market_room}`)
+// 	return true
+// }
 
 //------------------------------------------------------------------------------
 
@@ -258,14 +300,14 @@ const onLeagueUserDeleted = async (io, socket, callback) => {
 	const rooms = getSocketRooms(socket)
 
 	if (rooms.length == 0) {
-		console.error(`[eventHandler] socketID: ${socket.id} - user_id=${socket.user_id} team_id=${socket.team_id} try to delete but did not joined any room`)
+		console.error(`[eventHandler] [onLeagueUserDeleted] socketID: ${socket.id} - user_id=${socket.user_id} team_id=${socket.team_id} try to delete but did not joined any room`)
 		return callback(callbackErrorObject("try to delete user but did not joined any room")) // TODO: error_code
 	}
 
 	// leave all rooms
 	for (const room of rooms) {
 		socket.leave(room)
-		console.log(`[eventHandler] socketID: ${socket.id} - user_id=${socket.user_id} team_id=${socket.team_id} left room ${room}`)
+		console.log(`[eventHandler] [onLeagueUserDeleted] socketID: ${socket.id} - user_id=${socket.user_id} team_id=${socket.team_id} left room ${room}`)
 
 		// prepare response message
 		const socket_list = await getSocketsInRoom(io, room)
@@ -274,7 +316,7 @@ const onLeagueUserDeleted = async (io, socket, callback) => {
 		// validate response message
 		const message_validated = Schemas.serverUserDeletedSchema.validate(message)
 		if (message_validated.error) {
-			console.error(`[eventHandler] response message validation failed. ${message_validated.error}`)
+			console.error(`[eventHandler] [onLeagueUserDeleted] response message validation failed. ${message_validated.error}`)
 			return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
 		}
 
@@ -287,7 +329,7 @@ const onLeagueUserDeleted = async (io, socket, callback) => {
 			io.in(room).emit(EVENT_TYPE.SERVER.MARKET.USER_OFFLINE, message_validated.value)
 		}
 		else {
-			console.error(`[eventHandler] socketID: ${socket.id} - user_id=${socket.user_id} team_id=${socket.team_id} leaving room ${room} that is not a League nor a Market`)
+			console.error(`[eventHandler] [onLeagueUserDeleted] socketID: ${socket.id} - user_id=${socket.user_id} team_id=${socket.team_id} leaving room ${room} that is not a League nor a Market`)
 		}
 	}
 
@@ -315,14 +357,14 @@ const onLeagueUserOffline = async (io, socket, callback) => {
 	const rooms = getSocketRooms(socket)
 
 	if (rooms.length == 0) {
-		console.error(`[eventHandler] socketID: ${socket.id} - user_id=${socket.user_id} team_id=${socket.team_id} try to offline but did not joined any room`)
+		console.error(`[eventHandler] [onLeagueUserOffline] socketID: ${socket.id} - user_id=${socket.user_id} team_id=${socket.team_id} try to offline but did not joined any room`)
 		return callback(callbackErrorObject("try to offline user but did not joined any room")) // TODO: error_code
 	}
 
 	// leave all rooms
 	for (const room of rooms) {
 		socket.leave(room)
-		console.log(`[eventHandler] socketID: ${socket.id} - user_id=${socket.user_id} team_id=${socket.team_id} left room ${room}`)
+		console.log(`[eventHandler] [onLeagueUserOffline] socketID: ${socket.id} - user_id=${socket.user_id} team_id=${socket.team_id} left room ${room}`)
 
 		// prepare response message
 		const socket_list = await getSocketsInRoom(io, room)
@@ -331,7 +373,7 @@ const onLeagueUserOffline = async (io, socket, callback) => {
 		// validate response message
 		const message_validated = Schemas.serverUserOfflineSchema.validate(message)
 		if (message_validated.error) {
-			console.error(`[eventHandler] response message validation failed. ${message_validated.error}`)
+			console.error(`[eventHandler] [onLeagueUserOffline] response message validation failed. ${message_validated.error}`)
 			return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
 		}
 
@@ -344,7 +386,7 @@ const onLeagueUserOffline = async (io, socket, callback) => {
 			io.in(room).emit(EVENT_TYPE.SERVER.MARKET.USER_OFFLINE, message_validated.value)
 		}
 		else {
-			console.error(`[eventHandler] socketID: ${socket.id} - user_id=${socket.user_id} team_id=${socket.team_id} leaving room ${room} that is not a League nor a Market`)
+			console.error(`[eventHandler] [onLeagueUserOffline] socketID: ${socket.id} - user_id=${socket.user_id} team_id=${socket.team_id} leaving room ${room} that is not a League nor a Market`)
 		}
 	}
 
@@ -385,7 +427,8 @@ const onMarketOpen = async (io, socket, callback) => {
 	}
 
 	// Create Market object in DB
-	await createMarketObject(socket.league_id) //TODO: error handling?
+	let market = await createMarketObject(socket.league_id) //TODO: error handling?
+	console.log("[eventHandler] [onMarketOpen] market:", market)
 
 	const market_room = getMarketRoom(league_room)
 
@@ -432,21 +475,21 @@ const onMarketUserOnline = async (io, socket, callback) => {
 
 	// socket didn't join the league room
 	if (!league_room) {
-		console.error(`[eventHandler] socketID: ${socket.id} - try to join market room but did not joined the league room`)
+		console.error(`[eventHandler] [onMarketUserOnline] socketID: ${socket.id} - try to join market room but did not joined the league room`)
 		return callback(callbackErrorObject("try to join market room but did not joined the league room")) // TODO: error_code
 	}
 
 	const market_room = getMarketRoom(league_room)
 
 	// Check market is open
-	if (!isMarketOpen(market_room)) {
-		console.error(`[eventHandler] socketID: ${socket.id} - user: ${socket.user_id} try to join ${market_room} but the market is not open yet XXX`)
+	if (!isMarketActive(market_room)) {
+		console.error(`[eventHandler] [onMarketUserOnline] socketID: ${socket.id} - user: ${socket.user_id} try to join ${market_room} but the market is not open yet XXX`)
 		return callback(callbackErrorObject(`try to join ${market_room} but the market is not open yet XXX`)) // TODO: error_code
 	}
 
 	// Join Market room
 	socket.join(market_room)
-	console.log(`[eventHandler] socketID: ${socket.id} - user: ${socket.user_id} join market ${market_room}`)
+	console.log(`[eventHandler] [onMarketUserOnline] socketID: ${socket.id} - user: ${socket.user_id} join market ${market_room}`)
 
 	// prepare response message
 	const socket_list = await getSocketsInRoom(io, market_room)
@@ -455,14 +498,17 @@ const onMarketUserOnline = async (io, socket, callback) => {
 	// validate response message
 	const message_validated = Schemas.serverMarketUserOnlineSchema.validate(message)
 	if (message_validated.error) {
-		console.error(`[eventHandler] response message validation failed. ${message_validated.error}`)
+		console.error(`[eventHandler] [onMarketUserOnline] response message validation failed. ${message_validated.error}`)
 		return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
 	}
 
 	// Notify client with success callback
 	callback(callbackSuccessObject())
 
+	// TODO: do we also set market.onlineTeams ?? it is empty
+
 	// Send message to all sockets in the room
+	// message like : [{"team_id":"6239e77569e9d30068c56be9"}, {"team_id":"...."]
 	io.in(league_room).emit(EVENT_TYPE.SERVER.MARKET.USER_ONLINE, message_validated.value)
 
 }
@@ -470,7 +516,7 @@ const onMarketUserOnline = async (io, socket, callback) => {
 //------------------------------------------------------------------------------
 
 /**
- * Set market status to Start in the database.
+ * Set market status to Active in the database.
  * Broadcast new status to all users in the market room.
  * 
  * @param {*} io       socket server
@@ -478,8 +524,9 @@ const onMarketUserOnline = async (io, socket, callback) => {
  * @param {*} callback sent back to the client
  * @returns 
  */
-const onMarketStart = async (io, socket, callback) => {
-
+const onMarketActive = async (io, socket, callback) => {
+	console.log("[eventHandler] [onMarketActive] START")
+	console.log("[eventHandler] [onMarketActive] params - io: %s, socket: %s", io, socket)
 	// Assert callback is passed
 	if (typeof callback !== "function") {
 		console.error("No callback function passed. Disconnecting")
@@ -491,7 +538,7 @@ const onMarketStart = async (io, socket, callback) => {
 
 	// socket didn't join the league room
 	if (!league_room) {
-		console.error(`[eventHandler] socketID: ${socket.id} - user: ${socket.user_id} try to start market but did not joined the league room`)
+		console.error(`[eventHandler] [onMarketActive] socketID: ${socket.id} - user: ${socket.user_id} try to start market but did not joined the league room`)
 		return callback(callbackErrorObject("try to start market but did not joined the league room")) // TODO: error_code
 	}
 
@@ -499,19 +546,19 @@ const onMarketStart = async (io, socket, callback) => {
 
 	// socket didn't join the market room
 	if (!market_room) {
-		console.error(`[eventHandler] socketID: ${socket.id} - user: ${socket.user_id} try to start market but did not joined the market room`)
+		console.error(`[eventHandler] [onMarketActive] socketID: ${socket.id} - user: ${socket.user_id} try to start market but did not joined the market room`)
 		return callback(callbackErrorObject("try to start market but did not joined the market room")) // TODO: error_code
 	}
 
 	// Check admin
 	if (!isAdmin(socket)) {
-		console.error(`[eventHandler] socketID: ${socket.id} - try to start market but user is not admin`)
+		console.error(`[eventHandler] [onMarketActive] socketID: ${socket.id} - try to start market but user is not admin`)
 		return callback(callbackErrorObject("try to start market but user is not admin")) // TODO: error_code
 	}
 
 	// Check market is open
 	if (!isMarketOpen(market_room)) {
-		console.error(`[eventHandler] socketID: ${socket.id} - try to start market but market is not open`)
+		console.error(`[eventHandler] [onMarketActive] socketID: ${socket.id} - try to start market but market is not open`)
 		return callback(callbackErrorObject("try to start market but market is not open")) // TODO: error_code
 	}
 
@@ -522,7 +569,7 @@ const onMarketStart = async (io, socket, callback) => {
 	// validate response message
 	const message_validated = Schemas.serverMarketUserOnlineSchema.validate(message)
 	if (message_validated.error) {
-		console.error(`[eventHandler] response message validation failed. ${message_validated.error}`)
+		console.error(`[eventHandler] [onMarketActive] response message validation failed. ${message_validated.error}`)
 		return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
 	}
 
@@ -530,15 +577,16 @@ const onMarketStart = async (io, socket, callback) => {
 	const message_turn = getPlayerTurn(message)
 
 	// validate response message
-	const message_turn_validated = Schemas.serverMarketSearchSchema.validate(message_turn)
-	if (message_turn_validated.error) {
-		console.error(`[eventHandler] socketID: ${socket.id} - validation error: ${message_turn_validated.error}`)
-		return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
-	}
+	// const message_turn_validated = Schemas.serverMarketSearchSchema.validate(message_turn)
+	// if (message_turn_validated.error) {
+	// 	console.error(`[eventHandler] socketID: ${socket.id} - validation error: ${message_turn_validated.error}`)
+	// 	return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
+	// }
 
-	// Set market Start in the DB
-	if (!setMarketStart(market_room)) {
-		console.error(`[eventHandler] an error occurred while set market ${market_room} to start`)
+	// Set market Active in the DB
+	const marketId = socket.league_id
+	if (!setMarketActive(marketId)) {
+		console.error(`[eventHandler] an error occurred while set market ${market_room} to active`)
 		return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
 	}
 
@@ -546,8 +594,9 @@ const onMarketStart = async (io, socket, callback) => {
 	callback(callbackSuccessObject())
 
 	// Send messages to all sockets in the room
-	io.in(market_room).emit(EVENT_TYPE.SERVER.MARKET.START, message_validated.value)
-	io.in(market_room).emit(EVENT_TYPE.SERVER.MARKET.SEARCH, message_turn_validated.value)
+	io.in(market_room).emit(EVENT_TYPE.SERVER.MARKET.ACTIVE, message_validated.value)
+	// io.in(market_room).emit(EVENT_TYPE.SERVER.MARKET.SEARCH, message_turn_validated.value)
+	console.log("[eventHandler] [onMarketActive] END")
 }
 
 //------------------------------------------------------------------------------
@@ -603,8 +652,8 @@ const onMarketFootballPlayerSelectedOrBet = async (io, socket, payload, bet, cal
 		return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
 	}
 
-	if (!isMarketOpen(market_room) || !isMarketStart(market_room)) {
-		console.error(`[eventHandler] socketID: ${socket.id} - try to select/bet player but market is either closed or not started`)
+	if (!isMarketActive(market_room) || !isMarketOpen(market_room)) {
+		console.error(`[eventHandler] socketID: ${socket.id} - try to select/bet player but market is either closed or not active`)
 		return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
 	}
 
@@ -660,8 +709,8 @@ const onMarketPause = (io, socket, callback) => {
 		return callback(callbackErrorObject("try to pause market room but did not joined the market room"))  // TODO: error_code
 	}
 
-	if (!isMarketOpen(market_room) || !isMarketStart(market_room)) {
-		console.error(`[eventHandler] socketID: ${socket.id} - try to pause the market but the market is either closed or not started`)
+	if (!isMarketActive(market_room) || !isMarketOpen(market_room)) {
+		console.error(`[eventHandler] socketID: ${socket.id} - try to pause the market but the market is either closed or not active`)
 		return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
 	}
 
@@ -718,8 +767,8 @@ const onMarketClose = async (io, socket, callback) => {
 		return callback(callbackErrorObject("try to close market room but did not joined the market room"))  // TODO: error_code
 	}
 
-	if (!isMarketOpen(market_room) || !isMarketStart(market_room)) {
-		console.error(`[eventHandler] socketID: ${socket.id} - try to close the but the market is either closed or not started`)
+	if (!isMarketActive(market_room) || !isMarketOpen(market_room)) {
+		console.error(`[eventHandler] socketID: ${socket.id} - try to close the but the market is either closed or not active`)
 		return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
 	}
 
@@ -774,9 +823,9 @@ module.exports = (io, socket) => {
 		onMarketUserOnline(io, socket, callback)
 	})
 
-	socket.on(EVENT_TYPE.CLIENT.MARKET.START, (callback) => {
-		socket_event_counter.inc({ event_type: "EVENT_TYPE.CLIENT.MARKET.START" })
-		onMarketStart(io, socket, callback)
+	socket.on(EVENT_TYPE.CLIENT.MARKET.ACTIVE, (callback) => {
+		socket_event_counter.inc({ event_type: "EVENT_TYPE.CLIENT.MARKET.ACTIVE" })
+		onMarketActive(io, socket, callback)
 	})
 
 	socket.on(EVENT_TYPE.CLIENT.MARKET.PLAYER_SELECTED, (payload, callback) => {

@@ -159,14 +159,14 @@ const parseTeam = (team) => {
 
 const parseMarket = (market) => {
 
-	if(market == null){
+	if (market == null){
 		return null
 	}
 
 	let mk = {
 		_id: market._id.toString(),
 		league_id: market.leagueId.toString(),
-		open: market.open,
+		open: market.closedAt == null ? true : false,
 		active: market.active,
 		onlineTeams: [],
 		teamTurn: market.teamTurn ? market.teamTurn._id.toString(): null,

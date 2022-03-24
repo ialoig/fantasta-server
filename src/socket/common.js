@@ -14,7 +14,7 @@ export const EVENT_TYPE = {
 		},
 		MARKET: {
 			USER_ONLINE: 106,
-			START: 107,
+			ACTIVE: 107,
 			FOOTBALL_PLAYER_SELECTED: 108,
 			BET: 109,
 			WIN: 110,
@@ -35,7 +35,7 @@ export const EVENT_TYPE = {
 		},
 		MARKET: {
 			USER_ONLINE: 206,
-			START: 207,
+			ACTIVE: 207,
 			FOOTBALL_PLAYER_SELECTED: 208,
 			BET: 209,
 			WIN: 210,
@@ -75,5 +75,5 @@ export function extractTeamId(socket_list, exclude_socket = null) {
 export function getPlayerTurn(player_list){
 	// TODO: this is only random. handle turn rotation
 	const random_index = Math.floor(Math.random() * player_list.length)
-	return { turn: player_list[random_index] }
+	return { turn: player_list[random_index].toString() }
 }
