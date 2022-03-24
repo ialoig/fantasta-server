@@ -297,7 +297,16 @@ const PASSWORD_OPT = {
 	pointsForContainingSymbol: 10
 }
 
+
+
+const AUCTION_TYPE = {
+	RANDOM: "random",
+	CALL: "call",
+	ALPHABETIC: "alphabetic"
+}
+
 export {
 	Errors,
-	PASSWORD_OPT
+	PASSWORD_OPT,
+	AUCTION_TYPE
 }

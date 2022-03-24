@@ -72,8 +72,47 @@ export function extractTeamId(socket_list, exclude_socket = null) {
 		.map(socket => ({ team_id: socket.team_id }))
 }
 
-export function getPlayerTurn(player_list){
-	// TODO: this is only random. handle turn rotation
-	const random_index = Math.floor(Math.random() * player_list.length)
-	return { turn: player_list[random_index].toString() }
+/**
+ * Create an array of shuffled values using the Fisher-Yates algorithm
+ * https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
+ * 
+ * Based on js solution found here : 
+ * https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+ * 
+ * @param {Array} teams Array of object
+ * @returns The new shuffled array
+ */
+export const shuffle = (teams) => {
+	let currentIndex = teams.length,  randomIndex
+
+	// While there remain elements to shuffle...
+	while (currentIndex != 0) {
+
+		// Pick a remaining element...
+		randomIndex = Math.floor(Math.random() * currentIndex)
+		currentIndex--;
+
+		// And swap it with the current element.
+		[teams[currentIndex], teams[randomIndex]] = [teams[randomIndex], teams[currentIndex]]
+	}
+	return teams
+}
+
+
+/**
+ * Reorder an array of Teams in alphabetical order
+ * 
+ * @param {Array A} teamA First array to compare
+ * @param {Array B} teamB Second array to compare
+ * @returns 
+ */
+export const sortInAlphabeticOrder = (teamA, teamB) => {
+	const teamNameA = teamA.name.toLowerCase()
+	const teamNameB = teamB.name.toLowerCase()
+	if (teamNameA < teamNameB) {
+		return -1 // sort a before b
+	} else if (teamNameA > teamNameB) {
+		return 1 // sort b before a
+	} 
+	return 0
 }
