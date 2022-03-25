@@ -103,7 +103,6 @@ const parseLeague = (league) => {
 		auctionType: league.auctionType,
 		startPrice: league.startPrice,
 		teams: [],
-		// TODO: status
 		// TODO: isDeleted
 		// TODO: footballPlayers
 		// market: [], // we pass the last created market as a separate object
@@ -159,7 +158,7 @@ const parseTeam = (team) => {
 
 const parseMarket = (market) => {
 
-	if (market == null){
+	if (market == null) {
 		return null
 	}
 
@@ -169,7 +168,7 @@ const parseMarket = (market) => {
 		open: market.closedAt == null ? true : false,
 		active: market.active,
 		onlineTeams: [],
-		teamTurn: market.teamTurn ? market.teamTurn._id.toString(): null,
+		teamTurn: market.teamTurn ? market.teamTurn : [],
 		betHistory: market.betHistory,
 		closedAt: market.closedAt ? market.closedAt.toISOString() : null,
 		createdAt: market.createdAt.toISOString(),
@@ -212,7 +211,7 @@ const parseMarket = (market) => {
  */
 const getLatestMarket = async (league) => {
 	const leagueMarkets = league.market
-	if(leagueMarkets.length == 0){
+	if (leagueMarkets.length == 0){
 		return Promise.resolve(null)
 	}
 

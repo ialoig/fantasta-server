@@ -21,7 +21,7 @@ const serverUserOfflineSchema = listOfTeam
 const serverUserDeletedSchema = listOfTeam
 const serverMarketOpenSchema = listOfTeam
 const serverMarketUserOnlineSchema = listOfTeam
-const serverMarketSearchSchema = Joi.object({ turn: team_id })
+const serverMarketSearchSchema = Joi.array().items(Joi.object())
 const serverMarketFootballPlayerSelected = Joi.object({ team_id: team_id, football_player_id: football_player_id, bet: bet })
 
 export const Schemas = {

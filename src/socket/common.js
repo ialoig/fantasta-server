@@ -79,11 +79,11 @@ export function extractTeamId(socket_list, exclude_socket = null) {
  * Based on js solution found here : 
  * https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
  * 
- * @param {Array} teams Array of object
+ * @param {Array} array Array of object
  * @returns The new shuffled array
  */
-export const shuffle = (teams) => {
-	let currentIndex = teams.length,  randomIndex
+export const shuffle = (array) => {
+	let currentIndex = array.length,  randomIndex
 
 	// While there remain elements to shuffle...
 	while (currentIndex != 0) {
@@ -93,9 +93,9 @@ export const shuffle = (teams) => {
 		currentIndex--;
 
 		// And swap it with the current element.
-		[teams[currentIndex], teams[randomIndex]] = [teams[randomIndex], teams[currentIndex]]
+		[array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]]
 	}
-	return teams
+	return array
 }
 
 
