@@ -280,6 +280,14 @@ const Errors = {
 			message: "market_not_found_msg"
 		}
 	},
+	MARKET_ALREADY_OPEN: {
+		status: "MARKET_ALREADY_OPEN",
+		code: 817,
+		info: {
+			title: "market_already_open",
+			message: "market_already_open_msg"
+		}
+	},
 }
 
 const PASSWORD_OPT = {

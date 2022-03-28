@@ -25,5 +25,7 @@ export const en = {
 	cannot_join_league: "Sorry, you cannot join the League.",
 	reset_expired: "Sorry, Link is expired. Please retry.",
 	reset_expired_msg: "The used link is expired. Renew it by clicking again on 'forgot password'.",
-	league_not_found_for_user: "No League found. Verify that the user belong to it."
+	league_not_found_for_user: "No League found. Verify that the user belong to it.",
+	market_not_found: "Market not found",
+	market_already_open: "Market is already open"
 }

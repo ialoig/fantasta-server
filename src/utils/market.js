@@ -35,17 +35,24 @@ export const createMarketObject = async (league_id) => {
 			return Promise.reject(Errors.LEAGUE_NOT_FOUND)
 		}
 		else {
-			// create market in DB
-			let marketObj = { leagueId: league_id }
-			let market = await Market.create(marketObj)
-      
-			// add market to league in DB
-			league.market.push(market._id)
-			await league.save()
 
-			console.log("[createMarketObject] market object created in db:", market)
+			// find if exists other open markets with the same league id
+			const openMarket = await getMarketFromLeagueID(league_id)
+			if (!openMarket) {
+				// create market in DB
+				let marketObj = { leagueId: league_id }
+				let market = await Market.create(marketObj)
 
-			return Promise.resolve(market)
+				// add market to league in DB
+				league.market.push(market._id)
+				await league.save()
+	
+				console.log("[createMarketObject] market object created in db:", market)
+	
+				return Promise.resolve(market)
+			} else {
+				return Promise.reject(Errors.MARKET_ALREADY_OPEN)
+			}
 		}
 	}
 	catch (error) {
@@ -72,6 +79,8 @@ export const setMarketActive = async (league_id) => {
 
 			console.log("[setMarketActive] Market set to active:", market.active)
 			return Promise.resolve(market)
+		} else {
+			return Promise.reject(Errors.MARKET_NOT_FOUND)
 		}
 	} catch (error) {
 		// TODO: send ERROR event and manage failure
@@ -81,19 +90,19 @@ export const setMarketActive = async (league_id) => {
 }
 
 /**
- * Set the flag market.teamTurn with the given value 'teamTurn' for the given Market object
+ * Set the flag market.teamOrder with the given value 'teamOrder' for the given Market object
  * 
  * @param {Object} market the Market object from db
  * @param {Array} teamTurn Array of Teams ID
  * @returns the updated Market object 
  */
-export const setMarketTeamTurn = async (market, teamTurn) => {
+export const setMarketTeamOrder = async (market, teamOrder) => {
 	try {
 		if (market) {
 			console.log("[setMarketTeamTurn] Market to update:", market._id)
-			console.log("[setMarketTeamTurn] Team turn to save:", teamTurn)
-			// set array of teamTurn
-			market.teamTurn = teamTurn
+			console.log("[setMarketTeamTurn] Team order to save:", teamOrder)
+			// set array of teamOrder
+			market.teamOrder = teamOrder
 			await market.save()
 
 			console.log("[setMarketTeamTurn] Team turn saved!")
@@ -113,16 +122,9 @@ const getMarketFromLeagueID = async (league_id) => {
 
 		// find market object in db with leagueId and not closed
 		const filter = { leagueId: league_id, closetAt: null }
-		// sort in descending order
-		const sortBy = { createdAt: "desc" }
-		const market = await Market.findOne(filter).sort(sortBy)
-        
-		if (!market) {
-			console.log("[getMarketFromLeagueID] Market not found")
-			// TODO: send ERROR event and manage failure
-			return Promise.reject(Errors.MARKET_NOT_FOUND)
-		}
-		console.log("[getMarketFromLeagueID] Market from db found:", market._id)
+		const market = await Market.findOne(filter)
+
+		console.log("[getMarketFromLeagueID] Market from db found:", market == null ? null : market._id)
 		return Promise.resolve(market)
 		
 	} catch (error) {
@@ -139,10 +141,10 @@ const getMarketFromLeagueID = async (league_id) => {
  * @param {String} league_id League ID to found
  * @returns Array of Teams ID
  */
-export const getTeamTurn = async (league_id) => {
+export const getTeamOrder = async (league_id) => {
 
 	// store Teams ID to save inside market.teamsTurn field
-	let teamsTurn = []
+	let teamOrder = []
 	
 	// get the League from db
 	let league = await League.findById({ _id: league_id })
@@ -156,23 +158,17 @@ export const getTeamTurn = async (league_id) => {
 
 		// get auction type to define which order use
 		const auctionType = league.auctionType // random | call | alphabetic
-		console.log("[getTeamTurn] Sorting teams as auction type: %s", auctionType)
-		// case 0: random order
-		if (auctionType === AUCTION_TYPE.RANDOM) {
-			teamsTurn = shuffle(teams).map(team => team._id)
+		if (auctionType === AUCTION_TYPE.CALL) {
+			console.log("[getTeamTurn] Sorting teams as auction type: %s", auctionType)
+			teamOrder = shuffle(teams).map(team => {
+				return { 
+					team_id: team._id
+				}
+			})
+			console.log("[getTeamTurn] Teams are sorted!")
 		}
-		// case 1: alphabetic order
-		else if (auctionType === AUCTION_TYPE.ALPHABETIC) {
-			teamsTurn = teams.sort(sortInAlphabeticOrder).map(team => team._id)
-		}
-		// case 2: call
-		else if (auctionType === AUCTION_TYPE.CALL) {
-			//TODO: how can we manage call auction type ?
-		}
-
-		console.log("[getTeamTurn] Teams are sorted!")
-		return teamsTurn
+	} else {
+		console.log("[getTeamTurn] League not found and Team not sorted. Returning null")
 	}
-	console.log("[getTeamTurn] League not found and Team not sorted. Returning null")
-	return teamsTurn
+	return teamOrder
 }

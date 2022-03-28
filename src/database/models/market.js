@@ -19,9 +19,12 @@ const marketSchema = new Schema(
 			ref: "Team",
 			default: []
 		}],
-		teamTurn: [{
-			type: Schema.Types.ObjectId,
-			ref: "Team",
+		teamTurnIndex: {
+			type: Schema.Types.Number,
+			default: 0
+		},
+		teamOrder: [{
+			type: Schema.Types.Object,
 			default: []
 		}],
 		betHistory: [{

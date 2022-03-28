@@ -25,5 +25,7 @@ export const it = {
 	cannot_join_league: "Impossibile partecipare alla Lega.",
 	reset_expired: "Il link è scaduto",
 	reset_expired_msg: "Il link utilizzato è scaduto, richiedi un altro link cliccando su 'password dimenticata'",
-	league_not_found_for_user: "Lega non trovata. Verifica che l'utente partecipi alla Lega."
+	league_not_found_for_user: "Lega non trovata. Verifica che l'utente partecipi alla Lega.",
+	market_not_found: "Messun Mercato trovato",
+	market_already_open: "Esiste un Mercato già aperto"
 }
