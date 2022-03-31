@@ -1,11 +1,12 @@
-import { request, use } from 'chai';
-import chaiHttp from 'chai-http'
-import config from 'config'
-import { initMongoConnection } from '../../src/database/index.js'
+/* eslint-disable no-prototype-builtins */
+import { request, use } from "chai"
+import chaiHttp from "chai-http"
+import config from "config"
+import { initMongoConnection } from "../../src/database/index.js"
 
-const serverUrl = config.serverUrl || "http://localhost:3000";
+const serverUrl = config.serverUrl || "http://localhost:3000"
 
-use(chaiHttp);
+use(chaiHttp)
 
 initMongoConnection(false)
 
@@ -18,9 +19,9 @@ export const requester = request(serverUrl)
  * @param {*} obj : object to print
  */
 export const printObject = (msg, obj) => {
-    console.log("---------------------------------------")
-    console.log(`${msg}: ${JSON.stringify(obj, null, 2)}`)
-    console.log("---------------------------------------")
+	console.log("---------------------------------------")
+	console.log(`${msg}: ${JSON.stringify(obj, null, 2)}`)
+	console.log("---------------------------------------")
 }
 
 /**
@@ -30,19 +31,19 @@ export const printObject = (msg, obj) => {
  * @param {*} value    : expected value for property
  */
 export const findPropertyValueInNestedObject = (obj, property, value) => {
-    if (obj[property] === value) {
-        return true;
-    }
+	if (obj[property] === value) {
+		return true
+	}
 
-    let found = false
-    let prop;
-    for (prop in obj) {
-        if (obj.hasOwnProperty(prop) && typeof obj[prop] === 'object') {
-            found = findPropertyValueInNestedObject(obj[prop], property, value);
-            if (found) {
-                return found;
-            }
-        }
-    }
-    return found;
+	let found = false
+	let prop
+	for (prop in obj) {
+		if (obj.hasOwnProperty(prop) && typeof obj[prop] === "object") {
+			found = findPropertyValueInNestedObject(obj[prop], property, value)
+			if (found) {
+				return found
+			}
+		}
+	}
+	return found
 }

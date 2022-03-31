@@ -1,12 +1,12 @@
 //"use strict"
 // const mongoose = require('mongoose')
 // import { FootballPlayer } from "../../src/database"
+import { describe, } from "mocha"
 
-const assert = require("assert")
 
 describe("Database", function () {
 
-    /*
+	/*
     // Drop users collection
     beforeEach(done => {
         FootballPlayer.deleteMany({}, (error, deleteStatus) => {

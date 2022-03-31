@@ -9,6 +9,7 @@ const mantraRolesAllowed = ["Por", "Dd", "Ds", "Dc", "E", "M", "C", "W", "T", "A
 
 const containsCorrectData = (footballPlayer_obj) => {
 	let reason = ""
+	// eslint-disable-next-line no-prototype-builtins
 	if (!mandatoryFields.every(item => footballPlayer_obj.hasOwnProperty(item)))  // all fields must be present
 	{
 		reason = "Object does not contain mandatory fields"

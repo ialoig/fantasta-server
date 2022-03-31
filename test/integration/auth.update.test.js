@@ -1,7 +1,7 @@
-
 import { expect, should, use } from "chai"
 import chaiHttp from "chai-http"
 import config from "config"
+import { after, before, describe, it } from "mocha"
 import { User } from "../../src/database"
 import { Errors, tokenUtils } from "../../src/utils"
 import { requester } from "./index"
@@ -11,8 +11,8 @@ should()
 
 describe("UPDATE", () => {
 	before((done) => {
-		User.deleteMany({}, (err) => {
-			User.create({ email: "test@test.com", password: "123456", username: "username" }, (err) => {
+		User.deleteMany({}, () => {
+			User.create({ email: "test@test.com", password: "123456", username: "username" }, () => {
 				done()
 			})
 		})

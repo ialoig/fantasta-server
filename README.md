@@ -1,4 +1,4 @@
-# Fantasta server
+# 💻 Fantasta server
 
 Server side of the fantasta application. It receives API calls from the mobile application querying the mongodb if necessary. It handles also the football player auction that is running on different devices belonging to the same league.
 
@@ -115,7 +115,7 @@ Find a `user` with a specific email:
 > db.users.find({email: "user02@email.com"})
 ```
 
-## Drop database
+## How to drop database
 
 You can drob entire instance by running the following command:
 
@@ -146,15 +146,15 @@ They are two types of module syntax for nodejs. The `commonJS` syntax, that uses
 
 By default, `nodejs` will try to load modules with the CommonJS syntax. If you want to use the ES syntax, you must specify `"type":"module"` in your `package.json`. But you can't mix them up. You can use one syntax, but not both
 
-# @babel/eslint-parser [![npm](https://img.shields.io/npm/v/@babel/eslint-parser.svg)](https://www.npmjs.com/package/@babel/eslint-parser)
+## [@babel/eslint-parser](https://www.npmjs.com/package/@babel/eslint-parser)
 
-## When should I use @babel/eslint-parser?
+### When should I use @babel/eslint-parser?
 
 ESLint's default parser and core rules [only support the latest final ECMAScript standard](https://github.com/eslint/eslint/blob/a675c89573836adaf108a932696b061946abf1e6/README.md#what-about-experimental-features) and do not support experimental (such as new features) and non-standard (such as Flow or TypeScript types) syntax provided by Babel. @babel/eslint-parser is a parser that allows ESLint to run on source code that is transformed by Babel.
 
 **Note:** You only need to use @babel/eslint-parser if you are using Babel to transform your code. If this is not the case, please use the relevant parser for your chosen flavor of ECMAScript (note that the default parser supports all non-experimental syntax as well as JSX).
 
-## How does it work?
+### How does it work?
 
 ESLint allows for the use of [custom parsers](https://eslint.org/docs/developer-guide/working-with-custom-parsers). When using this plugin, your code is parsed by Babel's parser (using the configuration specified in your [Babel configuration file](https://babeljs.io/docs/en/configuration)) and the resulting AST is
 transformed into an [ESTree](https://github.com/estree/estree)-compliant structure that ESLint can understand. All location info such as line numbers,
@@ -162,8 +162,65 @@ columns is also retained so you can track down errors with ease.
 
 **Note:** ESLint's core rules do not support experimental syntax and may therefore not work as expected when using `@babel/eslint-parser`. Please use the companion [`@babel/eslint-plugin`](https://github.com/babel/babel/tree/main/eslint/babel-eslint-plugin) plugin for core rules that you have issues with.
 
-# @babel/eslint-plugin
+## [@babel/eslint-plugin](https://github.com/babel/babel/tree/main/eslint/babel-eslint-plugin)
 
 Companion rules for `@babel/eslint-parser`. `@babel/eslint-parser` does a great job at adapting `eslint`
 for use with Babel, but it can't change the built-in rules to support experimental features.
 `@babel/eslint-plugin` re-implements problematic rules so they do not give false positives or negatives.
+
+# 📑 NOTES
+
+Il tema è la gestione della lista giocatori all'interno del Market
+
+### SOLUZIONE PROPOSTA
+
+### 📌 LISTA MERCATO UNICA
+
+* La `Lista mercato` viene creata al momento della creazione del mercato, a partire dalla `Lista completa` aggiornata ogni giorno dal server.
+
+* La `Lista completa` recepisce tutti gli aggiornamenti; se un giocatore viene trasferito è eliminato dalla lista
+
+* La `Lista mercato` viene salvata nel db market nel campo "footballPlayers" come un array di oggetti definito come sotto:
+
+```shell
+{
+    _id: Number,
+    name: String,
+    actualPrice: Number
+}
+```
+
+### 👍 PRO
+
+* l'asta parte con una lista bloccata che non recepisce nessun tipo di aggiornamento
+
+### 👎 CONTRO
+
+* se l'asta dura più giorni, la lista è aggiornata alla data di inizio del mercato
+* se per qualche motivo risulta necessario avere ulteriori informazioni del giocatore, e questo è stato eliminato, non è possibile averle
+
+### 🙌 ASSUNZIONI
+
+* il mercato ha un unica lista generata al momento della creazione del mercato stesso
+* la lista rimane invariata fino alla chiusura del mercato
+* se l'id di un giocatore è presente nella `Lista mercato` ma non è presente nella `Lista completa`, viene considerato come eliminato
+
+### ✏️ TODO
+
+⬜️ creazione del campo "market.footballPlayers" come Array di oggetti
+
+⬜️ popolamento del campo "market.footballPlayers" alla creazione del market
+
+⬜️ determinare l'ordinamento del campo "market.footballPlayers" in base a league.auctionType, ovvero:
+
+* auctionType=RANDOM -> ordinamento random
+
+### ❓ OPEN POINTS
+
+1. la "Lista mercato" può non avere tutte le informazioni necessarie; quando un giocatore viene eliminato, le informazioni sono solo quelle presenti nella "Lista mercato" (in quanto nella "Lista completa" il giocatore è stato eliminato).
+
+Ipotesi:
+
+A) mantenera la `Lista completa` con tutti i giocatori compresi quelli eliminati ed effettuareun job di pulizia (da capitre)
+
+B) gestione delle statistiche per i giocatori eliminati; queste vengono visualizzate nellalista giocatori del team (team.footballPlayers)

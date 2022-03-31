@@ -23,7 +23,7 @@ const get = async (req, res, next) => {
 				throw Errors.USER_NOT_FOUND
 			}
 
-			// find league object from db with the league id passed as params
+			// find league object from db with the league id passed by
 			const league = await League.findById(leagueID).exec()
 			if (league) {
 				await populate.league(league)
