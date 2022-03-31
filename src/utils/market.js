@@ -157,7 +157,8 @@ export const getTeamOrder = async (league_id) => {
 		console.log("[getTeamTurn] Teams found are: %s", teams.length)
 
 		// get auction type to define which order use
-		const auctionType = league.auctionType // random | call | alphabetic
+		const auctionType = league.auctionType 
+		// auctionType=call - have to be defined a team order
 		if (auctionType === AUCTION_TYPE.CALL) {
 			console.log("[getTeamTurn] Sorting teams as auction type: %s", auctionType)
 			teamOrder = shuffle(teams).map(team => {

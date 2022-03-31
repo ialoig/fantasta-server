@@ -4,6 +4,5 @@
 --forbid-pending
 --bail
 --reporter spec
---require babel-core/register
 --exec babel-node
 --slow 0

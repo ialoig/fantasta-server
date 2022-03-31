@@ -21,6 +21,7 @@ export const EVENT_TYPE = {
 			PAUSE: 111,
 			CLOSE: 112,
 			USER_OFFLINE: 113,
+			FOOTBALL_PLAYER_SELECTED_RANDOM: 114
 		}
 	},
 
@@ -42,7 +43,8 @@ export const EVENT_TYPE = {
 			PAUSE: 211,
 			CLOSE: 212,
 			USER_OFFLINE: 213,
-			SEARCH: 214
+			SEARCH: 214,
+			FOOTBALL_PLAYER_SELECTED_RANDOM: 215
 		}
 	}
 }

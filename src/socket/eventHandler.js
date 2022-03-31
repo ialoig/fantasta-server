@@ -1,4 +1,4 @@
-import { League } from "../database"
+import { FootballPlayers, League } from "../database"
 import { socket_event_counter } from "../metrics"
 import { 
 	createMarketObject, 
@@ -487,29 +487,17 @@ const onMarketActive = async (io, socket, callback) => {
 			return callback(callbackErrorObject("try to start market but did not joined the market room")) // TODO: error_code
 		}
 
-		// Check admin
-		if (!isAdmin(socket.league_id, socket.user_id)) {
-			console.error(`[eventHandler] [onMarketActive] socketID: ${socket.id} - try to start market but user is not admin`)
-			return callback(callbackErrorObject("try to start market but user is not admin")) // TODO: error_code
-		}
-
 		// Check market is open
 		if (!isMarketOpen(market_room)) {
 			console.error(`[eventHandler] [onMarketActive] socketID: ${socket.id} - try to start market but market is not open`)
 			return callback(callbackErrorObject("try to start market but market is not open")) // TODO: error_code
 		}
 
-		// prepare response message
-		// const socket_list = await getSocketsInRoom(io, market_room)
-		// // get list of Teams
-		// const message = extractTeamId(socket_list)
-		// // validate response message
-		// const message_validated = Schemas.serverMarketUserOnlineSchema.validate(message)
-		// if (message_validated.error) {
-		// 	console.error(`[eventHandler] [onMarketActive] response message validation failed. ${message_validated.error}`)
-		// 	return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
-		// }
-
+		// Check admin
+		if (!isAdmin(socket.league_id, socket.user_id)) {
+			console.error(`[eventHandler] [onMarketActive] socketID: ${socket.id} - try to start market but user is not admin`)
+			return callback(callbackErrorObject("try to start market but user is not admin")) // TODO: error_code
+		}
 
 		// get the League ID from socket
 		const league_id = socket.league_id
@@ -524,6 +512,7 @@ const onMarketActive = async (io, socket, callback) => {
 		// define Team turn based on auction type of the League
 		let teamTurn = { team_id: "" }
 		let teamOrder = await getTeamOrder(league_id)
+		// if teamOrder is not empty it will be an order to follow
 		if (teamOrder.length >0) {
 			market = await setMarketTeamOrder(market, teamOrder)
 			console.log("[eventHandler] [onMarketActive] teamOrder: %s", teamOrder)
@@ -539,7 +528,6 @@ const onMarketActive = async (io, socket, callback) => {
 			return callback(callbackErrorObject("market.teamTurn does not contains Teams IDs")) // TODO: error_code
 		}
 		console.log("[eventHandler] [onMarketActive] message_turn_validated: %s", message_turn_validated)
-
 
 		// Notify client message is received
 		callback(callbackSuccessObject())
@@ -623,6 +611,79 @@ const onMarketFootballPlayerSelectedOrBet = async (io, socket, payload, bet, cal
 	else {
 		io.in(market_room).emit(EVENT_TYPE.SERVER.MARKET.PLAYER_SELECTED, message_validated.value)
 	}
+}
+
+
+
+const onMarketFootballPlayerSelectedRandom = async (io, socket, callback) => {
+
+	try {
+	// Assert callback is passed
+		if (typeof callback !== "function") {
+			console.error("No callback function passed. Disconnecting")
+			return socket.disconnect()
+		}
+
+		// retrieve league room
+		const league_room = getSocketRooms(socket).find(room => isLeagueRoom(room))
+
+		// socket didn't join the league room
+		if (!league_room) {
+			console.error(`[eventHandler] [onMarketFootballPlayerSelectedRandom] socketID: ${socket.id} - try to select/bet player but did not joined the league room`)
+			return callback(callbackErrorObject("try to select/bet player but did not joined the league room"))  // TODO: error_code
+		}
+		const market_room = getSocketRooms(socket).find(room => isMarketRoom(room))
+
+		// socket didn't join the market room
+		if (!market_room) {
+			console.error(`[eventHandler] [onMarketFootballPlayerSelectedRandom] socketID: ${socket.id} - try to select/bet player but did not joined the market room`)
+			return callback(callbackErrorObject("try to select/bet player but did not joined the market room"))  // TODO: error_code
+		}
+
+		if (!isMarketActive(market_room) || !isMarketOpen(market_room)) {
+			console.error(`[eventHandler] [onMarketFootballPlayerSelectedRandom] socketID: ${socket.id} - try to select/bet player but market is either closed or not active`)
+			return callback(callbackErrorObject("INTERNAL SERVER ERROR")) // TODO: error_code
+		}
+
+		// Check admin
+		if (!isAdmin(socket.league_id, socket.user_id)) {
+			console.error(`[eventHandler] [onMarketFootballPlayerSelectedRandom] socketID: ${socket.id} - try to start market but user is not admin`)
+			return callback(callbackErrorObject("try to start market but user is not admin")) // TODO: error_code
+		}
+
+		// object to send:
+		// { 
+		// team_id: ""1234"" (or """"), 
+		// footballPlayerId=123, 
+		// bet=50 
+		// }
+
+
+		// TODO : get bet history from market
+
+
+		// get all players data
+		const footballPlayers = await FootballPlayers.findOne()
+		console.log("[eventHandler] [onMarketFootballPlayerSelectedRandom] footballPlayers: %s", footballPlayers)
+		// get players values and filter out player deleted
+		const footballPlayersValues = Object.values(footballPlayers.list).filter(player => !player.deleted)
+
+		// TODO : filter out player from bet history
+
+
+		const randomIndex = Math.round(Math.random() * footballPlayersValues.length)
+		console.log("[eventHandler] [onMarketFootballPlayerSelectedRandom] footballPlayersIDs: %s", footballPlayersValues)
+
+		// get ramdomly football player id 
+		const footballPlayerIdRandom = footballPlayersValues[randomIndex]
+		console.log("[eventHandler] [onMarketFootballPlayerSelectedRandom] random footballPlayers IDs: %s", footballPlayerIdRandom)
+
+
+		
+	} catch (error) {
+		console.log("[eventHandler] [onMarketFootballPlayerSelectedRandom] ERROR:", error)
+	}
+		
 }
 
 
@@ -785,6 +846,11 @@ module.exports = (io, socket) => {
 	socket.on(EVENT_TYPE.CLIENT.MARKET.FOOTBALL_PLAYER_SELECTED, (payload, callback) => {
 		socket_event_counter.inc({ event_type: "EVENT_TYPE.CLIENT.MARKET.PLAYER_SELECTED" })
 		onMarketFootballPlayerSelectedOrBet(io, socket, payload, false, callback)
+	})
+
+	socket.on(EVENT_TYPE.CLIENT.MARKET.FOOTBALL_PLAYER_SELECTED_RANDOM, (callback) => {
+		socket_event_counter.inc({ event_type: "EVENT_TYPE.CLIENT.FOOTBALL_PLAYER_SELECTED_RANDOM" })
+		onMarketFootballPlayerSelectedRandom(io, socket, callback)
 	})
 
 	socket.on(EVENT_TYPE.CLIENT.MARKET.BET, (payload, callback) => {

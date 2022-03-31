@@ -168,16 +168,12 @@ const parseMarket = (market) => {
 		open: market.closedAt == null ? true : false,
 		active: market.active,
 		onlineTeams: [],
-		teamTurn: market.teamTurn ? market.teamTurn : [],
+		teamTurnIndex: market.teamTurnIndex,
+		teamOrder: market.teamOrder,
 		betHistory: market.betHistory,
 		closedAt: market.closedAt ? market.closedAt.toISOString() : null,
 		createdAt: market.createdAt.toISOString(),
 		updatedAt: market.updatedAt.toISOString(),
-	}
-
-	// populate 'onlineTeams' field
-	for (let i = 0; i < market.onlineTeams.length; i++) {
-		mk.onlineTeams.push(market.onlineTeams[i]._id.toString())
 	}
 
 	/*

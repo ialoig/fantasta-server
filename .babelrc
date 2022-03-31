@@ -8,6 +8,9 @@
             {
                 "regenerator": true
             }
+        ],
+        [
+            "istanbul"
         ]
     ],
     "retainLines": true

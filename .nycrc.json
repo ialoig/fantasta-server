@@ -1,38 +1,39 @@
 {
-    "check-coverage": true,
-    "per-file": true,
-    "statements": 0,
-    "functions": 0,
-    "branches": 0,
-    "lines": 0,
-    "include": [
-      "src/**/*.js"
-    ],
-    "exclude": [
-      "test/**",
-      "coverage/**",
-      "packages/**",
-      "views/**",
-      "public/**",
-      "node_modules/**",
-      "config/**",
-      ".vscode/**"
-    ],
-    "require": [
-      "babel-core/register"
-    ],
-    "reporter": [
-      "text",
-      "lcov",
-      "text-summary",
-      "html"
-    ],
-    "extension": [
-      ".js"
-    ],
-    "cache": false,
-    "all": true,
-    "temp-dir": "./test-results/coverage-tmp",
-    "report-dir": "./test-results/coverage"
+  "check-coverage": true,
+  "per-file": true,
+  "statements": 0,
+  "functions": 0,
+  "branches": 0,
+  "lines": 0,
+  "include": [
+    "src/**/*.js"
+  ],
+  "exclude": [
+    "test/**",
+    "coverage/**",
+    "packages/**",
+    "views/**",
+    "public/**",
+    "node_modules/**",
+    "config/**",
+    ".vscode/**"
+  ],
+  "sourceMap": false,
+  "instrument": false,
+  "require": [
+    "@babel/register"
+  ],
+  "reporter": [
+    "text",
+    "lcov",
+    "text-summary",
+    "html"
+  ],
+  "extension": [
+    ".js"
+  ],
+  "cache": false,
+  "all": true,
+  "temp-dir": "./test-results/coverage-tmp",
+  "report-dir": "./test-results/coverage"
 }
-  
