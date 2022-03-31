@@ -176,16 +176,15 @@ Il tema è la gestione della lista giocatori all'interno del Market
 
 ### 📌 LISTA MERCATO UNICA
 
-* La `Lista mercato` viene creata al momento della creazione del mercato, a partire dalla `Lista completa` aggiornata ogni giorno dal server.
+* La `Lista mercato` viene creata al momento della creazione del mercato, a partire dalla `Lista completa`.
 
-* La `Lista completa` recepisce tutti gli aggiornamenti; se un giocatore viene trasferito è eliminato dalla lista
+* La `Lista completa` recepisce tutti gli aggiornamenti ogni giorno; se un giocatore viene trasferito è eliminato dalla lista
 
-* La `Lista mercato` viene salvata nel db market nel campo "footballPlayers" come un array di oggetti definito come sotto:
+* La `Lista mercato` viene salvata nel db `market` nel campo `footballPlayers` come un array di oggetti definito come sotto:
 
 ```shell
 {
     _id: Number,
-    name: String,
     actualPrice: Number
 }
 ```
@@ -197,7 +196,7 @@ Il tema è la gestione della lista giocatori all'interno del Market
 ### 👎 CONTRO
 
 * se l'asta dura più giorni, la lista è aggiornata alla data di inizio del mercato
-* se per qualche motivo risulta necessario avere ulteriori informazioni del giocatore, e questo è stato eliminato, non è possibile averle
+* se per qualche motivo risulta necessario avere ulteriori informazioni del giocatore, e questo è stato eliminato, è possibile avere solo le informazioni salvate nella Lista mercato (id, nome, actualPrice)
 
 ### 🙌 ASSUNZIONI
 
@@ -205,22 +204,69 @@ Il tema è la gestione della lista giocatori all'interno del Market
 * la lista rimane invariata fino alla chiusura del mercato
 * se l'id di un giocatore è presente nella `Lista mercato` ma non è presente nella `Lista completa`, viene considerato come eliminato
 
+### ❓ OPEN POINTS
+
+1. la "Lista mercato" può non avere tutte le informazioni necessarie; quando un giocatore viene eliminato, le informazioni sono solo quelle presenti nella "Lista mercato" (in quanto nella "Lista completa" il giocatore è stato eliminato).
+    * creazione di una `Lista deleted` globale salvata in `footballPlayers.deleted` che contiene i giocatori eliminati dalla `Lista completa`, frutto del confronto tra Lista completa attuale vs Lista completa db
+    * creazione di una `Lista deleted Market` che contiene le informazioni complete del giocatore presente nella `Lista mercato` e `footballPlayers.deleted`
+    * la `Lista deleted Market` viene salvata nell'oggetto `market.footballPlayersDeleted`
+    * la `Lista deleted Market` viene creata alla join del market
+    * la creazione avviene solamente se `market.updatedAt < deleted.updatedAt`
+1. capire come gestire le statistiche per i giocatori eliminati; queste vengono visualizzate nella lista giocatori del team (team.footballPlayers)
+    * le statistiche dei giocatori non vengono eliminate
+    * necessario salvare le statistiche dell'anno precedente a quello in corso
+
+Ipotesi:
+
+A) mantenera la `Lista completa` con tutti i giocatori compresi quelli eliminati ed effettuare un job di pulizia (da capire)
+
 ### ✏️ TODO
 
-⬜️ creazione del campo "market.footballPlayers" come Array di oggetti
+⬜️ modifica allo schema market con aggiunta del campo "footballPlayers" come Array di oggetti
 
-⬜️ popolamento del campo "market.footballPlayers" alla creazione del market
+⬜️ modifica allo schema market con aggiunta del campo "footballPlayersDeleted" come Array di oggetti
+
+⬜️ creazione di un nuovo schema "FootballPlayersDeleted" definito come sotto:
+
+```shell
+list: {
+    type: Object
+}
+```
+
+⬜️ popolamento del campo "market.footballPlayers" alla creazione del market come array di oggetti definito come sotto:
+
+```shell
+{
+    _id: Number,
+    actualPrice: Number
+}
+```
+
+⬜️ popolamento del campo "market.footballPlayersDeleted" alla join del market come array di oggetti uguali a footballPlayers
+
+Per ogni giocatore presente in market.footballPlayers controllo che sia presente nella lista FootballPlayersDeleted:
+
+* si: aggiungo il giocatore in market.footballPlayersDeleted
+
+```shell
+market.footballPlayers.forEach( player => {
+    if (FootballPlayersDeleted[player._id])
+        market.footballPlayersDeleted.push(FootballPlayersDeleted[player._id])
+})
+```
+
+⬜️ il popolamento del campo "market.footballPlayersDeleted" è da fare se e solo se market.updatedAt < FootballPlayersDeleted.updatedAt.
+
+Ovvero aggiorna la lista mercato solo se è partito un giocatore dopo l'apertura del mercato
+
+⬜️ popolamento di "FootballPlayersDeleted" come diff tra footballPlayers.list attuale e footballPlayers.list nuovo
 
 ⬜️ determinare l'ordinamento del campo "market.footballPlayers" in base a league.auctionType, ovvero:
 
 * auctionType=RANDOM -> ordinamento random
+* auctionType=ALFABETICO -> ordinamento alfabetico
 
-### ❓ OPEN POINTS
+⬜️ creare uno storico salvato nel db per le Statistiche e FootballPlayers, anno per anno
 
-1. la "Lista mercato" può non avere tutte le informazioni necessarie; quando un giocatore viene eliminato, le informazioni sono solo quelle presenti nella "Lista mercato" (in quanto nella "Lista completa" il giocatore è stato eliminato).
-
-Ipotesi:
-
-A) mantenera la `Lista completa` con tutti i giocatori compresi quelli eliminati ed effettuareun job di pulizia (da capitre)
-
-B) gestione delle statistiche per i giocatori eliminati; queste vengono visualizzate nellalista giocatori del team (team.footballPlayers)
+⬜️ suddividere Statistiche e FootballPlayers in due Schemi differenti
