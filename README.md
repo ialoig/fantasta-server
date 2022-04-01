@@ -176,11 +176,11 @@ Il tema è la gestione della lista giocatori all'interno del Market
 
 ### 📌 LISTA MERCATO UNICA
 
-* La `Lista mercato` viene creata al momento della creazione del mercato, a partire dalla `Lista completa`.
+* La `Lista completa` viene aggiornata periodicamente da fantagazzetta; se un giocatore lascia la SerieA è eliminato dalla lista
 
-* La `Lista completa` recepisce tutti gli aggiornamenti ogni giorno; se un giocatore viene trasferito è eliminato dalla lista
+* La `Lista eliminati` contiene una lista di footballPlayer che vengono eliminati dalla `Lista completa`. Nuovo schema nel DB `FootballPlayersDeleted`
 
-* La `Lista mercato` viene salvata nel db `market` nel campo `footballPlayers` come un array di oggetti definito come sotto:
+* La `Lista mercato` viene creata al momento della creazione del mercato, come snapshot della `Lista completa` in quel momento. E' un array di oggetti definito come:
 
 ```shell
 {
@@ -189,9 +189,68 @@ Il tema è la gestione della lista giocatori all'interno del Market
 }
 ```
 
+Quando il mobile fa join al Market:
+* il server crea la `Lista mercato` a partire dalla `Lista completa` e la salva in `market.footballPlayers`
+* il server crea la `Lista mercato eliminati` a partire dalla `Lista mercato` con i giocatori presenti in `Lista eliminati` e la salva in `market.footballPlayersDeleted`
+* la creazione avviene solamente se `market.updatedAt < FootballPlayersDeleted.updatedAt`. (mi sa che non basta controllare `market.updatedAt`. Ci vuole un campo apposito)
+
+A questo punto nell'oggetto market abbiamo la lista di giocatori congelata al momento della creazione del market. Con l'ausilio di `Lista completa` e `market.footballPlayersDeleted` possiamo recuperare tutte le informazioni dei giocatori, che siano ancora in Serie A o meno (nome, squadra, costo, ruolo, ...).
+
+#### STATISTICHE
+Sembrerebbe che i giocatori venduti all'estero non vengono eliminati, quindi abbiamo a disposizione le informazioni di tutti i calciatori.
+
+### ✏️ TODO
+
+⬜️ suddividere `Statistics` e `FootballPlayers` in due Schemi differenti
+
+⬜️ salvare `Statistics` e `FootballPlayers` anno per anno (es: aggiungi campo `referenceYear:"2020-2021"`)
+
+⬜️ salvare `FootballPlayersDeleted` come diff tra `FootballPlayers` attuale e `FootballPlayers` nuovo con schema uguale a `FootballPlayers`:
+```shell
+list: {
+    type: Object
+}
+```
+
+⬜️ modifica allo schema market con aggiunta del campo `footballPlayers` come Array di oggetti
+
+⬜️ popolamento del campo `market.footballPlayers` alla creazione del market come array di oggetti definito come:
+```shell
+{
+    _id: Number,
+    actualPrice: Number
+}
+```
+⬜️ determinare l'ordinamento del campo `market.footballPlayers` in base a `league.auctionType`, ovvero:
+
+* `auctionType=RANDOM` -> ordinamento random
+* `auctionType=ALFABETICO` -> ordinamento alfabetico
+
+⬜️ modifica allo schema market con aggiunta del campo `footballPlayersDeleted` come Array di oggetti
+
+⬜️ popolamento del campo `market.footballPlayersDeleted` alla join del market come array di oggetti uguali a `FootballPlayers`
+Per ogni giocatore presente in `market.footballPlayers` controllo che sia presente nella lista `FootballPlayersDeleted`:
+* si: aggiungo il giocatore in `market.footballPlayersDeleted`
+
+```shell
+market.footballPlayers.forEach( player => {
+    if (FootballPlayersDeleted[player._id])
+        market.footballPlayersDeleted.push(FootballPlayersDeleted[player._id])
+})
+```
+il popolamento di `market.footballPlayersDeleted` è da fare se e solo se `market.updatedAt < FootballPlayersDeleted.updatedAt`.
+
+Ovvero aggiorna la lista mercato solo se è partito un giocatore dopo l'apertura del mercato
+
+
+
+
+
+================================================================================
+
 ### 👍 PRO
 
-* l'asta parte con una lista bloccata che non recepisce nessun tipo di aggiornamento
+* l'asta parte con una lista bloccata. Nuovi arrivi o partenze non cambiano la lista. 
 
 ### 👎 CONTRO
 
@@ -219,54 +278,3 @@ Il tema è la gestione della lista giocatori all'interno del Market
 Ipotesi:
 
 A) mantenera la `Lista completa` con tutti i giocatori compresi quelli eliminati ed effettuare un job di pulizia (da capire)
-
-### ✏️ TODO
-
-⬜️ modifica allo schema market con aggiunta del campo "footballPlayers" come Array di oggetti
-
-⬜️ modifica allo schema market con aggiunta del campo "footballPlayersDeleted" come Array di oggetti
-
-⬜️ creazione di un nuovo schema "FootballPlayersDeleted" definito come sotto:
-
-```shell
-list: {
-    type: Object
-}
-```
-
-⬜️ popolamento del campo "market.footballPlayers" alla creazione del market come array di oggetti definito come sotto:
-
-```shell
-{
-    _id: Number,
-    actualPrice: Number
-}
-```
-
-⬜️ popolamento del campo "market.footballPlayersDeleted" alla join del market come array di oggetti uguali a footballPlayers
-
-Per ogni giocatore presente in market.footballPlayers controllo che sia presente nella lista FootballPlayersDeleted:
-
-* si: aggiungo il giocatore in market.footballPlayersDeleted
-
-```shell
-market.footballPlayers.forEach( player => {
-    if (FootballPlayersDeleted[player._id])
-        market.footballPlayersDeleted.push(FootballPlayersDeleted[player._id])
-})
-```
-
-⬜️ il popolamento del campo "market.footballPlayersDeleted" è da fare se e solo se market.updatedAt < FootballPlayersDeleted.updatedAt.
-
-Ovvero aggiorna la lista mercato solo se è partito un giocatore dopo l'apertura del mercato
-
-⬜️ popolamento di "FootballPlayersDeleted" come diff tra footballPlayers.list attuale e footballPlayers.list nuovo
-
-⬜️ determinare l'ordinamento del campo "market.footballPlayers" in base a league.auctionType, ovvero:
-
-* auctionType=RANDOM -> ordinamento random
-* auctionType=ALFABETICO -> ordinamento alfabetico
-
-⬜️ creare uno storico salvato nel db per le Statistiche e FootballPlayers, anno per anno
-
-⬜️ suddividere Statistiche e FootballPlayers in due Schemi differenti
