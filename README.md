@@ -189,8 +189,10 @@ Il tema è la gestione della lista giocatori all'interno del Market
 }
 ```
 
-Quando il mobile fa join al Market:
+Quando il mobile fa Market.create:
 * il server crea la `Lista mercato` a partire dalla `Lista completa` e la salva in `market.footballPlayers`
+
+Quando il mobile fa Market.join:
 * il server crea la `Lista mercato eliminati` a partire dalla `Lista mercato` con i giocatori presenti in `Lista eliminati` e la salva in `market.footballPlayersDeleted`
 * la creazione avviene solamente se `market.updatedAt < FootballPlayersDeleted.updatedAt`. (mi sa che non basta controllare `market.updatedAt`. Ci vuole un campo apposito)
 
