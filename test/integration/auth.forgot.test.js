@@ -1,6 +1,6 @@
 import { expect, should, use } from "chai"
 import chaiHttp from "chai-http"
-import { after, before, describe, it, xit } from "mocha"
+import { after, before, describe, it } from "mocha"
 import { User } from "../../src/database/index.js"
 import { Errors } from "../../src/utils/index.js"
 import { printObject, requester } from "./index.js"
