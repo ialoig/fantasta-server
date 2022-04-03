@@ -157,8 +157,8 @@ const saveFootballPlayers = async (classicFile, mantraFile, statisticsFile) => {
 	let footballPlayersObj = null
 	let statisticsObj = null
 
-	let excelContentClassic = xlsxUtils.readFile(classicFile, 1)
-	let excelContentMantra = xlsxUtils.readFile(mantraFile, 1)
+	const excelContentClassic = xlsxUtils.readFile(classicFile, 1)
+	const excelContentMantra = xlsxUtils.readFile(mantraFile, 1)
 	if (excelContentClassic.length && excelContentMantra.length) {
 		// Extract footballPlayer from Json object
 		let footballPlayerClassic_obj = getPlayersFromExcelContent(excelContentClassic, false)
@@ -167,23 +167,23 @@ const saveFootballPlayers = async (classicFile, mantraFile, statisticsFile) => {
 		footballPlayersObj = mergeRoles(footballPlayerClassic_obj, footballPlayerMantra_obj)
 	}
 
-	let excelContent = xlsxUtils.readFile(statisticsFile, 1)
-	if (excelContent.length) {
-		statisticsObj = getStatisticsFromExcelContent(excelContent)
+	const excelContentStatistics = xlsxUtils.readFile(statisticsFile, 1)
+	if (excelContentStatistics.length) {
+		statisticsObj = getStatisticsFromExcelContent(excelContentStatistics)
 	}
 
 	if (footballPlayersObj || statisticsObj) {
 		try {
-			// recupero i giocatori
-			let oldTable = await FootballPlayers.findOne()
+			// get football players from DB
+			let tableDB = await FootballPlayers.findOne()
 
-			let players = oldTable && oldTable.footballPlayers || null
-			let statistics = oldTable && oldTable.statistics || null
+			let footballPlayersDB = tableDB && tableDB.footballPlayers || null
+			let statistics = tableDB && tableDB.statistics || null
 
-			if (!_.isEqual(players, footballPlayersObj) || !_.isEqual(statistics, statisticsObj)) {
-				if (!_.isEqual(players, footballPlayersObj)) {
+			if (!_.isEqual(footballPlayersDB, footballPlayersObj) || !_.isEqual(statistics, statisticsObj)) {
+				if (!_.isEqual(footballPlayersDB, footballPlayersObj)) {
 					console.log("[saveFootballPlayers] FootballPlayers collection has to be updated")
-					players = footballPlayersObj
+					footballPlayersDB = footballPlayersObj // TODO: merge objects
 				}
 				else {
 					console.log("[saveFootballPlayers] FootballPlayers collection already up to date")
@@ -191,7 +191,7 @@ const saveFootballPlayers = async (classicFile, mantraFile, statisticsFile) => {
 
 				if (!_.isEqual(statistics, statisticsObj)) {
 					console.log("[saveFootballPlayers] Statistics collection has to be updated")
-					statistics = statisticsObj
+					statistics = statisticsObj // TODO: merge objects
 				}
 				else {
 					console.log("[saveFootballPlayers] Statistics collection already up to date")
@@ -199,7 +199,7 @@ const saveFootballPlayers = async (classicFile, mantraFile, statisticsFile) => {
 
 				// svuoto la tabella
 				await FootballPlayers.deleteMany({})
-				saveFootballPlayerWithVersion(players, statistics, new Date().getTime())
+				saveFootballPlayerWithVersion(footballPlayersDB, statistics, new Date().getTime())
 			}
 			else {
 				console.log("[saveFootballPlayers] FootballPlayers collection already up to date")

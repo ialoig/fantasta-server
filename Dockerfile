@@ -29,9 +29,9 @@ COPY .nycrc.json ./
 #     fi
 
 ######### only for development ###########
-# RUN apt-get update && \
-#     apt-get install -y procps && \
-#     apt-get install vim -y
+RUN apt-get update && \
+    # apt-get install -y procps && \
+    apt-get install vim -y
 ##########################################
 
 # Install app dependencies

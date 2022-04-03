@@ -27,6 +27,10 @@ const marketSchema = new Schema(
 			type: Schema.Types.Object,
 			default: []
 		}],
+		footballPlayerList: [{
+			type: Schema.Types.Object,
+			default: []
+		}],
 		betHistory: [{
 			footballPlayerId: {
 				type: Schema.Types.Number,

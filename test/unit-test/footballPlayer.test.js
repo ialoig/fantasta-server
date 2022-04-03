@@ -36,7 +36,7 @@ describe("FOOTBALLPLAYER VALIDATION", function () {
 			}
 		}
 
-		for (const footballPlayer_obj of Object.entries(footballPlayerList_obj)) {
+		for (const [footballPlayerId, footballPlayer_obj] of Object.entries(footballPlayerList_obj)) {
 			assert.strictEqual(containsCorrectData(footballPlayer_obj), true)
 		}
 		done()
@@ -56,7 +56,7 @@ describe("FOOTBALLPLAYER VALIDATION", function () {
 			}
 		}
 
-		for (const footballPlayer_obj of Object.entries(footballPlayerList_obj_wrong_id)) {
+		for (const [footballPlayerId, footballPlayer_obj] of Object.entries(footballPlayerList_obj_wrong_id)) {
 			assert.strictEqual(containsCorrectData(footballPlayer_obj), false)
 		}
 		done()
@@ -76,7 +76,7 @@ describe("FOOTBALLPLAYER VALIDATION", function () {
 			}
 		}
 
-		for (const footballPlayer_obj of Object.entries(footballPlayerList_obj_wrong_name)) {
+		for (const [footballPlayerId, footballPlayer_obj] of Object.entries(footballPlayerList_obj_wrong_name)) {
 			assert.strictEqual(containsCorrectData(footballPlayer_obj), false)
 		}
 		done()
@@ -96,7 +96,7 @@ describe("FOOTBALLPLAYER VALIDATION", function () {
 			}
 		}
 
-		for (const [ footballPlayer_obj] of Object.entries(footballPlayerList_obj_wrong_team)) {
+		for (const [footballPlayerId, footballPlayer_obj] of Object.entries(footballPlayerList_obj_wrong_team)) {
 			assert.strictEqual(containsCorrectData(footballPlayer_obj), false)
 		}
 		done()
@@ -116,7 +116,7 @@ describe("FOOTBALLPLAYER VALIDATION", function () {
 			}
 		}
 
-		for (const footballPlayer_obj of Object.entries(footballPlayerList_obj_wrong_roleClassic)) {
+		for (const [footballPlayerId, footballPlayer_obj] of Object.entries(footballPlayerList_obj_wrong_roleClassic)) {
 			assert.strictEqual(containsCorrectData(footballPlayer_obj), false)
 		}
 		done()
@@ -136,7 +136,7 @@ describe("FOOTBALLPLAYER VALIDATION", function () {
 			}
 		}
 
-		for (const footballPlayer_obj of Object.entries(footballPlayerList_obj_wrong_roleMantra)) {
+		for (const [footballPlayerId, footballPlayer_obj] of Object.entries(footballPlayerList_obj_wrong_roleMantra)) {
 			assert.strictEqual(containsCorrectData(footballPlayer_obj), false)
 		}
 		done()
@@ -156,7 +156,7 @@ describe("FOOTBALLPLAYER VALIDATION", function () {
 			}
 		}
 
-		for (const [ footballPlayer_obj] of Object.entries(footballPlayerList_obj_wrong_actualPrice)) {
+		for (const [footballPlayerId, footballPlayer_obj] of Object.entries(footballPlayerList_obj_wrong_actualPrice)) {
 			assert.strictEqual(containsCorrectData(footballPlayer_obj), false)
 		}
 		done()
@@ -176,7 +176,7 @@ describe("FOOTBALLPLAYER VALIDATION", function () {
 			}
 		}
 
-		for (const footballPlayer_obj of Object.entries(footballPlayerList_obj_wrong_initialPrice)) {
+		for (const [footballPlayerId, footballPlayer_obj] of Object.entries(footballPlayerList_obj_wrong_initialPrice)) {
 			assert.strictEqual(containsCorrectData(footballPlayer_obj), false)
 		}
 		done()

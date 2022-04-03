@@ -37,7 +37,7 @@ const get = async (req, res, next) => {
 			if (!leagueFound) {
 				throw Errors.LEAGUE_NOT_FOUND_FOR_USER
 			}
-            
+
 			// parsing league and user object to filter out sensitive information
 			const parsedUser = userUtils.parseUser(user)
 			const parsedLeague = leagueUtils.parseLeague(league)
@@ -56,7 +56,7 @@ const get = async (req, res, next) => {
 			res.status(400).send(Response.reject(Errors.PARAMS_ERROR, req.headers.language))
 		}
 	} catch (error) {
-		console.error(`[api] league.get - error: ${error}`)
+		console.error(`[api] league.get - error: ${JSON.stringify(error, null, 2)}`)		
 		metricApiError("league.get", error, duration_start)
 		res.status(400).send(Response.reject(error, req.headers.language))
 	}

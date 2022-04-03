@@ -176,11 +176,13 @@ Il tema è la gestione della lista giocatori all'interno del Market
 
 ### 📌 LISTA MERCATO UNICA
 
-* La `Lista completa` viene aggiornata periodicamente da fantagazzetta; se un giocatore lascia la SerieA è eliminato dalla lista
+* La `Lista statistiche` aggiornata periodicamente da fantagazzetta; Nuovo schema nel DB `Statistics`
+
+* La `Lista completa` aggiornata periodicamente da fantagazzetta; se un giocatore lascia la SerieA è eliminato dalla lista
 
 * La `Lista eliminati` contiene una lista di footballPlayer che vengono eliminati dalla `Lista completa`. Nuovo schema nel DB `FootballPlayersDeleted`
 
-* La `Lista mercato` viene creata al momento della creazione del mercato, come snapshot della `Lista completa` in quel momento. E' un array di oggetti definito come:
+* La `Lista mercato` creata al momento della creazione del mercato, come snapshot della `Lista completa` in quel momento. E' un array di oggetti definito come:
 
 ```shell
 {
@@ -189,60 +191,76 @@ Il tema è la gestione della lista giocatori all'interno del Market
 }
 ```
 
+Quando il mobile parte:
+* footballPlayers.get
+* footballPlayersDeleted.get (usando la stessa logica con il controllo versione)
+* statistics.get (usando la stessa logica con il controllo versione)
+
 Quando il mobile fa Market.create:
 * il server crea la `Lista mercato` a partire dalla `Lista completa` e la salva in `market.footballPlayers`
+```shell
+{
+    _id: Number,
+    actualPrice: Number
+}
+```
 
-Quando il mobile fa Market.join:
-* il server crea la `Lista mercato eliminati` a partire dalla `Lista mercato` con i giocatori presenti in `Lista eliminati` e la salva in `market.footballPlayersDeleted`
-* la creazione avviene solamente se `market.updatedAt < FootballPlayersDeleted.updatedAt`. (mi sa che non basta controllare `market.updatedAt`. Ci vuole un campo apposito)
-
-A questo punto nell'oggetto market abbiamo la lista di giocatori congelata al momento della creazione del market. Con l'ausilio di `Lista completa` e `market.footballPlayersDeleted` possiamo recuperare tutte le informazioni dei giocatori, che siano ancora in Serie A o meno (nome, squadra, costo, ruolo, ...).
+Dopo che il client che fa Market.create/Market.join nell'oggetto market abbiamo la lista di giocatori congelata al momento della creazione del market. 
+Con l'ausilio di `Lista completa` e `Lista eliminati` possiamo recuperare tutte le informazioni dei giocatori del market, che giochino ancora in Serie A o meno (basta fare accesso a uno delle due liste)
 
 #### STATISTICHE
 Sembrerebbe che i giocatori venduti all'estero non vengono eliminati, quindi abbiamo a disposizione le informazioni di tutti i calciatori.
 
 ### ✏️ TODO
 
-⬜️ suddividere `Statistics` e `FootballPlayers` in due Schemi differenti
-
-⬜️ salvare `Statistics` e `FootballPlayers` anno per anno (es: aggiungi campo `referenceYear:"2020-2021"`)
-
-⬜️ salvare `FootballPlayersDeleted` come diff tra `FootballPlayers` attuale e `FootballPlayers` nuovo con schema uguale a `FootballPlayers`:
+⬜️ modificare schema in DB `FootballPlayers`. Contiene la lista dei giocatori anno per anno (aggiungi campo `season: "2020-2021"`). Rimuovere `statistics`
 ```shell
+season: String
+version: Number,
+list: {
+    type: Object
+}
+```
+⬜️ Modificare API `footballPlayers.get` per ottenere solo la lista dei giocatori (senza `statistiche`) 
+
+⬜️ creare nuovo schema in DB `Statistics`. Contiene le statistiche anno per anno (aggiungi campo `season: "2020-2021"`)
+```shell
+season: String
+version: Number,
 list: {
     type: Object
 }
 ```
 
-⬜️ modifica allo schema market con aggiunta del campo `footballPlayers` come Array di oggetti
+⬜️ Creare API `statistics.get` per ottenere la `Lista statistiche`. 
+Usare logica controllo versione per capire se il client ha bisogno di scaricare la nuova lista.
 
-⬜️ popolamento del campo `market.footballPlayers` alla creazione del market come array di oggetti definito come:
+
+⬜️ creare nuovo schema in DB `FootballPlayersDeleted`. Contiene i giocatori eliminati anno per anno (aggiungi campo `season: "2020-2021"`).
+Popolato come diff tra `FootballPlayers` del DB e `FootballPlayers` nuovo con schema uguale a `FootballPlayers`:
+```shell
+season: String
+version: Number,
+list: {
+    type: Object
+}
+```
+
+⬜️ Creare API `footballPlayersDeleted.get` per ottenere la `Lista eliminati`. 
+Usare logica controllo versione per capire se il client ha bisogno di scaricare la nuova lista.
+
+⬜️ modifica allo schema market con aggiunta del campo `market.footballPlayers` come Array di oggetti.
 ```shell
 {
-    _id: Number,
+    id: Number,
     actualPrice: Number
 }
 ```
-⬜️ determinare l'ordinamento del campo `market.footballPlayers` in base a `league.auctionType`, ovvero:
+Popolare il campo `market.footballPlayers` alla creazione del market ordinato in base a `league.auctionType`, ovvero:
 
 * `auctionType=RANDOM` -> ordinamento random
 * `auctionType=ALFABETICO` -> ordinamento alfabetico
 
-⬜️ modifica allo schema market con aggiunta del campo `footballPlayersDeleted` come Array di oggetti
-
-⬜️ popolamento del campo `market.footballPlayersDeleted` alla join del market come array di oggetti uguali a `FootballPlayers`
-Per ogni giocatore presente in `market.footballPlayers` controllo che sia presente nella lista `FootballPlayersDeleted`:
-* si: aggiungo il giocatore in `market.footballPlayersDeleted`
-
-```shell
-market.footballPlayers.forEach( player => {
-    if (FootballPlayersDeleted[player._id])
-        market.footballPlayersDeleted.push(FootballPlayersDeleted[player._id])
-})
-```
-il popolamento di `market.footballPlayersDeleted` è da fare se e solo se `market.updatedAt < FootballPlayersDeleted.updatedAt`.
-
-Ovvero aggiorna la lista mercato solo se è partito un giocatore dopo l'apertura del mercato
 
 
 

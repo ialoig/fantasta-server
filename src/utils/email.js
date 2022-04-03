@@ -10,7 +10,7 @@ const domain = config.transporter.gmail //config.transporter.outlook
 
 const auth = {
 	user: config.email.email,
-	pass: config.email.password   // TOGLIERE E METTERE QUALCOSA DI PIù SICURO PER LA PASSWORD
+	pass: config.email.password   // TODO: TOGLIERE E METTERE QUALCOSA DI PIù SICURO PER LA PASSWORD
 }
 
 const transport = Object.assign({}, _.cloneDeep(domain), { auth })
