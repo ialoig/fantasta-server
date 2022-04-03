@@ -9,160 +9,118 @@ import { requester } from "./index"
 use(chaiHttp)
 should()
 
+const api = "/fantasta/auth/update"
+
+const test_user = { 
+	email: "test@test.com", 
+	password: "123456", 
+	username: "username"
+}
+
 describe("UPDATE", () => {
-	before((done) => {
-		User.deleteMany({}, () => {
-			User.create({ email: "test@test.com", password: "123456", username: "username" }, () => {
-				done()
-			})
-		})
+
+	before(async () => {
+
+		// Clean DB
+		await User.deleteMany()
+		await User.create(test_user)
 	})
 
-	after(() => {
+	after( async () => {
 		requester.close()
 	})
 
-	it("Body is undefined", (done) => {
-		requester.put("/fantasta/auth/update")
-			.send(undefined)
-			.end((err, res) => {
-				expect(res).to.have.status(400)
-				expect(res.body).to.be.a("object")
-				expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
-				expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
-				done()
-			})
+	it("Body is undefined", async () => {
+		const res = await requester.put(api).send(undefined)
+		expect(res).to.have.status(400)
+		expect(res.body).to.be.a("object")
+		expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
+		expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
 	})
 
-	it("Body is empty", (done) => {
-		requester.put("/fantasta/auth/update")
-			.send({})
-			.end((err, res) => {
-				expect(res).to.have.status(400)
-				expect(res.body).to.be.a("object")
-				expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
-				expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
-				done()
-			})
+	it("Body is empty", async () => {
+		const res = await requester.put(api).send({})
+		expect(res).to.have.status(400)
+		expect(res.body).to.be.a("object")
+		expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
+		expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
 	})
 
-	it("Email is NULL", (done) => {
-		requester.put("/fantasta/auth/update")
-			.send({ email: null })
-			.end((err, res) => {
-				expect(res).to.have.status(400)
-				expect(res.body).to.be.a("object")
-				expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
-				expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
-				done()
-			})
+	it("Email is NULL", async () => {
+		const res = await requester.put(api).send({ email: null })
+		expect(res).to.have.status(400)
+		expect(res.body).to.be.a("object")
+		expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
+		expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
 	})
 
-	it("Email is NOT VALID", (done) => {
-		requester.put("/fantasta/auth/update")
-			.send({ email: "blabla" })
-			.end((err, res) => {
-				expect(res).to.have.status(400)
-				expect(res.body).to.be.a("object")
-				expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
-				expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
-				done()
-			})
+	it("Email is NOT VALID", async () => {
+		const res = await requester.put(api).send({ email: "blabla" })
+		expect(res).to.have.status(400)
+		expect(res.body).to.be.a("object")
+		expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
+		expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
 	})
 
-	it("Email is CORRECT", (done) => {
+	it("Email is CORRECT", async () => {
 		const token = tokenUtils.Create(config.token.kid, "test@test.com", "123456", "username")
-
-		requester.put("/fantasta/auth/update")
-			.set("Authorization", token)
-			.send({ email: "test@test.it" })
-			.end((err, res) => {
-				expect(res).to.have.status(200)
-				expect(res.body).to.be.a("object")
-				expect(res.body.user).to.be.a("object").that.is.not.empty
-				expect(res.body.user.email).to.equal("test@test.it")
-				expect(res.body.token).to.be.a("string")
-				done()
-			})
+		const res = await requester.put(api).set("Authorization", token).send({ email: "test@test.it" })
+		expect(res).to.have.status(200)
+		expect(res.body).to.be.a("object")
+		expect(res.body.user).to.be.a("object").that.is.not.empty
+		expect(res.body.user.email).to.equal("test@test.it")
+		expect(res.body.token).to.be.a("string")
 	})
 
-	it("Password is NULL", (done) => {
-		requester.put("/fantasta/auth/update")
-			.send({ password: null })
-			.end((err, res) => {
-				expect(res).to.have.status(400)
-				expect(res.body).to.be.a("object")
-				expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
-				expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
-				done()
-			})
+	it("Password is NULL", async () => {
+		const res = await requester.put(api).send({ password: null })
+		expect(res).to.have.status(400)
+		expect(res.body).to.be.a("object")
+		expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
+		expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
 	})
 
-	it("Password is NOT VALID", (done) => {
-		requester.put("/fantasta/auth/update")
-			.send({ password: "226" })
-			.end((err, res) => {
-				expect(res).to.have.status(400)
-				expect(res.body).to.be.a("object")
-				expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
-				expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
-				done()
-			})
+	it("Password is NOT VALID", async () => {
+		const res = await requester.put(api).send({ password: "226" })
+		expect(res).to.have.status(400)
+		expect(res.body).to.be.a("object")
+		expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
+		expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
 	})
 
-	it("Password is CORRECT", (done) => {
+	it("Password is CORRECT", async () => {
 		const token = tokenUtils.Create(config.token.kid, "test@test.it", "123456", "username")
-
-		requester.put("/fantasta/auth/update")
-			.set("Authorization", token)
-			.send({ password: "654321" })
-			.end((err, res) => {
-				expect(res).to.have.status(200)
-				expect(res.body).to.be.a("object")
-				expect(res.body.user).to.be.a("object").that.is.not.empty
-				expect(res.body.user.email).to.equal("test@test.it")
-				expect(res.body.token).to.be.a("string")
-				done()
-			})
+		const res = await requester.put(api).set("Authorization", token).send({ password: "654321" })
+		expect(res).to.have.status(200)
+		expect(res.body).to.be.a("object")
+		expect(res.body.user).to.be.a("object").that.is.not.empty
+		expect(res.body.user.email).to.equal("test@test.it")
+		expect(res.body.token).to.be.a("string")
 	})
 
-	it("Username is NULL", (done) => {
-		requester.put("/fantasta/auth/update")
-			.send({ username: null })
-			.end((err, res) => {
-				expect(res).to.have.status(400)
-				expect(res.body).to.be.a("object")
-				expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
-				expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
-				done()
-			})
+	it("Username is NULL", async () => {
+		const res = await requester.put(api).send({ username: null })
+		expect(res).to.have.status(400)
+		expect(res.body).to.be.a("object")
+		expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
+		expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
 	})
 
-	it("Username is NOT CORRECT", (done) => {
-		requester.put("/fantasta/auth/update")
-			.send({ username: "" })
-			.end((err, res) => {
-				expect(res).to.have.status(400)
-				expect(res.body).to.be.a("object")
-				expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
-				expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
-				done()
-			})
+	it("Username is NOT CORRECT", async () => {
+		const res = await requester.put(api).send({ username: "" })
+		expect(res).to.have.status(400)
+		expect(res.body).to.be.a("object")
+		expect(res.body.code).to.equal(Errors.PARAMS_ERROR.code)
+		expect(res.body.status).to.equal(Errors.PARAMS_ERROR.status)
 	})
 
-	it("Username is CORRECT", (done) => {
+	it("Username is CORRECT", async () => {
 		const token = tokenUtils.Create(config.token.kid, "test@test.it", "654321", "username")
-
-		requester.put("/fantasta/auth/update")
-			.set("Authorization", token)
-			.send({ username: "user" })
-			.end((err, res) => {
-				expect(res).to.have.status(200)
-				expect(res.body).to.be.a("object")
-				expect(res.body.user).to.be.a("object").that.is.not.empty
-				expect(res.body.user.username).to.equal("user")
-				expect(res.body.token).to.be.a("string")
-				done()
-			})
+		const res = await requester.put(api).set("Authorization", token).send({ username: "user" })
+		expect(res).to.have.status(200)
+		expect(res.body).to.be.a("object")
+		expect(res.body.user).to.be.a("object").that.is.not.empty
+		expect(res.body.user.username).to.equal("user")
+		expect(res.body.token).to.be.a("string")
 	})
 })

@@ -202,11 +202,17 @@ Quando il mobile fa Market.create:
 {
     _id: Number,
     actualPrice: Number
+    teamassigned: team.id
 }
 ```
 
 Dopo che il client che fa Market.create/Market.join nell'oggetto market abbiamo la lista di giocatori congelata al momento della creazione del market. 
 Con l'ausilio di `Lista completa` e `Lista eliminati` possiamo recuperare tutte le informazioni dei giocatori del market, che giochino ancora in Serie A o meno (basta fare accesso a uno delle due liste)
+
+123
+Lista completa[123]
+Lista eliminati[123]
+betHistory[123] <- team, value
 
 #### STATISTICHE
 Sembrerebbe che i giocatori venduti all'estero non vengono eliminati, quindi abbiamo a disposizione le informazioni di tutti i calciatori.
@@ -260,6 +266,55 @@ Popolare il campo `market.footballPlayers` alla creazione del market ordinato in
 
 * `auctionType=RANDOM` -> ordinamento random
 * `auctionType=ALFABETICO` -> ordinamento alfabetico
+
+⬜️ modifica allo schema market con aggiunta del campo `market.footballPlayersIndex` come Number.
+utilizzato dal server come indice di accesso all'array `market.footballPlayers` per capire quale giocatore deve essere lanciato all'asta per i casi
+`auctionType=RANDOM` e `auctionType=ALFABETICO`. Altrimenti `market.footballPlayersIndex=null`
+
+
+
+
+### ❓ OPEN POINTS
+Per recuperare lo stato di assegnazione di un calciatore il cui id e' in `market.footballPlayers`:
+
+`market.footballPlayers.id=123`
+
+`footballPlayers[123]`: per vedere se il calciatore e' ancora in serieA
+`footballPlayersDeleted[123]`: per vedere se il calciatore e' stato eliminato dalla serieA dopo la creazione del Mercato
+`betHistory[123]`: per recuperare il team che l'ha comprato e a quale prezzo
+
+
+CASI D'USO
+Pagina Players a mercato non esistente
+lista giocatori da `footballPlayers`
+
+Pagina Players a mercato aperto (2021-2022)
+lista giocatori da `market.footballPlayers`
+if (betHistory[123]) -> i giocatore e' stato gia' acquistato, mostro il team
+else if (footballPlayers[123]) -> giocatore ancora in SerieA e svincolato
+else if (footballPlayersDeleted[123]) -> il giocatore non e' piu' in serieA
+else Error("non funziona un cazzo")
+
+DB - market.season=2021-2022
+
+Gennaio - Pagina Players a mercato Agosto chiuso (uso mercato market.season=2021-2022)
+lista giocatori da `footballPlayers`
+if (betHistory[123]) -> i giocatore e' stato gia' acquistato, mostro il team
+else if (footballPlayers[123]) -> giocatore ancora in SerieA e svincolato
+else if (footballPlayersDeleted[123]) -> il giocatore non e' piu' in serieA
+else Error("non funziona un cazzo")
+
+Nuovo mercato:
+market.footballPlaters ricalcolato
+market.bethistory si parte da quello nel DB
+parte asta e continua a modificare market.season=2021-2022
+
+Aprile - Pagina Players a mercato Gennaio chiuso (uso mercato market.season=2021-2022)
+
+
+
+
+
 
 
 
