@@ -271,6 +271,9 @@ Popolare il campo `market.footballPlayers` alla creazione del market ordinato in
 utilizzato dal server come indice di accesso all'array `market.footballPlayers` per capire quale giocatore deve essere lanciato all'asta per i casi
 `auctionType=RANDOM` e `auctionType=ALFABETICO`. Altrimenti `market.footballPlayersIndex=null`
 
+⬜️ gestione app meno sicure per l'invio di email tramite google account 
+https://support.google.com/accounts/answer/6010255?authuser=1&p=lsa_blocked&hl=it&authuser=1&visit_id=637846110020700193-994282476&rd=1#more-secure-apps&zippy=%2Cse-lopzione-accesso-app-meno-sicure-%C3%A8-attiva-per-il-tuo-account%2Cusare-una-password-per-lapp
+
 
 
 
