@@ -18,6 +18,7 @@
     "docker-test-integration": "docker-compose -f ./docker-compose.yml -f ./docker-compose.test.yml up -d --build --remove-orphans && docker exec -it fantasta_server npm run test-integration ; docker-compose down",
     "docker-prod": "docker-compose -f ./docker-compose.yml -f ./docker-compose.prod.yml up --build --force-recreate --detach",
     "docker-stop": "docker stop grafana prometheus fantasta_server fantasta_mongo",
+    "lint": "npm run lint:src && npm run lint:test && npm run lint:json",
     "lint:src": "eslint --cache --fix src",
     "lint:test": "eslint --cache --fix test",
     "lint:json": "eslint --fix src --ext .json --format node_modules/eslint-plugin-i18n-json/formatter.js "

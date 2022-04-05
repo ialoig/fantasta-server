@@ -172,9 +172,7 @@ for use with Babel, but it can't change the built-in rules to support experiment
 
 Il tema è la gestione della lista giocatori all'interno del Market
 
-### SOLUZIONE PROPOSTA
-
-### 📌 LISTA MERCATO UNICA
+### 📌 SOLUZIONE PROPOSTA: LISTA MERCATO UNICA
 
 * La `Lista statistiche` aggiornata periodicamente da fantagazzetta; Nuovo schema nel DB `Statistics`
 
@@ -197,6 +195,7 @@ Quando il mobile parte:
 * statistics.get (usando la stessa logica con il controllo versione)
 
 Quando il mobile fa Market.create:
+
 * il server crea la `Lista mercato` a partire dalla `Lista completa` e la salva in `market.footballPlayers`
 ```shell
 {
@@ -206,20 +205,32 @@ Quando il mobile fa Market.create:
 }
 ```
 
-Dopo che il client che fa Market.create/Market.join nell'oggetto market abbiamo la lista di giocatori congelata al momento della creazione del market. 
+```shell
+{
+    _id: Number,
+    actualPrice: Number
+}
+```
+
+Dopo che il client fa Market.create/Market.join, nell'oggetto market abbiamo la lista di giocatori congelata al momento della creazione del market.
+
 Con l'ausilio di `Lista completa` e `Lista eliminati` possiamo recuperare tutte le informazioni dei giocatori del market, che giochino ancora in Serie A o meno (basta fare accesso a uno delle due liste)
 
-123
-Lista completa[123]
-Lista eliminati[123]
-betHistory[123] <- team, value
+es:
+
+1. giocatore id = 123
+1. Lista completa[123] -> prendo tutte le informazioni
+1. Lista eliminati[123] -> prendo tutte le informazioni, solo se non presente in Lista completa
+1. betHistory[123] -> prendo le informazioni di team e di valore di acquisto
 
 #### STATISTICHE
+
 Sembrerebbe che i giocatori venduti all'estero non vengono eliminati, quindi abbiamo a disposizione le informazioni di tutti i calciatori.
 
 ### ✏️ TODO
 
 ⬜️ modificare schema in DB `FootballPlayers`. Contiene la lista dei giocatori anno per anno (aggiungi campo `season: "2020-2021"`). Rimuovere `statistics`
+
 ```shell
 season: String
 version: Number,
@@ -227,9 +238,11 @@ list: {
     type: Object
 }
 ```
-⬜️ Modificare API `footballPlayers.get` per ottenere solo la lista dei giocatori (senza `statistiche`) 
+
+⬜️ Modificare API `footballPlayers.get` per ottenere solo la lista dei giocatori (senza `statistiche`)
 
 ⬜️ creare nuovo schema in DB `Statistics`. Contiene le statistiche anno per anno (aggiungi campo `season: "2020-2021"`)
+
 ```shell
 season: String
 version: Number,
@@ -238,12 +251,12 @@ list: {
 }
 ```
 
-⬜️ Creare API `statistics.get` per ottenere la `Lista statistiche`. 
+⬜️ Creare API `statistics.get` per ottenere la `Lista statistiche`.
 Usare logica controllo versione per capire se il client ha bisogno di scaricare la nuova lista.
-
 
 ⬜️ creare nuovo schema in DB `FootballPlayersDeleted`. Contiene i giocatori eliminati anno per anno (aggiungi campo `season: "2020-2021"`).
 Popolato come diff tra `FootballPlayers` del DB e `FootballPlayers` nuovo con schema uguale a `FootballPlayers`:
+
 ```shell
 season: String
 version: Number,
@@ -252,10 +265,11 @@ list: {
 }
 ```
 
-⬜️ Creare API `footballPlayersDeleted.get` per ottenere la `Lista eliminati`. 
+⬜️ Creare API `footballPlayersDeleted.get` per ottenere la `Lista eliminati`.
 Usare logica controllo versione per capire se il client ha bisogno di scaricare la nuova lista.
 
 ⬜️ modifica allo schema market con aggiunta del campo `market.footballPlayers` come Array di oggetti.
+
 ```shell
 {
     id: Number,
@@ -268,91 +282,58 @@ Popolare il campo `market.footballPlayers` alla creazione del market ordinato in
 * `auctionType=ALFABETICO` -> ordinamento alfabetico
 
 ⬜️ modifica allo schema market con aggiunta del campo `market.footballPlayersIndex` come Number.
-utilizzato dal server come indice di accesso all'array `market.footballPlayers` per capire quale giocatore deve essere lanciato all'asta per i casi
+
+Utilizzato dal server come indice di accesso all'array `market.footballPlayers` per capire quale giocatore deve essere lanciato all'asta per i casi
 `auctionType=RANDOM` e `auctionType=ALFABETICO`. Altrimenti `market.footballPlayersIndex=null`
 
-⬜️ gestione app meno sicure per l'invio di email tramite google account 
-https://support.google.com/accounts/answer/6010255?authuser=1&p=lsa_blocked&hl=it&authuser=1&visit_id=637846110020700193-994282476&rd=1#more-secure-apps&zippy=%2Cse-lopzione-accesso-app-meno-sicure-%C3%A8-attiva-per-il-tuo-account%2Cusare-una-password-per-lapp
+⬜️ gestione app meno sicure per l'invio di email tramite google account
+<https://support.google.com/accounts/answer/6010255?authuser=1&p=lsa_blocked&hl=it&authuser=1&visit_id=637846110020700193-994282476&rd=1#more-secure-apps&zippy=%2Cse-lopzione-accesso-app-meno-sicure-%C3%A8-attiva-per-il-tuo-account%2Cusare-una-password-per-lapp>
 
+## ❓ Come verificare se un giocatore è disponibile e reperire le informazioni di acquisto
 
+* dato l'ID di un giocatore (es: footballPlayerID=123):
+    1. se *betHistory[123]* esiste -> il giocatore e' stato gia' acquistato, mostro il team e il valore di acquisto
+    1. se *footballPlayers[123]* esiste -> il giocatore è ancora in SerieA e svincolato, mostro le sue informazioni
+    1. se *footballPlayersDeleted[123]* esiste -> il giocatore non e' piu' in serieA, mostro il flag `deleted`
+    1. Errore in tutti gli altri casi
+    > N.B: i casi sopra sono mutuamente esclusivi
 
+## 🗂 USE CASES
 
-### ❓ OPEN POINTS
-Per recuperare lo stato di assegnazione di un calciatore il cui id e' in `market.footballPlayers`:
+### 1. Pagina `Players` a mercato non esistente
 
-`market.footballPlayers.id=123`
+*Voglio visualizzare la lista di giocatori completa e aggiornata*
 
-`footballPlayers[123]`: per vedere se il calciatore e' ancora in serieA
-`footballPlayersDeleted[123]`: per vedere se il calciatore e' stato eliminato dalla serieA dopo la creazione del Mercato
-`betHistory[123]`: per recuperare il team che l'ha comprato e a quale prezzo
+* mostro tutta la lista giocatori presa da `footballPlayers` e le relative informazioni
 
+### 2. Pagina `Players` a mercato aperto
 
-CASI D'USO
-Pagina Players a mercato non esistente
-lista giocatori da `footballPlayers`
+*Voglio visualizzare i giocatori disponibili nel mercato e non gli eventuali nuovi arrivi, in modo da avere coerenza tra la lista di giocatori che posso selezionare quando c'è l'asta in corso e la lista nella pagina Players.*
 
-Pagina Players a mercato aperto (2021-2022)
-lista giocatori da `market.footballPlayers`
-if (betHistory[123]) -> i giocatore e' stato gia' acquistato, mostro il team
-else if (footballPlayers[123]) -> giocatore ancora in SerieA e svincolato
-else if (footballPlayersDeleted[123]) -> il giocatore non e' piu' in serieA
-else Error("non funziona un cazzo")
+* prendo l'oggetto `market` aperto
+* prendo la lista giocatori da `market.footballPlayers` che contiene la lista dei giocatori disponibili per quel mercato
+* verifica giocatore disponibile e informazioni di acquisto (vedi paragrafo *Come verificare se un giocatore è disponibile e reperire le informazioni di acquisto*)
 
-DB - market.season=2021-2022
+### 3. Pagina `Players` a mercato chiuso
 
-Gennaio - Pagina Players a mercato Agosto chiuso (uso mercato market.season=2021-2022)
-lista giocatori da `footballPlayers`
-if (betHistory[123]) -> i giocatore e' stato gia' acquistato, mostro il team
-else if (footballPlayers[123]) -> giocatore ancora in SerieA e svincolato
-else if (footballPlayersDeleted[123]) -> il giocatore non e' piu' in serieA
-else Error("non funziona un cazzo")
+_Voglio visualizzare la lista completa di giocatori, comprensiva dei nuovi arrivi. I giocatori già acquistati dai partecipanti devono mostrare le informazioni del `nome del Team` e del `valore di acquisto`_
 
-Nuovo mercato:
-market.footballPlaters ricalcolato
-market.bethistory si parte da quello nel DB
-parte asta e continua a modificare market.season=2021-2022
+* prendo la lista giocatori da `footballPlayers`
+* prendo l'oggetto `market` (ultimo in ordine temporale)
+* verifica giocatore disponibile e informazioni di acquisto (vedi paragrafo *Come verificare se un giocatore è disponibile e reperire le informazioni di acquisto*)
 
-Aprile - Pagina Players a mercato Gennaio chiuso (uso mercato market.season=2021-2022)
+### 4. Lista `seleziona giocatore` nell'asta
 
+*Voglio visualizzare la lista giocatori del mercato, esclusi quelli che sono già stati assegnati, ovvero solo gli svincolati*
 
+* prendo l'oggetto `market` aperto
+* prendo la lista giocatori da `market.footballPlayers` che contiene la lista dei giocatori disponibili per quel mercato
+* verifica giocatore disponibile (vedi paragrafo *Come verificare se un giocatore è disponibile e reperire le informazioni di acquisto*)
 
+### 5. Apertura `nuovo mercato` quando è già stato eseguito un mercato precedentemente (es. apertura mercato di Gennaio)
 
+*Devo creare una nuova lista giocatori e visualizzare le informzioni dei giocatori che sono stati già stati assegnati con la/le asta/e precedente/i*
 
-
-
-
-
-
-
-================================================================================
-
-### 👍 PRO
-
-* l'asta parte con una lista bloccata. Nuovi arrivi o partenze non cambiano la lista. 
-
-### 👎 CONTRO
-
-* se l'asta dura più giorni, la lista è aggiornata alla data di inizio del mercato
-* se per qualche motivo risulta necessario avere ulteriori informazioni del giocatore, e questo è stato eliminato, è possibile avere solo le informazioni salvate nella Lista mercato (id, nome, actualPrice)
-
-### 🙌 ASSUNZIONI
-
-* il mercato ha un unica lista generata al momento della creazione del mercato stesso
-* la lista rimane invariata fino alla chiusura del mercato
-* se l'id di un giocatore è presente nella `Lista mercato` ma non è presente nella `Lista completa`, viene considerato come eliminato
-
-### ❓ OPEN POINTS
-
-1. la "Lista mercato" può non avere tutte le informazioni necessarie; quando un giocatore viene eliminato, le informazioni sono solo quelle presenti nella "Lista mercato" (in quanto nella "Lista completa" il giocatore è stato eliminato).
-    * creazione di una `Lista deleted` globale salvata in `footballPlayers.deleted` che contiene i giocatori eliminati dalla `Lista completa`, frutto del confronto tra Lista completa attuale vs Lista completa db
-    * creazione di una `Lista deleted Market` che contiene le informazioni complete del giocatore presente nella `Lista mercato` e `footballPlayers.deleted`
-    * la `Lista deleted Market` viene salvata nell'oggetto `market.footballPlayersDeleted`
-    * la `Lista deleted Market` viene creata alla join del market
-    * la creazione avviene solamente se `market.updatedAt < deleted.updatedAt`
-1. capire come gestire le statistiche per i giocatori eliminati; queste vengono visualizzate nella lista giocatori del team (team.footballPlayers)
-    * le statistiche dei giocatori non vengono eliminate
-    * necessario salvare le statistiche dell'anno precedente a quello in corso
-
-Ipotesi:
-
-A) mantenera la `Lista completa` con tutti i giocatori compresi quelli eliminati ed effettuare un job di pulizia (da capire)
+* inizializzo `market.footballPlayer` con `Lista completa`
+* `market.betHistory` non viene cancellato ma contiene lo storico delle aste precedenti
+* verifica giocatore disponibile e informazioni di acquisto (vedi paragrafo *Come verificare se un giocatore è disponibile e reperire le informazioni di acquisto*)
