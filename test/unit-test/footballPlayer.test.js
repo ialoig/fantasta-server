@@ -2,9 +2,9 @@ import { strict as assert } from "assert"
 import { describe, it } from "mocha"
 import { containsCorrectData } from "../../src/footballPlayers/saveFootballPlayers.js"
 
-describe("FOOTBALLPLAYER VALIDATION", function () {
+describe("FOOTBALLPLAYER VALIDATION", () => {
 
-	it("validate footballPlayerList", done => {
+	it("validate footballPlayerList", () => {
 
 		const footballPlayerList_obj = {
 			"1": {
@@ -39,10 +39,9 @@ describe("FOOTBALLPLAYER VALIDATION", function () {
 		for (const [footballPlayerId, footballPlayer_obj] of Object.entries(footballPlayerList_obj)) {
 			assert.strictEqual(containsCorrectData(footballPlayer_obj), true)
 		}
-		done()
 	})
 
-	it("validate footballPlayerList with WRONG ID", done => {
+	it("validate footballPlayerList with WRONG ID", () => {
 
 		const footballPlayerList_obj_wrong_id = {
 			"4": {
@@ -59,10 +58,9 @@ describe("FOOTBALLPLAYER VALIDATION", function () {
 		for (const [footballPlayerId, footballPlayer_obj] of Object.entries(footballPlayerList_obj_wrong_id)) {
 			assert.strictEqual(containsCorrectData(footballPlayer_obj), false)
 		}
-		done()
 	})
 
-	it("validate footballPlayerList with WRONG NAME", done => {
+	it("validate footballPlayerList with WRONG NAME", () => {
 
 		const footballPlayerList_obj_wrong_name = {
 			"4": {
@@ -79,10 +77,9 @@ describe("FOOTBALLPLAYER VALIDATION", function () {
 		for (const [footballPlayerId, footballPlayer_obj] of Object.entries(footballPlayerList_obj_wrong_name)) {
 			assert.strictEqual(containsCorrectData(footballPlayer_obj), false)
 		}
-		done()
 	})
 
-	it("validate footballPlayerList with WRONG TEAM", done => {
+	it("validate footballPlayerList with WRONG TEAM", () => {
 
 		const footballPlayerList_obj_wrong_team = {
 			"4": {
@@ -99,10 +96,9 @@ describe("FOOTBALLPLAYER VALIDATION", function () {
 		for (const [footballPlayerId, footballPlayer_obj] of Object.entries(footballPlayerList_obj_wrong_team)) {
 			assert.strictEqual(containsCorrectData(footballPlayer_obj), false)
 		}
-		done()
 	})
 
-	it("validate footballPlayerList with WRONG CLASSIC ROLE", done => {
+	it("validate footballPlayerList with WRONG CLASSIC ROLE", () => {
 
 		const footballPlayerList_obj_wrong_roleClassic = {
 			"4": {
@@ -119,10 +115,9 @@ describe("FOOTBALLPLAYER VALIDATION", function () {
 		for (const [footballPlayerId, footballPlayer_obj] of Object.entries(footballPlayerList_obj_wrong_roleClassic)) {
 			assert.strictEqual(containsCorrectData(footballPlayer_obj), false)
 		}
-		done()
 	})
 
-	it("validate footballPlayerList with WRONG MANTRA ROLE", done => {
+	it("validate footballPlayerList with WRONG MANTRA ROLE", () => {
 
 		const footballPlayerList_obj_wrong_roleMantra = {
 			"4": {
@@ -139,10 +134,9 @@ describe("FOOTBALLPLAYER VALIDATION", function () {
 		for (const [footballPlayerId, footballPlayer_obj] of Object.entries(footballPlayerList_obj_wrong_roleMantra)) {
 			assert.strictEqual(containsCorrectData(footballPlayer_obj), false)
 		}
-		done()
 	})
 
-	it("validate footballPlayerList with WRONG ACTUAL PRICE", done => {
+	it("validate footballPlayerList with WRONG ACTUAL PRICE", () => {
 
 		const footballPlayerList_obj_wrong_actualPrice = {
 			"4": {
@@ -159,10 +153,9 @@ describe("FOOTBALLPLAYER VALIDATION", function () {
 		for (const [footballPlayerId, footballPlayer_obj] of Object.entries(footballPlayerList_obj_wrong_actualPrice)) {
 			assert.strictEqual(containsCorrectData(footballPlayer_obj), false)
 		}
-		done()
 	})
 
-	it("validate footballPlayerList with WRONG INITIAL PRICE", done => {
+	it("validate footballPlayerList with WRONG INITIAL PRICE", () => {
 
 		const footballPlayerList_obj_wrong_initialPrice = {
 			"4": {
@@ -179,6 +172,5 @@ describe("FOOTBALLPLAYER VALIDATION", function () {
 		for (const [footballPlayerId, footballPlayer_obj] of Object.entries(footballPlayerList_obj_wrong_initialPrice)) {
 			assert.strictEqual(containsCorrectData(footballPlayer_obj), false)
 		}
-		done()
 	})
 })

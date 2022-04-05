@@ -7,7 +7,7 @@ import { xlsxUtils } from "../../src/utils/index.js"
 describe("Excel files parsing", function () {
 	//this.timeout(0) // disable test environment timeout
 
-	it("parse Classic and Mantra excel files", done => {
+	it("parse Classic and Mantra excel files", () => {
 
 		const footballPlayerListExpected_obj = {
 			"250": {
@@ -66,8 +66,6 @@ describe("Excel files parsing", function () {
 		let footballPlayerList_obj = mergeRoles(footballPlayerListClassic_obj, footballPlayerListMantra_obj)
 
 		assert.strictEqual(_.isEqual(footballPlayerList_obj, footballPlayerListExpected_obj), true)
-
-		done()
 	})
 
 })
