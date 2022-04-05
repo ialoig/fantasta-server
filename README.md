@@ -176,9 +176,7 @@ Il tema è la gestione della lista giocatori all'interno del Market
 
 * La `Lista statistiche` aggiornata periodicamente da fantagazzetta; Nuovo schema nel DB `Statistics`
 
-* La `Lista completa` aggiornata periodicamente da fantagazzetta; se un giocatore lascia la SerieA è eliminato dalla lista
-
-* La `Lista eliminati` contiene una lista di footballPlayer che vengono eliminati dalla `Lista completa`. Nuovo schema nel DB `FootballPlayersDeleted`
+* La `Lista completa` aggiornata periodicamente da fantagazzetta; se un giocatore lascia la SerieA è eliminato dalla lista viene settato il flag delete=true
 
 * La `Lista mercato` creata al momento della creazione del mercato, come snapshot della `Lista completa` in quel momento. E' un array di oggetti definito come:
 
@@ -191,20 +189,11 @@ Il tema è la gestione della lista giocatori all'interno del Market
 
 Quando il mobile parte:
 * footballPlayers.get
-* footballPlayersDeleted.get (usando la stessa logica con il controllo versione)
 * statistics.get (usando la stessa logica con il controllo versione)
 
 Quando il mobile fa Market.create:
 
-* il server crea la `Lista mercato` a partire dalla `Lista completa` e la salva in `market.footballPlayers`
-```shell
-{
-    _id: Number,
-    actualPrice: Number
-    teamassigned: team.id
-}
-```
-
+* il server crea la `Lista mercato` a partire dalla `Lista completa` filtrando deleted=true e la salva in `market.footballPlayers`
 ```shell
 {
     _id: Number,
@@ -212,15 +201,11 @@ Quando il mobile fa Market.create:
 }
 ```
 
-Dopo che il client fa Market.create/Market.join, nell'oggetto market abbiamo la lista di giocatori congelata al momento della creazione del market.
-
-Con l'ausilio di `Lista completa` e `Lista eliminati` possiamo recuperare tutte le informazioni dei giocatori del market, che giochino ancora in Serie A o meno (basta fare accesso a uno delle due liste)
+Dopo che il client fa Market.create/Market.join, nell'oggetto market abbiamo la lista di giocatori disponibili congelata al momento della creazione del market.
 
 es:
-
 1. giocatore id = 123
-1. Lista completa[123] -> prendo tutte le informazioni
-1. Lista eliminati[123] -> prendo tutte le informazioni, solo se non presente in Lista completa
+1. Lista completa[123] -> prendo tutte le informazioni (anche se e' eliminato)
 1. betHistory[123] -> prendo le informazioni di team e di valore di acquisto
 
 #### STATISTICHE
@@ -254,29 +239,14 @@ list: {
 ⬜️ Creare API `statistics.get` per ottenere la `Lista statistiche`.
 Usare logica controllo versione per capire se il client ha bisogno di scaricare la nuova lista.
 
-⬜️ creare nuovo schema in DB `FootballPlayersDeleted`. Contiene i giocatori eliminati anno per anno (aggiungi campo `season: "2020-2021"`).
-Popolato come diff tra `FootballPlayers` del DB e `FootballPlayers` nuovo con schema uguale a `FootballPlayers`:
-
-```shell
-season: String
-version: Number,
-list: {
-    type: Object
-}
-```
-
-⬜️ Creare API `footballPlayersDeleted.get` per ottenere la `Lista eliminati`.
-Usare logica controllo versione per capire se il client ha bisogno di scaricare la nuova lista.
-
-⬜️ modifica allo schema market con aggiunta del campo `market.footballPlayers` come Array di oggetti.
-
+✅ modifica allo schema market con aggiunta del campo `market.footballPlayers` come Array di oggetti.
 ```shell
 {
     id: Number,
     actualPrice: Number
 }
 ```
-Popolare il campo `market.footballPlayers` alla creazione del market ordinato in base a `league.auctionType`, ovvero:
+⬜️ Popolare il campo `market.footballPlayers` alla creazione del market ordinato in base a `league.auctionType`, ovvero:
 
 * `auctionType=RANDOM` -> ordinamento random
 * `auctionType=ALFABETICO` -> ordinamento alfabetico
@@ -293,8 +263,7 @@ Utilizzato dal server come indice di accesso all'array `market.footballPlayers` 
 
 * dato l'ID di un giocatore (es: footballPlayerID=123):
     1. se *betHistory[123]* esiste -> il giocatore e' stato gia' acquistato, mostro il team e il valore di acquisto
-    1. se *footballPlayers[123]* esiste -> il giocatore è ancora in SerieA e svincolato, mostro le sue informazioni
-    1. se *footballPlayersDeleted[123]* esiste -> il giocatore non e' piu' in serieA, mostro il flag `deleted`
+    1. se *footballPlayers[123]* esiste -> il giocatore è ancora in SerieA e (svincolato o eliminato), mostro le sue informazioni
     1. Errore in tutti gli altri casi
     > N.B: i casi sopra sono mutuamente esclusivi
 
