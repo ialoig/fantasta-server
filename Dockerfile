@@ -29,9 +29,12 @@ COPY .nycrc.json ./
 #     fi
 
 ######### only for development ###########
-RUN apt-get update && \
-    # apt-get install -y procps && \
-    apt-get install vim -y
+RUN echo "deb http://security.debian.org/debian-security bullseye-security main contrib non-free" > /etc/apt/sources.list
+
+# apt-get update && \   ### not working : solution: https://serverfault.com/questions/1074688/security-debian-org-does-not-have-a-release-file-on-with-debian-docker-images/1130167#1130167
+RUN apt-get update
+# apt-get install -y procps && \
+# apt-get install vim -y
 ##########################################
 
 # Install app dependencies
